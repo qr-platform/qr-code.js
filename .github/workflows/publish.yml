@@ -12,7 +12,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Publish to npm
+      - name: Check if version exists
+        id: check_version
         run: |
-          npm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
-          npm publish --access public
+          VERSION=$(node -p "require('./package.json').version")
+          if npm view ${GITHUB_REPOSITORY#*/}@${VERSION} version >/dev/null 2>&1; then
+            echo "Version ${VERSION} already exists on npm, skipping publish."
+            echo "skip_publish=true" >> $GITHUB_OUTPUT
+          else
+            echo "Version ${VERSION} does not exist, proceeding with publish."
+            echo "skip_publish=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Publish to npm
+        if: steps.check_version.outputs.skip_publish == 'false'
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
