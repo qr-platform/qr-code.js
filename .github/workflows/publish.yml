@@ -19,20 +19,25 @@ jobs:
           node-version: '22'
           registry-url: 'https://registry.npmjs.org'
 
-      - name: Check if version exists
+      # --- Check if version already exists ---
+      - name: Check if version exists on npm
         id: check_version
         run: |
+          PACKAGE_NAME=$(node -p "require('./package.json').name")
           VERSION=$(node -p "require('./package.json').version")
-          if npm view ${GITHUB_REPOSITORY#*/}@${VERSION} version >/dev/null 2>&1; then
-            echo "Version ${VERSION} already exists on npm, skipping publish."
+          echo "Checking if package '${PACKAGE_NAME}@${VERSION}' exists on npm..."
+          if npm view "${PACKAGE_NAME}@${VERSION}" version > /dev/null 2>&1; then
+            echo "Version ${VERSION} of ${PACKAGE_NAME} already exists on npm. Skipping publish."
             echo "skip_publish=true" >> $GITHUB_OUTPUT
           else
-            echo "Version ${VERSION} does not exist, proceeding with publish."
+            echo "Version ${VERSION} of ${PACKAGE_NAME} does not exist on npm. Proceeding with publish."
             echo "skip_publish=false" >> $GITHUB_OUTPUT
           fi
 
+      # --- Publish Step ---
       - name: Publish to npm
+        # Only run this step if check_version determined skip_publish is 'false'
         if: steps.check_version.outputs.skip_publish == 'false'
-        run: npm publish --access public
+        run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
