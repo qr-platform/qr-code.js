@@ -4,14 +4,15 @@
 
 <!-- Add other badges like build status, coverage, etc. if available -->
 
-**Generate beautiful, customizable QR codes with ease.**
+## Simple, Beautiful, Reliable
+##### Create Beautiful, Reliable QR Codes with Ease
 
 QRCode.js is a professional JavaScript/TypeScript library for creating customized QR codes, offering a blend of simplicity and sophistication. With versatile styling options—dot shapes, colors, gradients, embedded images, borders, and text—it enables you to design unique, visually appealing QR codes that work flawlessly with standard scanners. QRCode.js is part of [QR-Platform](https://qr-platform.com): All-in-One QR Codes Management Solution.
 
 ![QR Code Styling Example](https://raw.githubusercontent.com/qr-platform/qr-code.js/main/src/assets/qr-styling.png) <!-- Placeholder: Replace with an actual representative image URL if available -->
 
 ## ✨ Features
-
+*   **Core QR Code Generation**: Encode any text, URL, or data.
 *   **Highly Customizable:** Control dot shapes, colors, sizes, corner styles, and background.
 *   **Gradients:** Apply linear or radial gradients to dots, corners, and backgrounds.
 *   **Image Embedding:** Embed logos or other images in the center, as an overlay, or as a background.
