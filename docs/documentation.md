@@ -827,6 +827,17 @@ qrCode.serialize().then(svgString => {
 ### Key Differences & Considerations
 
 - **Import Path**: Use `import { QRCodeJs } from '@qr-platform/qr-code.js/node';`.
+
+- **Peer Dependencies:** You must install the required `peerDependencies` for Node.js functionality.
+  
+  Install automatically using npx:
+  ```bash
+  npx i-peers @qr-platform/qr-code.js
+  ```
+  Install manually using npm:
+  ```bash
+  npm i @xmldom/xmldom @undecaf/zbar-wasm image-size jose jimp @resvg/resvg-js file-type
+  ```
 - **No Canvas/Download**: Methods relying on browser APIs like `append()`, `download()`, or internal canvas generation are not available or behave differently in the Node.js version.
 - **License Management**: Use the static methods described in the [License Management](#license-management) section.
 - **Border Branding**: Similar to the browser version, Node.js will add "QR-Platform" branding to borders in the free version. To remove this, you'll need to activate a license.

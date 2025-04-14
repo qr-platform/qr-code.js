@@ -1,15 +1,14 @@
-# QRCode.js - @qr-platform/qr-code.js
+# QRCode.js - Simple, Beautiful, Reliable
 
 [![npm version](https://badge.fury.io/js/%40qr-platform%2Fqr-code.js.svg)](https://badge.fury.io/js/%40qr-platform%2Fqr-code.js)
 
 <!-- Add other badges like build status, coverage, etc. if available -->
 
-## Simple, Beautiful, Reliable
-##### Create Beautiful, Reliable QR Codes with Ease
+## Create Beautiful, Reliable QR Codes with Ease
 
-QRCode.js is a professional JavaScript/TypeScript library for creating customized QR codes, offering a blend of simplicity and sophistication. With versatile styling options—dot shapes, colors, gradients, embedded images, borders, and text—it enables you to design unique, visually appealing QR codes that work flawlessly with standard scanners. QRCode.js is part of [QR-Platform](https://qr-platform.com): All-in-One QR Codes Management Solution.
+QRCode.js is a professional JavaScript/TypeScript library for creating customized QR codes, offering a blend of simplicity and sophistication. With versatile styling options—dot shapes, colors, gradients, embedded images, borders, and text—it enables you to design unique, visually appealing QR codes that work flawlessly with standard scanners. QRCode.js is part of [QR-Platform](https://www.qr-platform.com): All-in-One QR Codes Management Solution.
 
-![QR Code Styling Example](https://raw.githubusercontent.com/qr-platform/qr-code.js/main/src/assets/qr-styling.png) <!-- Placeholder: Replace with an actual representative image URL if available -->
+<!-- ![QR Code Styling Example](https://raw.githubusercontent.com/qr-platform/qr-code.js/main/src/assets/qr-styling.png) Placeholder: Replace with an actual representative image URL if available -->
 
 ## ✨ Features
 *   **Core QR Code Generation**: Encode any text, URL, or data.
@@ -26,18 +25,32 @@ QRCode.js is a professional JavaScript/TypeScript library for creating customize
 
 ## 🚀 Installation
 
+
+#### NPM ⤵️
+
 ```bash
-# Using npm
 npm install @qr-platform/qr-code.js
+```
 
-# Using yarn
+#### YARN ⤵️
+```bash
 yarn add @qr-platform/qr-code.js
-
-# Using pnpm
+```
+#### PNPM ⤵️
+```bash
 pnpm add @qr-platform/qr-code.js
 ```
 
 ## 💡 Basic Usage
+
+```typescript
+import { QRCodeJs } from '@qr-platform/qr-code.js';
+
+const qrCode = new QRCodeJs({ data: 'https://example.com' });
+qrCode.append(document.getElementById('qr-container'));
+
+```
+#### or
 
 ```typescript
 import { QRCodeJs, Options } from '@qr-platform/qr-code.js';
@@ -91,14 +104,14 @@ qrCode.serialize().then(svgString => {
 | `imageOptions`         | Options for the embedded image (size, margin).   | `{ imageSize: 0.3, margin: 2 }` |
 | `borderOptions`        | **Premium.** Options for decorative borders.     | `{ hasBorder: true, thickness: 20, ... }` |
 
-*For a full list of options, see the [API Reference Guide](./docs/api-reference-guide.md#start).*
+#### For a full list of options, see the [API Reference Guide](https://qr-platform.github.io/qr-code.js/docs/api-reference-guide.html).
 
 ## 🎨 Examples
 
 Explore various configurations:
 
-*   **[Basic Examples](./docs/examples.md#start):** Get started with common use cases.
-*   **[Advanced Examples](./docs/advanced-examples.md#start):** Dive deep into customization possibilities.
+* #### [Basic Examples](https://qr-platform.github.io/qr-code.js/docs/examples.html) Get started with common use cases.
+* #### [Advanced Examples](https://qr-platform.github.io/qr-code.js/docs/advanced-examples.html) Dive deep into customization possibilities. 
 
 ## 🖥️ Node.js Usage
 
@@ -128,7 +141,17 @@ qrCode.serialize().then(svgString => {
 **Key Differences:**
 *   Import from `@qr-platform/qr-code.js/node`.
 *   Methods requiring a DOM like `append()` or `download()` are not available. Use `serialize()` to get the SVG string.
-*   License activation (if needed) persists only in memory per session. See [License Management](./docs/license-management.md#start).
+*   License activation (if needed) persists only in memory per session. See [License Management](https://qr-platform.github.io/qr-code.js/docs/license-management.html) for details.
+*   **Peer Dependencies:** You must install the required `peerDependencies` for Node.js functionality. 
+  
+    Install automatically using npx:
+     ```bash 
+     npx i-peers
+    ```
+    Install manually using npm:
+    ````bash
+     npm i @xmldom/xmldom @undecaf/zbar-wasm image-size jose jimp @resvg/resvg-js file-type
+     ````
 
 ## 🔑 License Management (Free vs. Premium)
 
@@ -172,17 +195,17 @@ const qrPremium = new QRCodeJs({
 });
 ```
 
-*For full details on activation, persistence, configuration, and backend implementation, see the [License Management Guide](./docs/license-management.md#start).*
+##### For full details on activation, persistence, configuration, and backend implementation, see the [License Management Guide](https://qr-platform.github.io/qr-code.js/docs/license-management.html).
 
 ## 📚 Documentation
 
-*   **[Usage Guide](./docs/usage-guide.md#start):** Comprehensive guide covering all options.
-*   **[API Reference](./docs/api-reference-guide.md#start):** Detailed reference for all options, methods, and enums.
-*   **[TypeScript Definitions](./docs/typescript-types-definitions.md#start):** Full TypeScript type definitions.
-*   **[Basic Examples](./docs/examples.md#start):** Simple examples to get started.
-*   **[Advanced Examples](./docs/advanced-examples.md#start):** Complex customization examples.
-*   **[License Management](./docs/license-management.md#start):** Details on free vs. premium features and activation.
+*   ##### [Usage Guide](https://qr-platform.github.io/qr-code.js/docs/usage-guide.html) Comprehensive guide covering all options.
+*   ##### [API Reference](https://qr-platform.github.io/qr-code.js/docs/api-reference-guide.html) Detailed reference for all options, methods, and enums.
+*   ##### [TypeScript Definitions](https://qr-platform.github.io/qr-code.js/docs/typescript-types-definitions.html) Full TypeScript type definitions.
+*   ##### [Basic Examples](https://qr-platform.github.io/qr-code.js/docs/examples.html) Simple examples to get started.
+*   ##### [Advanced Examples](https://qr-platform.github.io/qr-code.js/docs/advanced-examples.html) Complex customization examples.
+*   ##### [License Management](https://qr-platform.github.io/qr-code.js/docs/license-management.html) Details on free vs. premium features and activation. 
 
 ## 📜 License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details. Premium features require a separate commercial license from [QR-Platform](https://qr-platform.com).
+This Software is licensed, not sold, by QR-Platform ("Licensor") for use only under the terms of this license. The source code for the Software is proprietary, confidential, and is **not** provided or licensed under this agreement. Licensor reserves all rights not expressly granted to User - see the [LICENSE](https://qr-platform.github.io/qr-code.js/LICENSE.md) file for details. Premium features require a separate commercial license from [QR-Platform](https://www.qr-platform.com).

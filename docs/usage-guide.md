@@ -410,6 +410,17 @@ To use QRCode.js in a Node.js environment:
 - **Key considerations**:
   - Use `serialize()` to obtain the SVG as a string for further processing.
 
+  - **Peer Dependencies:** You must install the required `peerDependencies` for Node.js functionality.
+    
+    Install automatically using npx:
+    ```bash
+    npx i-peers @qr-platform/qr-code.js
+    ```
+    Install manually using npm:
+    ```bash
+    npm i @xmldom/xmldom @undecaf/zbar-wasm image-size jose jimp @resvg/resvg-js file-type
+    ```
+
 ---
 <a id="license-management"></a>
 ### License Management

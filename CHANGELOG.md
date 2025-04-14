@@ -1,10 +1,15 @@
 # @qr-platform/qr-code-js
 
+## 0.8.19
+
+### Patch Changes
+
+- 5cfd829: Readme, Documentation, License updates
+
 ## 0.8.17
 
 ### Patch Changes
 
-- 809309c: Domain validation from token
 - a3d5390: Update to Validation and Node library
 
 ## 0.8.16
