@@ -1,5 +1,11 @@
 # @qr-platform/qr-code-js
 
+## 0.8.20
+
+### Patch Changes
+
+- 90fd9b4: Update to license manager domain check array
+
 ## 0.8.19
 
 ### Patch Changes
