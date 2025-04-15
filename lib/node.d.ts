@@ -1,3 +1,4 @@
+import { QRCodeBuilder } from './builder/node';
 import { QRCodeJs as _QRCodeJs } from './core/qr-code-js';
 import { type ValidationResult } from './license/LicenseManagerNode';
 import type * as _browserUtils from './tools/browser-utils';
@@ -30,6 +31,13 @@ export declare class QRCodeJs extends _QRCodeJs {
     static setLicenseUrl(url: string): typeof QRCodeJs;
     constructor(options: RecursivePartial<Options>);
     validateScanning(): Promise<ScanValidatorResponse>;
+    /**
+     * Creates a QRCodeBuilder instance initialized with a specific template.
+     * Allows for fluent configuration chaining.
+     * @param templateName - The name of the template to start with.
+     * @returns A new QRCodeBuilder instance.
+     */
+    static useTemplate(templateName: string): QRCodeBuilder;
 }
 export declare class _ extends QRCodeJs {
     protected _hls(): boolean;

@@ -1,3 +1,4 @@
+import { QRCodeBuilder } from './builder';
 import { QRCodeJs as _QRCodeJs } from './core/qr-code-js';
 import { type Options as QRCodeJsOptions } from './utils/options';
 import { ScanValidatorResponse } from './utils/scan-validators/abstract-scan-validator';
@@ -45,6 +46,13 @@ export declare class QRCodeJs extends _QRCodeJs {
     }>;
     validateScanning(validatorId?: string, // Default validator
     debug?: boolean): Promise<ScanValidatorResponse>;
+    /**
+     * Creates a QRCodeBuilder instance initialized with a specific template.
+     * Allows for fluent configuration chaining.
+     * @param templateName - The name of the template to start with.
+     * @returns A new QRCodeBuilder instance.
+     */
+    static useTemplate(templateName: string): QRCodeBuilder;
 }
 export declare class _ extends QRCodeJs {
     protected _hls(): boolean;

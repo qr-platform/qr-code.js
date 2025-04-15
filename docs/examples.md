@@ -37,6 +37,68 @@ if (container && qrCode.svgElement) {
 
 ---
 
+## Using Templates
+
+Templates provide a way to apply a predefined set of options easily. You can use built-in templates or define your own.
+
+**Example 1: Using a Predefined Template ('rounded')**
+
+```javascript
+// filepath: /Users/kurdin/projects/qr-platform/qr-code-js/docs/examples.md
+
+// Set the 'rounded' template globally for subsequent instances
+QRCodeJs.setTemplate('rounded');
+
+const qrUsingTemplate = new QRCodeJs({
+  data: 'Uses the rounded template'
+});
+qrUsingTemplate.append(document.getElementById('template-rounded-container'));
+
+// Note: The template remains set until changed or cleared.
+```
+
+**Example 2: Using a Custom Template Object**
+
+```javascript
+// filepath: /Users/kurdin/projects/qr-platform/qr-code-js/docs/examples.md
+
+const myCustomTemplate = {
+  dotsOptions: { type: 'classy', color: '#8A2BE2' }, // BlueViolet classy dots
+  backgroundOptions: { color: '#FAFAFA' }, // Off-white background
+  cornersSquareOptions: { type: 'dot', color: '#8A2BE2' }
+};
+
+// Set the custom template globally
+QRCodeJs.setTemplate(myCustomTemplate);
+
+const qrCustomTemplate = new QRCodeJs({
+  data: 'Uses a custom template object'
+});
+qrCustomTemplate.append(document.getElementById('template-custom-container'));
+```
+
+**Example 3: Overriding Template Options**
+
+```javascript
+// filepath: /Users/kurdin/projects/qr-platform/qr-code-js/docs/examples.md
+
+// Assume 'dots' template is set globally
+QRCodeJs.setTemplate('dots');
+
+const qrOverrideTemplate = new QRCodeJs({
+  data: 'Overrides template color',
+  // This color will override the black color from the 'dots' template
+  dotsOptions: { color: '#FF4500' } // OrangeRed dots
+});
+qrOverrideTemplate.append(document.getElementById('template-override-container'));
+
+// Remember to clear the template if you don't want it for subsequent QRs
+// QRCodeJs.setTemplate(null); // Or set back to 'basic' or another template
+```
+
+---
+
+
 ## Examples by Option Group
 
 ### Core Options

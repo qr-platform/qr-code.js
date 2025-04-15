@@ -1,5 +1,11 @@
 # @qr-platform/qr-code-js
 
+## 0.8.21
+
+### Patch Changes
+
+- dc60e82: Added useTemplate local base template option method and setTemplate global static method for QRCodeJs class
+
 ## 0.8.20
 
 ### Patch Changes

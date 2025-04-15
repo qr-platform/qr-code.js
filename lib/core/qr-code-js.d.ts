@@ -9,6 +9,7 @@ export declare enum FileExtension {
 }
 export type ExtensionFunction = (svg: SVGElement, options: RecursivePartial<Options>) => void;
 export declare class QRCodeJs {
+    private static _selectedTemplate;
     private options;
     private container?;
     private qr?;
@@ -20,6 +21,7 @@ export declare class QRCodeJs {
         height: number;
     } | undefined;
     constructor(options: RecursivePartial<Options>);
+    static setTemplate(templateNameOrOptions: string | RecursivePartial<Options>): typeof QRCodeJs;
     update(options?: RecursivePartial<Options>): Promise<void>;
     append(
     /** This container will be used for appending of the QR code */

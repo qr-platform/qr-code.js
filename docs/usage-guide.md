@@ -516,6 +516,26 @@ if (validationResult.isValid) {
   Configures a custom function for fetching license tokens.
 
 
+- **`QRCodeJs.setTemplate(templateNameOrOptions: string | RecursivePartial<Options>): void`**
+  Sets a default template to be used for subsequent `QRCodeJs` instances. This template's options will be merged with the options provided during instantiation, with the instantiation options taking precedence. You can provide either the name of a predefined template (e.g., `'rounded'`, `'dots'`) or a custom options object.
+
+  ```typescript
+  // Set a predefined template by name
+  QRCodeJs.setTemplate('rounded');
+  const qr1 = new QRCodeJs({ data: 'Uses rounded template' });
+
+  // Set a custom template object
+  const myTemplate = { dotsOptions: { type: 'classy', color: '#AA00AA' } };
+  QRCodeJs.setTemplate(myTemplate);
+  const qr2 = new QRCodeJs({ data: 'Uses custom classy template' });
+
+  // Clear the template (falls back to basic)
+  // @ts-expect-error - Accessing private static for testing/clearing
+  QRCodeJs._selectedTemplate = null;
+  const qr3 = new QRCodeJs({ data: 'Uses basic template again' });
+  ```
+
+
 ## FAQ
 
 ### How do I handle CORS issues with embedded images?
