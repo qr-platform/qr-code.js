@@ -110,10 +110,11 @@ Options that affect the QR code generation algorithm.
 - **Type**: `ErrorCorrectionLevel` enum
 - **Default**: `'Q'`
 - **Possible values**: 
-  - `'L'`: 7% error recovery
-  - `'M'`: 15% error recovery
-  - `'Q'`: 25% error recovery
-  - `'H'`: 30% error recovery
+  - `'L'`: Low - 7% error recovery
+  - `'M'`: Medium - 15% error recovery
+  - `'Q'`: Quality - 25% error recovery
+  - `'H'`: High - 30% error recovery
+
 - **Example**:
   ```typescript
   qrOptions: {

@@ -5,15 +5,20 @@ import LuminanceSource from './LuminanceSource';
  */
 export declare class NodeLuminanceSource extends LuminanceSource {
     private buffer;
-    private _width;
-    private _height;
     private constructor();
     /**
      * Asynchronously creates a NodeLuminanceSource from an image buffer.
-     * @param imageBuffer - The image data (e.g. from fs.readFile) as a Buffer.
-     * @param doAutoInvert - If true, computes an inverted grayscale buffer.
+     * Can handle standard image formats (PNG/JPEG via Jimp) or raw RGBA buffers.
+     * @param bufferInput - The image data as a Buffer (PNG, JPEG, or raw RGBA).
+     * @param isPngOrJpeg - Flag indicating if the buffer is a standard format (true) or raw RGBA (false).
+     * @param width - Required width if bufferInput is raw RGBA.
+     * @param height - Required height if bufferInput is raw RGBA.
+     * @param doAutoInvert - If true, computes an inverted grayscale buffer (only relevant for grayscale conversion).
      */
-    static create(imageBuffer: Buffer, doAutoInvert?: boolean): Promise<NodeLuminanceSource>;
+    static create(bufferInput: Buffer, isPngOrJpeg: boolean, // Renamed from isPng for clarity
+    width?: number, // Optional width
+    height?: number, // Optional height
+    doAutoInvert?: boolean): Promise<NodeLuminanceSource>;
     /**
      * Converts raw RGBA data to a grayscale buffer.
      * If doAutoInvert is true, each computed luminance is inverted.
@@ -24,13 +29,5 @@ export declare class NodeLuminanceSource extends LuminanceSource {
     isCropSupported(): boolean;
     crop(left: number, top: number, width: number, height: number): LuminanceSource;
     isRotateSupported(): boolean;
-    rotateCounterClockwise(): LuminanceSource;
-    rotateCounterClockwise45(): LuminanceSource;
-    /**
-     * Rotates the image by the specified angle (in degrees) using Sharp.
-     * This method creates a temporary RGBA image from the grayscale data,
-     * rotates it, then re-converts to grayscale.
-     */
-    private rotate;
     invert(): LuminanceSource;
 }

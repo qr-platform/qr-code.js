@@ -44,7 +44,7 @@ export declare class QRCodeJs extends _QRCodeJs {
         token: string | null;
         license: DecodedLicenseToken | null;
     }>;
-    validateScanning(validatorId?: string, // Default validator
+    validateScanning(_validatorId?: string, // Default validator
     debug?: boolean): Promise<ScanValidatorResponse>;
     /**
      * Creates a QRCodeBuilder instance initialized with a specific template.
