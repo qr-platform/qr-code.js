@@ -9,6 +9,8 @@ export declare enum FileExtension {
 }
 export type ExtensionFunction = (svg: SVGElement, options: RecursivePartial<Options>) => void;
 export declare class QRCodeJs {
+    /** Library version injected at build time */
+    static version: string;
     private static _selectedTemplate;
     private options;
     private container?;
