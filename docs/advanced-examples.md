@@ -446,6 +446,90 @@ const qrBorderElaborate = new QRCodeJs({
 qrBorderElaborate.append(document.getElementById('border-elaborate-container'));
 ```
 
+
+
+--- 
+
+### Builder Pattern Example: Combining Template and Style
+
+Demonstrates using the fluent builder pattern (`useTemplate`, `useStyle`) to combine base settings with specific styles for a complex result.
+
+```typescript
+// Define a base template (could be predefined like 'dots' or 'rounded')
+const baseTemplate = {
+  qrOptions: { errorCorrectionLevel: 'Q' },
+  backgroundOptions: { color: '#f0f0f0' }, // Light grey background
+  margin: 5
+};
+
+// Define a style for specific visual elements - a purple/blue gradient
+const gradientStyle = {
+  dotsOptions: {
+    type: 'classy',
+    gradient: {
+      type: 'linear',
+      rotation: Math.PI / 6, // 30 degrees
+      colorStops: [
+        { offset: 0, color: '#6a11cb' }, // Purple
+        { offset: 1, color: '#2575fc' }  // Blue
+      ]
+    }
+  },
+  cornersSquareOptions: { type: 'dot', color: '#6a11cb' } // Match start color of gradient
+};
+
+// Use the builder pattern to combine template and style
+const qrBuilderExample = QRCodeJs.useTemplate(baseTemplate) // Start with base settings
+  .useStyle(gradientStyle) // Apply the gradient style
+  .options({ data: 'https://example.com/builder-pattern-advanced' }) // Add the data
+
+qrBuilderExample.append(document.getElementById('builder-pattern-container'));
+
+// or using the build method
+
+const qrBuilderExampleWithBuild = QRCodeJs.useTemplate(baseTemplate)
+  .useStyle(gradientStyle)
+  .build();
+
+qrBuilderExampleWithBuild.append(document.getElementById('builder-pattern-container-build'));
+qrBuilderExampleWithBuild.update({ data: 'https://example.com/builder-pattern-advanced' });
+```
+---
+
+### setTemplate and setStyle (Class Instance Pattern)
+
+Demonstrates using the class instance pattern (`setTemplate`, `setStyle`) to combine base settings with specific styles for a complex result.
+
+```typescript
+// Define a base template (could be predefined like 'dots' or 'rounded')
+const baseTemplate = {
+  qrOptions: { errorCorrectionLevel: 'Q' },
+  backgroundOptions: { color: '#f0f0f0' }, // Light grey background
+  margin: 5
+};
+
+// Define a style for specific visual elements - a purple/blue gradient
+const gradientStyle = {
+  dotsOptions: {
+    type: 'classy',
+    gradient: {
+      type: 'linear',
+      rotation: Math.PI / 6, // 30 degrees
+      colorStops: [
+        { offset: 0, color: '#6a11cb' }, // Purple
+        { offset: 1, color: '#2575fc' }  // Blue
+      ]
+    }
+  },
+  cornersSquareOptions: { type: 'dot', color: '#6a11cb' } // Match start color of gradient
+};
+
+// Use the builder pattern to combine template and style
+const qrBuilderExample = new QRCodeJs({ data: 'https://example.com/class-instance-pattern-advanced' })
+  .setTemplate(baseTemplate) // Start with 'classy' template
+  .setStyle(gradientStyle) // Apply the gradient style
+  .append(document.getElementById('builder-pattern-container'));
+```
 ---
 
 ### Scan Validation (Premium Feature)

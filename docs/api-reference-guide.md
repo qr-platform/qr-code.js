@@ -86,9 +86,13 @@ qrCode.append(document.getElementById('qr-container'));
 | `serialize`         | `inverted?: boolean`                                                       | Converts the QR code to an SVG string. Returns `Promise<string \| undefined>`. |
 | `download`          | `downloadOptions?: { name?: string; extension: 'svg' \| 'png' \| 'jpeg' \| 'webp' }, canvasOptions?: CanvasOptions` | Downloads the QR code as a file. Returns `Promise<void>`.                   |
 | `update`            | `options?: RecursivePartial<Options>`                                      | Updates the QR code with new options. Returns `void`.                       |
+| `setTemplate`       | `templateNameOrOptions: string \| RecursivePartial<Options>` | Sets a global default template for subsequent instances. Returns `void`.    |\n| `useTemplate`       | `templateNameOrOptions: string \| RecursivePartial<Options>` | Initiates a builder pattern pre-configured with a template. Returns `QRCodeBuilder`. |
 | `validateScanning`  | `validatorId?: string, debug?: boolean`                                    | **(Premium method)** Validates that the QR code is scannable. Returns `Promise<ScanValidatorResponse>`. |
 
 ---
+
+| `useStyle`          | `styleNameOrOptions: string \| StyleOptions`                               | Creates a `QRCodeBuilder` instance initialized with a specific style. Returns `QRCodeBuilder`. |
+| `useTemplate`       | `templateNameOrOptions: string \| RecursivePartial<Options>`             | Creates a `QRCodeBuilder` instance initialized with a specific template. Returns `QRCodeBuilder`. |
 <a id="borderoptions"></a>
 ### borderOptions Options 
 
@@ -244,6 +248,40 @@ enum ImageMode {
 
 ---
 
+
+
+---
+
+### QRCodeBuilder Class
+
+The `QRCodeBuilder` provides a fluent interface for configuring and creating `QRCodeJs` instances, often starting with a template or style.
+
+**Usage:**
+
+```typescript
+// Start with a template
+const qr1 = QRCodeJs.useTemplate('rounded')
+  .options({ data: 'Data for rounded template' })
+  .build();
+
+// Start with a style
+const qr2 = QRCodeJs.useStyle({ dotsOptions: { type: 'dots', color: 'blue' } })
+  .options({ data: 'Data for blue dots style' })
+  .build();
+
+// Chain template and style
+const qr3 = QRCodeJs.useTemplate('basic')
+  .useStyle({ backgroundOptions: { color: '#eee' } })
+  .options({ data: 'Data with template and style' })
+  .build();
+```
+
+| Method        | Parameters                                                                 | Description                                                                                                |
+| :------------ | :------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------- |
+| `useTemplate` | `templateNameOrOptions: string \| RecursivePartial<Options>`             | Applies a template's options to the current configuration. Options from subsequent calls take precedence. Returns `this`. |
+| `useStyle`    | `styleNameOrOptions: string \| StyleOptions`                               | Applies style options (mapping them to `Options`) to the current configuration. Returns `this`.            |
+| `options`     | `options: RecursivePartial<Options>`                                       | Merges the provided `Options` into the current configuration and returns the final `QRCodeJs` instance.    |
+| `build`       | -                                                                          | Creates and returns the final `QRCodeJs` instance based on the accumulated configuration.                  |
 ### See Also
 - [QRCode.js Documentation](./documentation.md#start)
 - [Quick References Guide](./quick-references-guide.md#start)

@@ -1,5 +1,6 @@
 import { CanvasOptions } from '~/utils/canvas-options';
 import { RecursivePartial } from '../types/helper';
+import { StyleOptions } from '../types/style-options';
 import { Options } from '../utils/options';
 export declare enum FileExtension {
     svg = "svg",
@@ -12,6 +13,7 @@ export declare class QRCodeJs {
     /** Library version injected at build time */
     static version: string;
     private static _selectedTemplate;
+    private static _selectedStyle;
     private options;
     private container?;
     private qr?;
@@ -24,6 +26,13 @@ export declare class QRCodeJs {
     } | undefined;
     constructor(options: RecursivePartial<Options>);
     static setTemplate(templateNameOrOptions: string | RecursivePartial<Options>): typeof QRCodeJs;
+    /**
+     * Sets the static style to be used as a base for new instances.
+     * Accepts either a predefined style name or a StyleOptions object.
+     * @param styleNameOrOptions - The name of the style or the StyleOptions object.
+     * @returns The QRCodeJs class for chaining.
+     */
+    static setStyle(styleNameOrOptions: string | StyleOptions): typeof QRCodeJs;
     update(options?: RecursivePartial<Options>): Promise<void>;
     append(
     /** This container will be used for appending of the QR code */

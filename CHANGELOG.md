@@ -1,5 +1,11 @@
 # @qr-platform/qr-code-js
 
+## 0.9.0
+
+### Minor Changes
+
+- 06a7b86: added useTemplate, useStyle, build method for builder pattern. setTemplate, setStyle for class instance pattern
+
 ## 0.8.21
 
 ### Patch Changes

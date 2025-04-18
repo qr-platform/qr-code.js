@@ -2,6 +2,7 @@ import { QRCodeJs as _QRCodeJs } from './core/qr-code-js';
 import { type ValidationResult } from './license/LicenseManagerNode';
 import type * as _browserUtils from './tools/browser-utils';
 import { RecursivePartial } from './types/helper';
+import { StyleOptions } from './types/style-options';
 import { Options } from './utils/options';
 import { ScanValidatorResponse } from './utils/scan-validators/abstract-scan-validator';
 import { type DecodedLicenseToken } from './utils/token-validator';
@@ -34,25 +35,49 @@ export declare class QRCodeJs extends _QRCodeJs {
      * Creates a QRCodeBuilder instance initialized with a specific template.
      * Allows for fluent configuration chaining. We need it here to avoid circular dependency
      * @param templateName - The name of the template to start with.
+     * @param templateNameOrOptions - The name of the template or a partial options object to start with.
      * @returns A new QRCodeBuilder instance.
      */
-    static useTemplate(templateName: string): QRCodeBuilder<QRCodeJs>;
-}
-type QRCodeJsConstructor<T extends QRCodeJs = QRCodeJs> = new (options: Options) => T;
-declare class QRCodeBuilder<T extends QRCodeJs> {
-    protected config: RecursivePartial<Options>;
-    protected qrCodeJsConstructor: QRCodeJsConstructor<T>;
+    static useTemplate(templateNameOrOptions: string | RecursivePartial<Options>): QRCodeBuilder;
     /**
-     * Creates a new QRCodeBuilderCore instance.
-     * @param templateName - Optional name of a predefined template to start with.
+     * Creates a QRCodeBuilder instance initialized with a specific style.
+     * Allows for fluent configuration chaining.
+     * @param styleNameOrOptions - The name of the predefined style or a StyleOptions object.
+     * @returns A new QRCodeBuilder instance.
      */
-    constructor(templateName?: string);
+    static useStyle(styleNameOrOptions: string | StyleOptions): QRCodeBuilder;
+}
+declare class QRCodeBuilder {
+    protected config: RecursivePartial<Options>;
     /**
-     * Merges the provided options into the builder's configuration and creates the QRCodeJs instance.
+     * Creates a new QRCodeBuilder instance.
+     * @param templateNameOrOptions - Optional name of a predefined template or a partial options object to start with.
+     */
+    constructor(templateNameOrOptions?: string | RecursivePartial<Options>);
+    /**
+     * Applies a template to the builder's configuration. Template options
+     * will be overridden by subsequently chained .style() or .options() calls.
+     * @param templateNameOrOptions - The name of the template or a partial options object to apply.
+     * @returns The builder instance for chaining.
+     */
+    useTemplate(templateNameOrOptions: string | RecursivePartial<Options>): this;
+    /**
+     * Applies style options to the builder's configuration.
+     * @param styleNameOrOptions - Name of a predefined style or Style options object to apply.
+     * @returns The builder instance for chaining.
+     */
+    useStyle(styleNameOrOptions: string | StyleOptions): this;
+    /**
+     * Merges the provided options into the builder's configuration.
      * @param options - A partial options object to merge.
+     * @returns The builder instance for chaining.
+     */
+    options(options: RecursivePartial<Options>): QRCodeJs;
+    /**
+     * Builds the QRCodeJs instance with the accumulated configuration.
      * @returns The created QRCodeJs instance.
      */
-    options(options: RecursivePartial<Options>): T;
+    build(): QRCodeJs;
 }
 export declare class _ extends QRCodeJs {
     protected _hls(): boolean;

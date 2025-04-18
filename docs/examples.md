@@ -35,29 +35,137 @@ if (container && qrCode.svgElement) {
 }
 ```
 
----
-
 ## Using Templates
 
-Templates provide a way to apply a predefined set of options easily. You can use built-in templates or define your own.
+Templates provide convenient ways to apply predefined sets of options. QRCode.js offers two main approaches: setting a global template default with `setTemplate` and using a builder pattern with `useTemplate`.
 
-**Example 1: Using a Predefined Template ('rounded')**
+### Setting Global Defaults with `setTemplate`
+
+The `QRCodeJs.setTemplate()` static method allows you to define default options that will apply to all subsequently created `QRCodeJs` instances until the template is changed or cleared.
+
+**Example 1: Setting a Predefined Global Template ('rounded')**
+
+```javascript
+// Import the library (adjust path as needed)
+import { QRCodeJs, Options } from '@qr-platform/qr-code.js';
+
+// Set the 'rounded' template globally
+QRCodeJs.setTemplate('rounded');
+
+// This instance will use the 'rounded' template defaults
+const qrGlobalRounded = new QRCodeJs({
+  data: 'Uses the global rounded template'
+});
+qrGlobalRounded.append(document.getElementById('global-template-rounded-container'));
+
+// This instance will also use 'rounded'
+const qrAnotherRounded = new QRCodeJs({
+  data: 'Also uses rounded template'
+});
+qrAnotherRounded.append(document.getElementById('another-rounded-container'));
+
+// Note: The global template remains active until changed or cleared.
+// To clear: QRCodeJs.setTemplate(null); or QRCodeJs.setTemplate('basic');
+```
+
+**Example 2: Setting a Custom Global Template Object**
+
+```javascript
+const myGlobalTemplate = {
+  dotsOptions: { type: 'classy', color: '#8A2BE2' }, // BlueViolet classy dots
+  backgroundOptions: { color: '#FAFAFA' }, // Off-white background
+  cornersSquareOptions: { type: 'dot', color: '#8A2BE2' }
+};
+
+// Set the custom template globally
+QRCodeJs.setTemplate(myGlobalTemplate);
+
+const qrCustomGlobal = new QRCodeJs({
+  data: 'Uses a custom global template'
+});
+qrCustomGlobal.append(document.getElementById('custom-global-container'));
+```
+
+**Example 3: Overriding Global Template Options**
+
+```javascript
+// Assume 'dots' template is set globally
+QRCodeJs.setTemplate('dots');
+
+const qrOverrideGlobal = new QRCodeJs({
+  data: 'Overrides global template color',
+  // This color overrides the black color from the 'dots' template
+  dotsOptions: { color: '#FF4500' } // OrangeRed dots
+});
+qrOverrideGlobal.append(document.getElementById('override-global-container'));
+```
+
+### Using the Builder Pattern with `useTemplate`
+
+The `QRCodeJs.useTemplate()` static method provides a flexible builder pattern. It returns a builder instance pre-configured with a template (by name or by providing options directly). You *must* then call the `.options()` method on the builder to provide the required `data` and any final overrides. This approach does *not* affect the global template setting.
+
+**Example 4: Using `useTemplate` with a Predefined Name ('dots')**
+
+```javascript
+// Import the library (adjust path as needed)
+import { QRCodeJs, Options } from '@qr-platform/qr-code.js';
+
+// Start with the 'dots' template, then provide data and overrides
+const qrBuilderDots = QRCodeJs.useTemplate('dots').options({
+  data: 'Built with dots template',
+  dotsOptions: { color: '#20C997' } // Override color to Teal
+});
+qrBuilderDots.append(document.getElementById('builder-dots-container'));
+
+// This instance is unaffected by the useTemplate call above
+const qrBasicAfterBuilder = new QRCodeJs({ data: 'Basic QR' });
+qrBasicAfterBuilder.append(document.getElementById('basic-after-builder-container'));
+```
+
+**Example 5: Using `useTemplate` with Custom Options**
+
+```javascript
+const myInlineTemplate = {
+  dotsOptions: { type: 'star', color: '#DC3545' }, // Red stars
+  shape: 'circle'
+};
+
+// Start with custom options, then provide data
+const qrBuilderCustom = QRCodeJs.useTemplate(myInlineTemplate).options({
+  data: 'Built with inline custom template (stars)'
+});
+qrBuilderCustom.append(document.getElementById('builder-custom-container'));
+```
+
+**Example 6: Overriding `useTemplate` Options in `.options()`**
+
+```javascript
+// Start with the 'classy' template
+const qrBuilderOverride = QRCodeJs.useTemplate('classy').options({
+  data: 'Overrides classy template color',
+  // This color overrides the black from the 'classy' template
+  dotsOptions: { color: '#6f42c1' } // Indigo
+});
+qrBuilderOverride.append(document.getElementById('builder-override-container'));
+```
+---
+
+## Using the Builder Pattern (`useTemplate`, `useStyle`, `build`)
+
+The builder pattern provides a fluent way to configure QR codes, often starting with a template or style.
+
+**Example 1: Using `useTemplate` with a Predefined Template ('rounded')**
 
 ```javascript
 // filepath: /Users/kurdin/projects/qr-platform/qr-code-js/docs/examples.md
 
-// Set the 'rounded' template globally for subsequent instances
-QRCodeJs.setTemplate('rounded');
+const qrFromTemplate = QRCodeJs.useTemplate('rounded') // Start builder with 'rounded' template
+  .options({ data: 'Uses the rounded template via builder' }) // Add data
 
-const qrUsingTemplate = new QRCodeJs({
-  data: 'Uses the rounded template'
-});
-qrUsingTemplate.append(document.getElementById('template-rounded-container'));
-
-// Note: The template remains set until changed or cleared.
+qrFromTemplate.append(document.getElementById('template-rounded-container'));
 ```
 
-**Example 2: Using a Custom Template Object**
+**Example 2: Using `useTemplate` with a Custom Template Object**
 
 ```javascript
 // filepath: /Users/kurdin/projects/qr-platform/qr-code-js/docs/examples.md
@@ -68,36 +176,46 @@ const myCustomTemplate = {
   cornersSquareOptions: { type: 'dot', color: '#8A2BE2' }
 };
 
-// Set the custom template globally
-QRCodeJs.setTemplate(myCustomTemplate);
+const qrCustomTemplate = QRCodeJs.useTemplate(myCustomTemplate) // Start builder with custom template
+  .build();
 
-const qrCustomTemplate = new QRCodeJs({
-  data: 'Uses a custom template object'
-});
+// update the data
+qrCustomTemplate.update({ data: 'Uses a custom template object' });
 qrCustomTemplate.append(document.getElementById('template-custom-container'));
 ```
 
-**Example 3: Overriding Template Options**
+**Example 3: Using `useStyle`**
 
 ```javascript
 // filepath: /Users/kurdin/projects/qr-platform/qr-code-js/docs/examples.md
 
-// Assume 'dots' template is set globally
-QRCodeJs.setTemplate('dots');
+const myStyle = {
+  dotsOptions: { type: 'dots', color: '#FF4500' }, // OrangeRed dots
+  backgroundOptions: { color: '#FFF0E1' } // SeaShell background
+};
 
-const qrOverrideTemplate = new QRCodeJs({
-  data: 'Overrides template color',
-  // This color will override the black color from the 'dots' template
-  dotsOptions: { color: '#FF4500' } // OrangeRed dots
-});
-qrOverrideTemplate.append(document.getElementById('template-override-container'));
+const qrFromStyle = QRCodeJs.useStyle(myStyle) // Start builder with style
+  .options({ data: 'Uses a style via builder' })
+  .build();
 
-// Remember to clear the template if you don't want it for subsequent QRs
-// QRCodeJs.setTemplate(null); // Or set back to 'basic' or another template
+qrFromStyle.append(document.getElementById('style-container'));
+```
+
+**Example 4: Chaining `useTemplate` and `useStyle`**
+
+```javascript
+// filepath: /Users/kurdin/projects/qr-platform/qr-code-js/docs/examples.md
+
+// Start with 'dots' template (black dots), then apply a style to change color
+const qrChained = QRCodeJs.useTemplate('dots')
+  .useStyle({ dotsOptions: { color: '#20B2AA' } }) // LightSeaGreen dots
+  .options({ data: 'Template overridden by Style' })
+  .build();
+
+qrChained.append(document.getElementById('template-style-chain-container'));
 ```
 
 ---
-
 
 ## Examples by Option Group
 

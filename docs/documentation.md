@@ -997,6 +997,63 @@ When using the basic border features in the free version, the library will autom
   });
   ```
 
+
+## Using Templates
+
+Templates offer a convenient way to apply a consistent set of styling and configuration options across multiple QR codes. QRCode.js provides two primary methods for working with templates:
+
+### Setting Global Defaults (`setTemplate`)
+
+The static method `QRCodeJs.setTemplate(templateNameOrOptions)` allows you to define a default template that will be automatically applied to all `QRCodeJs` instances created *after* the template is set. This is useful for establishing a baseline style for your application.
+
+- You can provide the name of a predefined template (e.g., `'rounded'`, `'dots'`, `'classy'`).
+- You can provide a custom partial options object (`RecursivePartial<Options>`).
+- Any options provided during the instantiation of `new QRCodeJs({...})` will override the global template defaults for that specific instance.
+- Call `QRCodeJs.setTemplate(null)` or `QRCodeJs.setTemplate('basic')` to reset to the default behavior.
+
+```typescript
+// Set a global template
+QRCodeJs.setTemplate('dots');
+
+// This QR code will use the 'dots' template
+const qr1 = new QRCodeJs({ data: 'Uses global dots template' });
+
+// Override the global template's color for this instance
+const qr2 = new QRCodeJs({
+  data: 'Overrides global dots color',
+  dotsOptions: { color: '#FF4500' } // OrangeRed
+});
+
+// Reset to basic template
+QRCodeJs.setTemplate('basic');
+```
+
+### Using the Builder Pattern (`useTemplate`)
+
+The static method `QRCodeJs.useTemplate(templateNameOrOptions)` initiates a builder pattern. It returns a builder object pre-configured with the specified template (either by name or by providing a partial options object directly). 
+
+- This method **does not** set a global default.
+- You **must** chain this call with the `.options({...})` method on the returned builder.
+- The `.options()` method takes the final configuration, including the required `data` property and any overrides specific to this instance.
+
+```typescript
+// Start with the 'rounded' template, provide data and override color
+const qrBuilder1 = QRCodeJs.useTemplate('rounded').options({
+  data: 'Built with rounded template',
+  dotsOptions: { color: '#007BFF' } // Blue override
+});
+
+// Start with inline custom options, then provide data
+const qrBuilder2 = QRCodeJs.useTemplate({
+  shape: 'circle',
+  dotsOptions: { type: 'star', color: '#DC3545' } // Red stars
+}).options({
+  data: 'Built with inline circle/star template'
+});
+```
+
+Choosing between `setTemplate` and `useTemplate` depends on whether you need a persistent global default or a one-off configuration based on a template.
+
 ## Complete Examples
 
 ### Basic QR Code with Custom Dots
@@ -1306,6 +1363,23 @@ qrCode.validateScanning(
 
 ### Static Methods (License Management)
 
+
+
+#### `useTemplate()`
+
+Creates a `QRCodeBuilder` instance initialized with a specific template.
+
+```typescript
+QRCodeJs.useTemplate(templateNameOrOptions: string | RecursivePartial<Options>): QRCodeBuilder
+```
+
+#### `useStyle()`
+
+Creates a `QRCodeBuilder` instance initialized with a specific style.
+
+```typescript
+QRCodeJs.useStyle(styleNameOrOptions: string | StyleOptions): QRCodeBuilder
+```
 These methods are called directly on the `QRCodeJs` class (or `QRCodeJs` imported from `qrcode-js/node`).
 
 #### `initializeIfNeeded()`
@@ -1354,6 +1428,114 @@ Sets the URL endpoint for license key validation.
 
 ```typescript
 QRCodeJs.setLicenseUrl(url: string): void
+```
+
+#### `setTemplate()`
+
+Sets a global default template for subsequent `QRCodeJs` instances.
+
+```typescript
+QRCodeJs.setTemplate(templateNameOrOptions: string | RecursivePartial<Options>): void
+```
+
+#### `useTemplate()`
+
+Initiates a builder pattern pre-configured with a template.
+
+```typescript
+QRCodeJs.useTemplate(templateNameOrOptions: string | RecursivePartial<Options>): QRCodeBuilder
+```
+
+#### `setStyle()`
+
+Sets a global default style for subsequent `QRCodeJs` instances.
+
+```typescript
+QRCodeJs.setStyle(styleNameOrOptions: string | RecursivePartial<StyleOptions>): void
+```
+
+#### `useStyle()`
+
+Initiates a builder pattern pre-configured with a style.
+
+```typescript
+QRCodeJs.useTemplate(styleNameOrOptions: string | RecursivePartial<StyleOptions>): QRCodeBuilder
+```
+
+## Fluent Builder Pattern (`useTemplate`, `useStyle`, `build`)
+
+QRCode.js offers a fluent builder pattern for a more readable and chainable way to configure and create QR codes, especially when combining templates, styles, and custom options.
+
+### Overview
+
+Instead of passing all options to the constructor, you can start with a base template or style using `QRCodeJs.useTemplate()` or `QRCodeJs.useStyle()`. These methods return a `QRCodeBuilder` instance. You can then chain further `.useTemplate()`, `.useStyle()`, and finally `.options()` or `.build()` to finalize the configuration.
+
+- `QRCodeJs.useTemplate(template)`: Starts a builder with a predefined or custom template.
+- `QRCodeJs.useStyle(style)`: Starts a builder and applies a predefined or custom style.
+- `.useTemplate(template)` (on builder): Applies another template. Options merge, with later calls overriding earlier ones.
+- `.useStyle(style)` (on builder): Applies another style. Options merge, with later calls overriding earlier ones.
+- `.options(options)` (on builder): Merges final specific options and returns the `QRCodeJs` instance.
+- `.build()` (on builder, optional method if options(options) is NOT called): Creates the `QRCodeJs` instance with the accumulated configuration.
+
+### How `useStyle` and `useTemplate` Work Together (Builder Pattern)
+
+You can chain `useTemplate` and `useStyle` calls. The options are merged progressively. If both a template and a style define the same option (e.g., `dotsOptions.color`), the option from the *last* applied template or style in the chain will take precedence.
+
+### Examples
+
+**1. Start with a Template, Add Options:**
+
+```typescript
+const qrFromTemplate = QRCodeJs.useTemplate('rounded') // Start with 'rounded' template
+  .options({ // Merge specific options
+    data: 'Data for rounded QR',
+    margin: 10
+  })
+  .build(); // Build the final instance
+
+qrFromTemplate.append(document.getElementById('qr-container-1'));
+```
+
+**2. Start with a Style, Add Options:**
+
+```typescript
+const myStyle = {
+  dotsOptions: { type: 'dots', color: '#FF6347' }, // Tomato dots
+  backgroundOptions: { color: '#F0F8FF' } // AliceBlue background
+};
+
+const qrFromStyle = QRCodeJs.useStyle(myStyle) // Start with custom style
+  .options({ // Merge specific options
+    data: 'Data for styled QR',
+    qrOptions: { errorCorrectionLevel: 'H' }
+  })
+  .build();
+
+qrFromStyle.append(document.getElementById('qr-container-2'));
+```
+
+**3. Chain Template and Style:**
+
+```typescript
+const qrCombined = QRCodeJs.useTemplate('dots') // Start with 'dots' template (black dots)
+  .useStyle({ dotsOptions: { color: '#4682B4' } }) // Apply style, overriding dot color to SteelBlue
+  .options({ data: 'Template + Style' })
+  .build();
+
+qrCombined.append(document.getElementById('qr-container-3'));
+```
+
+**4. Build without final options:**
+
+```typescript
+// Assume 'data' is part of the template or style
+const qrBuildDirectly = QRCodeJs.useTemplate({ 
+    data: 'Data in template',
+    dotsOptions: { type: 'square' }
+  })
+  .build(); // Build directly if all options are set
+
+qrBuildDirectly.append(document.getElementById('qr-container-4'));
 ```
 
 ## FAQ

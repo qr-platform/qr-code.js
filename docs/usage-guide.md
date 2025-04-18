@@ -515,6 +515,24 @@ if (validationResult.isValid) {
 - **`QRCodeJs.configureLicenseFetcher(fetcher: (licenseKey: string) => Promise<string>): void`**
   Configures a custom function for fetching license tokens.
 
+- **`QRCodeJs.useTemplate(templateNameOrOptions: string | RecursivePartial<Options>): QRCodeBuilder`**
+  Creates a `QRCodeBuilder` instance initialized with a specific template.
+
+  ```typescript
+  // Using a template name
+  const qrBuilder1 = QRCodeJs.useTemplate('rounded').options({
+    data: 'Built with rounded template',
+    dotsOptions: { color: '#FF8C00' } // DarkOrange override
+  });
+
+  // Using inline options
+  const qrBuilder2 = QRCodeJs.useTemplate({ shape: 'circle' }).options({
+    data: 'Built with inline circle shape'
+  });
+  ```
+
+- **`QRCodeJs.useStyle(styleNameOrOptions: string | StyleOptions): QRCodeBuilder`**
+  Creates a `QRCodeBuilder` instance initialized with a specific style.
 
 - **`QRCodeJs.setTemplate(templateNameOrOptions: string | RecursivePartial<Options>): void`**
   Sets a default template to be used for subsequent `QRCodeJs` instances. This template's options will be merged with the options provided during instantiation, with the instantiation options taking precedence. You can provide either the name of a predefined template (e.g., `'rounded'`, `'dots'`) or a custom options object.
@@ -535,6 +553,35 @@ if (validationResult.isValid) {
   const qr3 = new QRCodeJs({ data: 'Uses basic template again' });
   ```
 
+
+
+
+## Fluent Builder Pattern (`useTemplate`, `useStyle`, `build`)
+
+For a more structured and readable configuration process, especially when combining predefined settings with custom overrides, QRCode.js offers a fluent builder pattern.
+
+**How it Works:**
+
+1.  **Start:** Begin by calling `QRCodeJs.useTemplate()` or `QRCodeJs.useStyle()` with either a predefined name (e.g., `'rounded'`) or a custom options/style object. This returns a `QRCodeBuilder` instance.
+2.  **Chain (Optional):** Call `.useTemplate()` or `.useStyle()` again on the builder instance to layer additional templates or styles. Options are merged, with later calls overriding earlier ones for the same properties.
+3.  **Finalize:**
+    *   Call `.options(yourOptions)` to merge any final, specific options.
+    *   Or call `.build()` to create the `QRCodeJs` instance with the accumulated configuration. This is optional if `.options(yourOptions)` is NOT called. If `.options(yourOptions)` is called, calling `.build()` is not necessary. You can use `.update()` after `.build()` to update the data.
+
+**Combining Templates and Styles:**
+
+When you chain `useTemplate` and `useStyle`, their options are merged. If both define the same property (e.g., `dotsOptions.color`), the value from the `useStyles` is always applied over the `useTemplate` options (e.g., `dotsOptions.color` from the `useTemplate` is overridden by the `dotsOptions.color` from the `useStyle`).
+
+**Example:**
+
+```typescript
+// Start with 'dots' template, override color with a style, add final data
+const qrCode = QRCodeJs.useTemplate('dots')       // Base: dots template (e.g., black square dots)
+  .useStyle({ dotsOptions: { color: 'navy' } }) // Style: Change dot color to navy
+  .options({ data: 'Built with Template and Style' }) // Final data
+
+qrCode.append(document.getElementById('builder-example-container'));
+```
 
 ## FAQ
 
