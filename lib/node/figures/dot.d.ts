@@ -1,0 +1,31 @@
+import { DrawArgs } from '../types/helper.js';
+import { DotType } from '../utils/options.js';
+export declare class QRDot {
+    private readonly type;
+    private readonly document;
+    private _element?;
+    get element(): SVGElement | undefined;
+    constructor(type: `${DotType}`, document: Document);
+    draw(args: DrawArgs): void;
+    private rotateFigure;
+    private basicDot;
+    private basicSquare;
+    private basicSideRounded;
+    private basicCornerRounded;
+    private basicCornerExtraRounded;
+    private basicCornersRounded;
+    private drawDot;
+    private drawRandomDot;
+    private drawSquare;
+    private drawSmallSquare;
+    private drawTinySquare;
+    private drawDiamond;
+    private drawRounded;
+    private drawVerticalLine;
+    private drawHorizontalLine;
+    private drawExtraRounded;
+    private drawClassy;
+    private drawClassyRounded;
+    private drawStar;
+    private drawPlus;
+}
