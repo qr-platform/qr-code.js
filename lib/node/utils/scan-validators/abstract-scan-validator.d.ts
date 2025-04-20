@@ -26,6 +26,10 @@ export interface ScanValidatorResponse {
      * Error code if validation failed
      */
     errorCode?: string;
+    /**
+     * Validator used for the validation
+     */
+    validator?: string;
 }
 declare class AbstractScanValidator {
     debug: boolean;
