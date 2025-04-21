@@ -36,6 +36,7 @@ export declare class QRCodeJs extends _QRCodeJs {
     constructor(options: RecursivePartial<Options>, _?: boolean);
     static validateImageData(imageData: ImageDataLike): Promise<ScanValidatorResponse>;
     validateScanning(): Promise<ScanValidatorResponse>;
+    static validateSvg(svgSource: string): Promise<ScanValidatorResponse>;
     /**
      * Creates a QRCodeBuilder instance initialized with a specific template.
      * Allows for fluent configuration chaining. We need it here to avoid circular dependency
