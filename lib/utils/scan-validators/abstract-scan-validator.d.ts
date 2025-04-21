@@ -9,7 +9,11 @@ export interface ScanValidatorResponse {
     /**
      * Decoded data from the QR code
      */
-    decodedText?: string | null;
+    data?: string | null;
+    /**
+     * Format of the detected barcode
+     */
+    format?: string;
     /**
      * Whether the successful decode was from an inverted image
      */

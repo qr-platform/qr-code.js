@@ -4,6 +4,7 @@ import type * as _browserUtils from './tools/browser-utils';
 import { RecursivePartial } from './types/helper';
 import { StyleOptions } from './types/style-options';
 import { Options } from './utils/options';
+import { ImageDataLike } from './utils/scan-validator-worker';
 import { ScanValidatorResponse } from './utils/scan-validators/abstract-scan-validator';
 import { type DecodedLicenseToken } from './utils/token-validator';
 export { ErrorCorrectionLevel, Mode, TypeNumber } from '~/lib/qrcode/QRCodeMinimal';
@@ -33,6 +34,7 @@ export declare class QRCodeJs extends _QRCodeJs {
     static _initPromise: Promise<void> | null;
     static initXmldom(): Promise<void>;
     constructor(options: RecursivePartial<Options>, _?: boolean);
+    static validateImageData(imageData: ImageDataLike): Promise<ScanValidatorResponse>;
     validateScanning(): Promise<ScanValidatorResponse>;
     /**
      * Creates a QRCodeBuilder instance initialized with a specific template.
@@ -84,5 +86,6 @@ declare class QRCodeBuilder {
 }
 export declare class _ extends QRCodeJs {
     protected _hls(): boolean;
+    static get hls(): boolean;
     constructor(options: RecursivePartial<Options>);
 }

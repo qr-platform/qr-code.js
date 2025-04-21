@@ -1,3 +1,4 @@
+import { ScanValidatorResponse } from '~/utils/scan-validators/abstract-scan-validator';
 interface QRValidatorOptions {
     /** Maximum number of retry attempts */
     maxRetries?: number;
@@ -5,22 +6,6 @@ interface QRValidatorOptions {
     retryInterval?: number;
     /** Enable debug logging */
     debug?: boolean;
-}
-interface QRValidationResult {
-    /** Whether the validation was successful */
-    isValid: boolean;
-    /** Decoded data from the QR code (if successful) */
-    data?: string;
-    /** Format of the detected barcode */
-    format?: string;
-    /** Number of retry attempts made */
-    attempts?: number;
-    /** Whether the successful decode came from an inverted image */
-    isInverted?: boolean;
-    /** Error message if validation failed */
-    error?: string;
-    /** Error code if validation failed */
-    errorCode?: string;
 }
 declare class QRValidatorZbarNode {
     private maxRetries;
@@ -43,7 +28,7 @@ declare class QRValidatorZbarNode {
      * @param height Optional height for resizing
      * @returns Validation results with decoded data if successful
      */
-    validate(input: string | Buffer, isInverted?: boolean, width?: number | null, height?: number | null): Promise<QRValidationResult>;
+    validate(input: string | Buffer, isInverted?: boolean, width?: number | null, height?: number | null): Promise<ScanValidatorResponse>;
     /**
      * Sleep function to wait between retry attempts
      * @param ms Milliseconds to wait

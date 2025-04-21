@@ -1,6 +1,11 @@
 import { BinaryBitmap } from '~/lib/zxing-js/src';
 import { NodeLuminanceSource } from '~/lib/zxing-js/src/node';
 import { ScanValidatorResponse } from './scan-validators/abstract-scan-validator';
+interface ImageDataLike {
+    data: Uint8ClampedArray;
+    width: number;
+    height: number;
+}
 export interface PreprocessingOptions {
     lower?: number;
     upper?: number;
@@ -14,5 +19,6 @@ export interface PreprocessingOptions {
  */
 export declare const qrValidatorZxing: {
     validateZxing: (svgString: string | undefined) => Promise<ScanValidatorResponse>;
+    validateImageData: (imageData: ImageDataLike) => Promise<ScanValidatorResponse>;
 };
 export type { NodeLuminanceSource, BinaryBitmap, ScanValidatorResponse };

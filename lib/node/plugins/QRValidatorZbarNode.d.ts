@@ -4,6 +4,7 @@
  * This server-side class uses zbar-wasm to decode QR codes and other barcodes,
  * with Jimp (and Resvg for SVG conversion) for image processing.
  */
+import { ScanValidatorResponse } from '~/utils/scan-validators/abstract-scan-validator';
 interface QRValidatorOptions {
     /** Maximum number of retry attempts */
     maxRetries?: number;
@@ -12,21 +13,13 @@ interface QRValidatorOptions {
     /** Enable debug logging */
     debug?: boolean;
 }
-interface QRValidationResult {
-    /** Whether the validation was successful */
-    isValid: boolean;
-    /** Decoded data from the QR code (if successful) */
-    data?: string;
-    /** Format of the detected barcode */
-    format?: string;
-    /** Number of retry attempts made */
-    attempts?: number;
-    /** Whether the successful decode came from an inverted image */
-    isInverted?: boolean;
-    /** Error message if validation failed */
-    error?: string;
-    /** Error code if validation failed */
-    errorCode?: string;
+interface ImageDataLike {
+    /** Raw pixel data (RGBA) */
+    data: Uint8ClampedArray;
+    /** Image width */
+    width: number;
+    /** Image height */
+    height: number;
 }
 declare class QRValidatorZbarNode {
     private maxRetries;
@@ -37,7 +30,7 @@ declare class QRValidatorZbarNode {
     /**
      * Validate and decode a QR code from an SVG string (or file path)
      */
-    validate(input: string, isInverted?: boolean): Promise<QRValidationResult>;
+    validate(input: string, isInverted?: boolean): Promise<ScanValidatorResponse>;
     private sleep;
     /**
      * Process image using Sharp and get raw pixel data
@@ -48,6 +41,10 @@ declare class QRValidatorZbarNode {
      */
     private processImageResvg;
     private validateWithRetry;
+    /**
+     * Validate and decode a QR code directly from ImageData
+     */
+    validateImageData(imageData: ImageDataLike): Promise<ScanValidatorResponse>;
     /**
      * Save a debug image using Jimp. The raw image data is used to reconstruct an image.
      */

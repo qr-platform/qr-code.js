@@ -30,6 +30,12 @@ declare class QRValidatorZbar {
      */
     decodeQRWithRetry(imageData: ImageData): Promise<Object>;
     /**
+     * Validate and decode a QR code directly from ImageData
+     * @param {object} imageData - Object with { data: Uint8ClampedArray, width: number, height: number }
+     * @returns {Promise<Object>} - Validation results
+     */
+    validateImageData(imageData: object): Promise<Object>;
+    /**
      * Decode QR code from image data using zbar-wasm
      * @param {ImageData} imageData - Raw image data
      * @returns {Promise<Object>} - Validation result
