@@ -19,6 +19,7 @@ type QRSVGOptions = Pick<Options, 'width' | 'height' | 'isResponsive' | 'margin'
 };
 export declare class QRSVG {
     static instanceCount: number;
+    private static readonly FALLBACK_IMAGE_DATA_URL;
     private _element;
     private defs;
     private backgroundMask?;
@@ -53,11 +54,12 @@ export declare class QRSVG {
     drawBackgroundForBorder(padding: number, baseRadius: number): SVGElement | undefined;
     drawDots(filter?: (i: number, j: number) => boolean): void;
     drawCorners(): void;
-    drawImage({ width, height, count, dotSize }: {
+    drawImage({ width, height, count, dotSize, radius }: {
         width: number;
         height: number;
         count: number;
         dotSize: number;
+        radius?: string | number;
     }): Promise<void>;
     createColor({ options, borderOptions, color, additionalRotation, x, y, height, width, name, returnSVGGroup }: {
         options?: Gradient;

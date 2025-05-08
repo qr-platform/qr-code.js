@@ -393,11 +393,27 @@ Controls the QR code background.
 
 ### `image`
 
-- **Purpose**: URL, Buffer, or Blob of an image to embed in the QR code
+- **Purpose**: URL, Buffer, or Blob of an image to embed in the QR code. This can be set directly in the options, or via `QRCodeJs.setImage()` for a global default, or `QRCodeJs.useImage()` for a builder-specific image.
 - **Type**: `string | Buffer | Blob`
 - **Example**:
   ```typescript
   image: 'https://example.com/logo.png'
+  ```
+
+#### Override Behavior with `setImage` and `useImage`
+
+- Both `setImage` and `useImage` methods can accept an optional second parameter with `{ override: true }` to ensure the image takes precedence over any image set elsewhere.
+- **Example with Override**:
+  ```typescript
+  // Global image that will override any instance-specific images
+  QRCodeJs.setImage('https://example.com/global-logo.png', { override: true });
+  
+  // Builder pattern with image that will override final options
+  const qr = QRCodeJs.useImage('https://example.com/important-logo.png', { override: true })
+    .options({
+      data: 'https://example.com',
+      image: 'https://example.com/this-will-be-ignored.png' // Will be ignored due to override
+    });
   ```
 
 ### `imageOptions`
@@ -532,7 +548,7 @@ QRCode.js provides border features in both the free and premium versions, with s
 
 ### `borderOptions`
 
-Options for adding decorative borders around the QR code.
+Options for adding decorative borders around the QR code. Borders can be configured globally using `QRCodeJs.setBorder()` / `QRCodeJs.setBorderId()` or on a per-instance basis using the builder pattern initiated with `QRCodeJs.useBorder()` / `QRCodeJs.useBorderId()`.
 
 #### `hasBorder`
 
@@ -765,6 +781,196 @@ if (licenseDetails) {
   console.log('License plan:', licenseDetails.plan);
   console.log('License expires:', new Date(licenseDetails.exp * 1000));
 }
+```
+
+## Border Text Methods (Premium Feature)
+
+QRCode.js provides dedicated methods for managing text on QR code borders, allowing for convenient text configuration across all sides.
+
+### Static Methods for Global Text Settings
+
+#### `setText()`
+
+- **Purpose**: Sets global default text for QR code borders that will apply to all subsequently created instances.
+- **Type**: `function(textNameOrOptions: string | TextOptions | null, options?: { override?: boolean }): typeof QRCodeJs`
+- **Parameters**:
+  - `textNameOrOptions`: A predefined text template name (e.g., 'Scan Me (Top)'), a custom `TextOptions` object, or `null` to clear
+  - `options`: Optional configuration with `override` property to ensure text takes precedence
+- **Returns**: The QRCodeJs class for chaining
+- **Example**:
+  ```typescript
+  // Set global text on top and bottom border sides
+  QRCodeJs.setText({
+    topValue: 'SCAN ME',
+    bottomValue: 'www.example.com'
+  });
+  
+  // Use a predefined text template
+  QRCodeJs.setText('Scan Me (Top)');
+  
+  // With override option to ensure it takes precedence
+  QRCodeJs.setText({ topValue: 'MUST DISPLAY THIS TEXT' }, { override: true });
+  
+  // Clear global text
+  QRCodeJs.setText(null);
+  ```
+
+#### `setTextId()`
+
+- **Purpose**: Sets global default text for QR code borders by referencing a predefined template ID.
+- **Type**: `function(textId: string | null, options?: { override?: boolean }): typeof QRCodeJs`
+- **Parameters**:
+  - `textId`: ID of a predefined text template (e.g., 'visit-website-bottom') or `null` to clear
+  - `options`: Optional configuration with `override` property to ensure text takes precedence
+- **Returns**: The QRCodeJs class for chaining
+- **Example**:
+  ```typescript
+  // Set global text using a predefined template ID
+  QRCodeJs.setTextId('visit-website-bottom');
+  
+  // With override option
+  QRCodeJs.setTextId('lost-found-all-sides', { override: true });
+  
+  // Clear global text
+  QRCodeJs.setTextId(null);
+  ```
+
+### Builder Methods for Instance-Specific Text
+
+#### `useText()`
+
+- **Purpose**: Initiates a builder pattern pre-configured with border text from a template name or custom options.
+- **Type**: `function(textNameOrOptions: string | TextOptions, options?: { override?: boolean }): QRCodeBuilder`
+- **Parameters**:
+  - `textNameOrOptions`: A predefined text template name or a custom `TextOptions` object
+  - `options`: Optional configuration with `override` property to ensure text takes precedence
+- **Returns**: A `QRCodeBuilder` instance for chaining
+- **Example**:
+  ```typescript
+  // Start builder with custom text options
+  const qrCode = QRCodeJs.useText({
+    topValue: 'VISIT OUR WEBSITE',
+    bottomValue: 'www.example.com'
+  }).options({
+    data: 'https://example.com'
+  });
+  
+  // Start builder with a predefined text template
+  const qrWithTemplate = QRCodeJs.useText('Scan Me (Bottom)')
+    .options({ data: 'https://example.com/scan-me' });
+    
+  // With override option to ensure text takes precedence over final options
+  const qrWithOverride = QRCodeJs.useText(
+    { leftValue: 'IMPORTANT TEXT' }, 
+    { override: true }
+  ).options({
+    data: 'https://example.com',
+    borderOptions: {
+      decorations: {
+        left: { value: 'This will be ignored', enableText: true }
+      }
+    }
+  });
+  ```
+
+#### `useTextId()`
+
+- **Purpose**: Initiates a builder pattern pre-configured with border text from a predefined template ID.
+- **Type**: `function(textId: string, options?: { override?: boolean }): QRCodeBuilder`
+- **Parameters**:
+  - `textId`: ID of a predefined text template (e.g., 'visit-website-bottom')
+  - `options`: Optional configuration with `override` property to ensure text takes precedence
+- **Returns**: A `QRCodeBuilder` instance for chaining
+- **Example**:
+  ```typescript
+  // Start builder with a predefined text template by ID
+  const qrCode = QRCodeJs.useTextId('visit-website-bottom')
+    .options({ data: 'https://example.com' });
+    
+  // With override option
+  const qrWithOverride = QRCodeJs.useTextId('scan-me-top', { override: true })
+    .options({ data: 'https://example.com' });
+  ```
+
+### TextOptions Structure
+
+The `TextOptions` object allows you to specify text for each side of the QR code border:
+
+```typescript
+interface TextOptions {
+  topValue?: string | null;    // Text for top border (null explicitly disables)
+  rightValue?: string | null;  // Text for right border
+  bottomValue?: string | null; // Text for bottom border
+  leftValue?: string | null;   // Text for left border
+}
+```
+
+- Setting a value to `null` explicitly disables text on that side
+- Omitting a property (undefined) leaves any existing text on that side unchanged
+- Empty string (`''`) will be treated as no text but with `enableText: true`
+
+### Override Behavior
+
+All text methods accept an optional `{ override: true }` parameter to ensure the text values take precedence over any text settings applied at a later stage:
+
+- `setText()` with override will override text from instance options
+- `setTextId()` with override will override text from instance options
+- `useText()` with override will override text from final `.options()` call
+- `useTextId()` with override will override text from final `.options()` call
+
+This is particularly useful when you need to ensure specific text appears regardless of other configuration.
+
+### Example: Combining Text Methods with Border Options
+
+```typescript
+// First activate license (required for custom border text)
+await QRCodeJs.license('YOUR-LICENSE-KEY');
+
+// Set global default for all QR codes
+QRCodeJs.setText({ 
+  topValue: 'SCAN ME',
+  bottomValue: 'www.example.com'
+});
+
+// Create QR code with custom border that uses the global text
+const qrCode = new QRCodeJs({
+  data: 'https://example.com',
+  borderOptions: {
+    hasBorder: true,
+    thickness: 40,
+    color: '#0033CC',
+    radius: '10%'
+    // No decoration settings needed - will use the global text
+  }
+});
+
+// Chain builder methods for more complex setup
+const qrChained = QRCodeJs.useBorder('Rounded Border (Large)')
+  .useText({ 
+    topValue: 'POWERED BY',
+    bottomValue: 'QR-PLATFORM'
+  })
+  .options({ data: 'https://example.com/chained' });
+```
+
+### Clearing Text Settings
+
+To remove text from borders:
+
+```typescript
+// Clear global text settings
+QRCodeJs.setText(null);
+
+// Clear text on specific sides
+QRCodeJs.setText({ 
+  topValue: null,     // Explicitly remove top text
+  bottomValue: null,  // Explicitly remove bottom text
+});
+
+// Use a predefined "empty" template to clear all sides
+QRCodeJs.useText('empty-text-options').options({
+  data: 'https://example.com'
+});
 ```
 
 ## Scan Validation (Premium Feature)
@@ -1054,8 +1260,30 @@ const qrBuilder2 = QRCodeJs.useTemplate({
 
 Choosing between `setTemplate` and `useTemplate` depends on whether you need a persistent global default or a one-off configuration based on a template.
 
-## Complete Examples
+## Using Styles and Borders (Global Defaults vs. Builder)
 
+Similar to templates, styles and border configurations can be applied globally or using the builder pattern.
+
+### Setting Global Defaults (`setStyle`, `setBorder`)
+
+- **`QRCodeJs.setStyle(styleNameOrOptions)`**: Sets a default style (by name or object) that applies to subsequent instances. Options provided during instantiation override the global style.
+- **`QRCodeJs.setBorder(borderNameOrOptions)`**: Sets a default border configuration (by name or object) that applies to subsequent instances. Options provided during instantiation override the global border settings.
+- **`QRCodeJs.setStyleId(styleId)` / `QRCodeJs.setBorderId(borderId)`**: Similar to the above, but uses the predefined ID of the style or border.
+
+These methods are useful for establishing a consistent look and feel across multiple QR codes in your application.
+
+### Using the Builder Pattern (`useStyle`, `useBorder`)
+
+- **`QRCodeJs.useStyle(styleNameOrOptions)`**: Initiates a builder pre-configured with the specified style.
+- **`QRCodeJs.useBorder(borderNameOrOptions)`**: Initiates a builder pre-configured with the specified border configuration.
+- **`QRCodeJs.useStyleId(styleId)` / `QRCodeJs.useBorderId(borderId)`**: Similar, but uses the predefined ID.
+
+These methods return a `QRCodeBuilder` instance, allowing you to chain configurations and finalize with `.options({...})` or `.build()`. This approach is ideal for creating specific QR code instances with unique combinations of templates, styles, and borders without affecting global defaults.
+
+
+**Combining Methods:** You can combine global defaults with builder methods. For example, you could set a global template and then use the builder to apply a specific style, border, and image to an individual instance. Options are merged, with later steps in the configuration process (e.g., builder methods, final `.options()` call) overriding earlier ones (e.g., global defaults). The general precedence for the image source is: Builder's `useImage()` > Static `setImage()` > Template's image > Direct `options.image` in constructor.
+
+## Complete Examples
 ### Basic QR Code with Custom Dots
 
 ```typescript
@@ -1459,7 +1687,39 @@ QRCodeJs.setStyle(styleNameOrOptions: string | RecursivePartial<StyleOptions>): 
 Initiates a builder pattern pre-configured with a style.
 
 ```typescript
-QRCodeJs.useTemplate(styleNameOrOptions: string | RecursivePartial<StyleOptions>): QRCodeBuilder
+QRCodeJs.useStyle(styleNameOrOptions: string | StyleOptions): QRCodeBuilder
+```
+
+#### `setBorder()`
+
+Sets a global default border configuration for subsequent `QRCodeJs` instances.
+
+```typescript
+QRCodeJs.setBorder(borderNameOrOptions: string | RecursivePartial<BorderOptions>): void
+```
+
+#### `setBorderId()`
+
+Sets a global default border configuration by its ID for subsequent `QRCodeJs` instances.
+
+```typescript
+QRCodeJs.setBorderId(borderId: string): void
+```
+
+#### `useBorder()`
+
+Initiates a builder pattern pre-configured with a border configuration.
+
+```typescript
+QRCodeJs.useBorder(borderNameOrOptions: string | BorderOptions): QRCodeBuilder
+```
+
+#### `useBorderId()`
+
+Initiates a builder pattern pre-configured with a border configuration by its ID.
+
+```typescript
+QRCodeJs.useBorderId(borderId: string): QRCodeBuilder
 ```
 
 ## Fluent Builder Pattern (`useTemplate`, `useStyle`, `build`)
@@ -1468,18 +1728,22 @@ QRCode.js offers a fluent builder pattern for a more readable and chainable way 
 
 ### Overview
 
-Instead of passing all options to the constructor, you can start with a base template or style using `QRCodeJs.useTemplate()` or `QRCodeJs.useStyle()`. These methods return a `QRCodeBuilder` instance. You can then chain further `.useTemplate()`, `.useStyle()`, and finally `.options()` or `.build()` to finalize the configuration.
+Instead of passing all options to the constructor, you can start with a base template, style, border, or image using `QRCodeJs.useTemplate()`, `QRCodeJs.useStyle()`, `QRCodeJs.useBorder()`, or `QRCodeJs.useImage()`. These methods return a `QRCodeBuilder` instance. You can then chain further `.useTemplate()`, `.useStyle()`, `.useBorder()`, `.useImage()`, and finally `.options()` or `.build()` to finalize the configuration.
 
 - `QRCodeJs.useTemplate(template)`: Starts a builder with a predefined or custom template.
 - `QRCodeJs.useStyle(style)`: Starts a builder and applies a predefined or custom style.
-- `.useTemplate(template)` (on builder): Applies another template. Options merge, with later calls overriding earlier ones.
-- `.useStyle(style)` (on builder): Applies another style. Options merge, with later calls overriding earlier ones.
+- `QRCodeJs.useBorder(border)`: Starts a builder and applies a predefined or custom border configuration.
+- `QRCodeJs.useImage(imageUrl)`: Starts a builder and sets an image.
+- `.useTemplate(template)` (on builder): Applies another template. Options merge.
+- `.useStyle(style)` (on builder): Applies another style. Options merge.
+- `.useBorder(border)` (on builder): Applies a border configuration. Options merge.
+- `.useImage(imageUrl)` (on builder): Sets or overrides the image.
 - `.options(options)` (on builder): Merges final specific options and returns the `QRCodeJs` instance.
 - `.build()` (on builder, optional method if options(options) is NOT called): Creates the `QRCodeJs` instance with the accumulated configuration.
 
-### How `useStyle` and `useTemplate` Work Together (Builder Pattern)
+### How Builder Methods Work Together
 
-You can chain `useTemplate` and `useStyle` calls. The options are merged progressively. If both a template and a style define the same option (e.g., `dotsOptions.color`), the option from the *last* applied template or style in the chain will take precedence.
+You can chain `useTemplate`, `useStyle`, `useBorder`, and `useImage` calls. The options are merged progressively. If multiple methods define the same option (e.g., `dotsOptions.color` from a template and a style, or `image` from `useImage` and a template), the option from the *last* applied method in the chain for that specific property will generally take precedence. The final `.options()` call provides the ultimate override.
 
 ### Examples
 
@@ -1516,17 +1780,18 @@ qrFromStyle.append(document.getElementById('qr-container-2'));
 
 **3. Chain Template and Style:**
 
+
 ```typescript
 const qrCombined = QRCodeJs.useTemplate('dots') // Start with 'dots' template (black dots)
   .useStyle({ dotsOptions: { color: '#4682B4' } }) // Apply style, overriding dot color to SteelBlue
-  .options({ data: 'Template + Style' })
+  .useImage('https://example.com/logo.png') // Add an image
+  .options({ data: 'Template + Style + Image' })
   .build();
 
 qrCombined.append(document.getElementById('qr-container-3'));
 ```
 
 **4. Build without final options:**
-
 ```typescript
 // Assume 'data' is part of the template or style
 const qrBuildDirectly = QRCodeJs.useTemplate({ 

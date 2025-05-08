@@ -21,3 +21,6 @@ export interface RotateFigureArgs {
     rotation?: number;
     draw: () => void;
 }
+export interface MethodOverrideOptions {
+    override?: boolean;
+}

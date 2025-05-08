@@ -2,13 +2,14 @@ export declare enum GradientType {
     radial = "radial",
     linear = "linear"
 }
+export type GradientTypeStrings = `${GradientType}`;
 export interface Gradient {
     /**
      * Type of gradient spread
      *
      * @default GradientType.linear
      */
-    type: GradientType;
+    type: GradientType | GradientTypeStrings;
     /**
      * Rotation of gradient (in radians, Math.PI === 180 degrees)
      *

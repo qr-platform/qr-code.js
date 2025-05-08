@@ -1,5 +1,11 @@
 # @qr-platform/qr-code-js
 
+## 0.10.0
+
+### Minor Changes
+
+- 4ec372c: added template and style, text and border combination for qrcode js class
+
 ## 0.9.0
 
 ### Minor Changes

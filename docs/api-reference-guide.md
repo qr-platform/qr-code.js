@@ -48,7 +48,7 @@ qrCode.append(document.getElementById('qr-container'));
 | `backgroundOptions.color` | `string`                            | `'#FFFFFF'`    | The background color.                                                       |
 | `backgroundOptions.round` | `number \| string`                  | `0`            | Rounds the corners of the background (0-1 or percentage).                   |
 | `backgroundOptions.gradient` | `Gradient` object                | `undefined`    | Apply a gradient fill to the background. See [Gradient options](#gradientoptions) for configuration details.
-| `image`                | `string \| Buffer \| Blob`             | `undefined`    | URL, Buffer, or Blob of an image to embed in the QR code.                   |
+| `image`                | `string \| Buffer \| Blob`             | `undefined`    | URL, Buffer, or Blob of an image to embed in the QR code. Can be set globally via `QRCodeJs.setImage()` or per-instance via `QRCodeJs.useImage()` or direct options. |
 | `imageOptions`         | `object`                               | `{...}`        | Options for the embedded image.                                             |
 | `imageOptions.mode`    | `ImageMode` enum                       | `'center'`     | How the image is embedded. See `ImageMode` enum.                            |
 | `imageOptions.imageSize` | `number`                             | `0.4`          | Relative size of the image (0-1).                                           |
@@ -57,7 +57,7 @@ qrCode.append(document.getElementById('qr-container'));
 | `imageOptions.fill`    | `object`                               | `{...}`           | Fill `color` or `gradient`.                               |
 | `imageOptions.fill.color` | `string`                            | `'rgba(255,255,255,1)'`    | Fill color.
 | `imageOptions.fill.gradient` | `Gradient` object | `undefined`    | Apply a gradient fill to the QR code. See [Gradient options](#gradientoptions) for configuration details.
-| `borderOptions`        | `BorderOptions` object                 | `undefined`    | Options for adding decorative borders. See below for sub-options. **Premium option** | 
+| `borderOptions`        | `BorderOptions` object                 | `undefined`    | Options for adding decorative borders. Can be configured globally via `QRCodeJs.setBorder()`/`setBorderId()` or per-instance via the builder pattern (`useBorder()`/`useBorderId()`). See below for sub-options. **Premium option** |
 
 ---
 
@@ -71,7 +71,7 @@ qrCode.append(document.getElementById('qr-container'));
 | `cornersDotOptions.type` | `CornerDotType` enum| `Inherits` | Specifies the shape of the corner dots. Refer to the `CornerDotType` enum for available options (e.g., square, rounded). |
 | `cornersDotOptions.color`| `string`            | `Inherits` | Defines the solid color of the corner dots. Accepts any valid CSS color string (e.g., `'#FF0000'`, `'red'`, `'rgba(255, 0, 0, 0.5)'`). |
 | `cornersDotOptions.gradient` | `Gradient` object | `undefined`| Applies a gradient fill to the corner dots, overriding the `color` property if both are set. See [Gradient Sub-options](#gradient-sub-options) for configuration details. |
-
+  
 ### Additional Notes
 - The `data` option is the only required option for generating a QR code.
 - Premium features like `borderOptions` and `validateScanning` require a valid license to use.
@@ -86,13 +86,28 @@ qrCode.append(document.getElementById('qr-container'));
 | `serialize`         | `inverted?: boolean`                                                       | Converts the QR code to an SVG string. Returns `Promise<string \| undefined>`. |
 | `download`          | `downloadOptions?: { name?: string; extension: 'svg' \| 'png' \| 'jpeg' \| 'webp' }, canvasOptions?: CanvasOptions` | Downloads the QR code as a file. Returns `Promise<void>`.                   |
 | `update`            | `options?: RecursivePartial<Options>`                                      | Updates the QR code with new options. Returns `void`.                       |
-| `setTemplate`       | `templateNameOrOptions: string \| RecursivePartial<Options>` | Sets a global default template for subsequent instances. Returns `void`.    |\n| `useTemplate`       | `templateNameOrOptions: string \| RecursivePartial<Options>` | Initiates a builder pattern pre-configured with a template. Returns `QRCodeBuilder`. |
+| `setTemplate`       | `templateNameOrOptions: string \| RecursivePartial<Options>` | Sets a global default template (by name or options object) for subsequent instances. Returns `void`. |
+| `setTemplateId`     | `templateId: string`                                                       | Sets a global default template by its ID. Returns `void`. |
+| `setStyle`          | `styleNameOrOptions: string \| StyleOptions`                               | Sets a global default style (by name or options object) for subsequent instances. Returns `void`. |
+| `setStyleId`        | `styleId: string`                                                          | Sets a global default style by its ID. Returns `void`. |
+| `setText`           | `textNameOrOptions: string \| TextOptions \| null, options?: { override?: boolean }` | Sets a global default text configuration for border text. With `{ override: true }`, the text will take precedence over any instance-specific border text. Returns `void`. |
+| `setTextId`         | `textId: string \| null, options?: { override?: boolean }`                 | Sets a global default text configuration by its ID. With `{ override: true }`, the text will take precedence over any instance-specific border text. Returns `void`. |
+| `setBorder`         | `borderNameOrOptions: string \| RecursivePartial<BorderOptions>`           | Sets a global default border configuration (by name or options object) for subsequent instances. Returns `void`. |
+| `setBorderId`       | `borderId: string`                                                         | Sets a global default border configuration by its ID. Returns `void`. |
+| `setImage`          | `imageUrl: string \| DataURL \| null, options?: { override?: boolean }`    | Sets a global default image URL for subsequent instances. With `{ override: true }`, the image will take precedence over any instance-specific images.
+| `useTemplate`       | `templateNameOrOptions: string \| RecursivePartial<Options>`             | Initiates a builder pattern pre-configured with a template (by name or options object). Returns `QRCodeBuilder`. |
+| `useTemplateId`     | `templateId: string`                                                       | Initiates a builder pattern pre-configured with a template by its ID. Returns `QRCodeBuilder`. |
+| `useStyle`          | `styleNameOrOptions: string \| StyleOptions`                               | Initiates a builder pattern pre-configured with a style (by name or options object). Returns `QRCodeBuilder`. |
+| `useStyleId`        | `styleId: string`                                                          | Initiates a builder pattern pre-configured with a style by its ID. Returns `QRCodeBuilder`. |
+| `useText`           | `textNameOrOptions: string \| TextOptions, options?: { override?: boolean }` | Initiates a builder pattern pre-configured with text for border sides. With `{ override: true }`, the text will take precedence over any text set in final options. Returns `QRCodeBuilder`. |
+| `useTextId`         | `textId: string, options?: { override?: boolean }`                         | Initiates a builder pattern pre-configured with text by its ID. With `{ override: true }`, the text will take precedence over any text set in final options. Returns `QRCodeBuilder`. |
+| `useBorder`         | `borderNameOrOptions: string \| BorderOptions`                             | Initiates a builder pattern pre-configured with a border configuration (by name or options object). Returns `QRCodeBuilder`. |
+| `useBorderId`       | `borderId: string`                                                         | Initiates a builder pattern pre-configured with a border configuration by its ID. Returns `QRCodeBuilder`. |
+| `useImage`          | `imageUrl: string \| DataURL, options?: { override?: boolean }`            | Initiates a builder pattern pre-configured with an image URL. With `{ override: true }`, the image will take precedence over any image set in final options.
 | `validateScanning`  | `validatorId?: string, debug?: boolean`                                    | **(Premium method)** Validates that the QR code is scannable. Returns `Promise<ScanValidatorResponse>`. |
 
 ---
 
-| `useStyle`          | `styleNameOrOptions: string \| StyleOptions`                               | Creates a `QRCodeBuilder` instance initialized with a specific style. Returns `QRCodeBuilder`. |
-| `useTemplate`       | `templateNameOrOptions: string \| RecursivePartial<Options>`             | Creates a `QRCodeBuilder` instance initialized with a specific template. Returns `QRCodeBuilder`. |
 <a id="borderoptions"></a>
 ### borderOptions Options 
 
@@ -280,6 +295,11 @@ const qr3 = QRCodeJs.useTemplate('basic')
 | :------------ | :------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------- |
 | `useTemplate` | `templateNameOrOptions: string \| RecursivePartial<Options>`             | Applies a template's options to the current configuration. Options from subsequent calls take precedence. Returns `this`. |
 | `useStyle`    | `styleNameOrOptions: string \| StyleOptions`                               | Applies style options (mapping them to `Options`) to the current configuration. Returns `this`.            |
+| `useText`     | `textNameOrOptions: string \| TextOptions, options?: { override?: boolean }` | Applies text configuration for border sides. With `{ override: true}`, text will take precedence over any text set in final options. Returns `this`. |
+| `useTextId`   | `textId: string, options?: { override?: boolean }`                         | Applies text configuration by its ID. With `{ override: true}`, text will take precedence over any text set in final options. Returns `this`. |
+| `useBorder`   | `borderNameOrOptions: string \| BorderOptions`                             | Applies border configuration (by name or options object) to the current configuration. Returns `this`.     |
+| `useBorderId` | `borderId: string`                                                         | Applies border configuration by its ID to the current configuration. Returns `this`.                       |
+| `useImage`    | `imageUrl: string, options?: { override?: boolean }`                       | Sets the image URL for the current configuration. With `{ override: true}`, the image will take precedence over any image set in final options. Returns `this`. |
 | `options`     | `options: RecursivePartial<Options>`                                       | Merges the provided `Options` into the current configuration and returns the final `QRCodeJs` instance.    |
 | `build`       | -                                                                          | Creates and returns the final `QRCodeJs` instance based on the accumulated configuration.                  |
 ### See Also

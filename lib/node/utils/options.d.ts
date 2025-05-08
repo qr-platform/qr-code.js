@@ -10,8 +10,8 @@ export interface DecorationOption {
     curveDisabled?: boolean;
     curveRadius?: string;
     enableText?: boolean;
-    type: 'text' | 'image';
-    value: string;
+    type?: 'text' | 'image';
+    value?: string;
     style?: QRBorderPluginStyleOptions;
 }
 export interface BorderOptions {
@@ -28,17 +28,17 @@ export interface BorderOptions {
     innerVerticalOffset?: number;
     thickness: number;
     noBorderThickness?: number;
-    color: string;
+    color?: string;
     background?: string;
     decorations?: {
         [key in Position]?: DecorationOption;
     };
     borderOuter?: {
-        color: string;
+        color?: string;
         thickness: number;
     };
     borderInner?: {
-        color: string;
+        color?: string;
         thickness: number;
     };
 }
@@ -93,6 +93,11 @@ export declare enum ImageMode {
      */
     background = "background"
 }
+type ShapeTypeStrings = `${ShapeType}`;
+type DotTypeStrings = `${DotType}`;
+type CornerSquareTypeStrings = `${CornerSquareType}`;
+type CornerDotTypeStrings = `${CornerDotType}`;
+type ImageModeStrings = `${ImageMode}`;
 export interface Options {
     /** Use a custom DOM domplementation */
     document: Document;
@@ -116,7 +121,7 @@ export interface Options {
      *
      * @default ShapeType.square
      */
-    shape: ShapeType;
+    shape: ShapeType | ShapeTypeStrings;
     /** Options will be passed to `~` lib */
     scale?: number;
     offset?: number;
@@ -132,20 +137,17 @@ export interface Options {
          *
          * @default ImageMode.center
          */
-        mode?: ImageMode;
+        mode?: ImageMode | ImageModeStrings;
         /**
-         * Fill blank areas of the code with selected color
+         * Background color of QR code image (logo, image, etc.)
          */
-        fill?: {
-            /**
-             * Color of QR dots
-             *
-             * @default "rgba(255,255,255,0.75)"
-             */
-            color: string;
-            /** Gradient of Corners Dot */
-            gradient?: Gradient;
-        };
+        backgroundColor?: string;
+        /**
+         * Padding around the image (in blocks)
+         *
+         * @default 0
+         */
+        padding?: number;
         /**
          * Coefficient of the image size
          *
@@ -158,6 +160,8 @@ export interface Options {
          * @default 0
          */
         margin: number;
+        /** Radius of the image */
+        radius?: string | number;
         /**
          * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLImageElement/crossOrigin)
          */
@@ -183,7 +187,7 @@ export interface Options {
          *
          * @default DotType.square
          */
-        type: DotType;
+        type: DotType | DotTypeStrings;
     };
     /** Corners Square options, omitted values match dots */
     cornersSquareOptions?: {
@@ -192,7 +196,7 @@ export interface Options {
         /** Gradient of Corners Square */
         gradient?: Gradient;
         /** Style of Corners Square */
-        type?: CornerSquareType;
+        type?: CornerSquareType | CornerSquareTypeStrings;
     };
     /** Corners Dot options, omitted values match squares */
     cornersDotOptions?: {
@@ -201,7 +205,7 @@ export interface Options {
         /** Gradient of Corners Dot */
         gradient?: Gradient;
         /** Style of Corners Dot */
-        type?: CornerDotType;
+        type?: CornerDotType | CornerDotTypeStrings;
     };
     /** QR background styling options, false to disable background */
     backgroundOptions?: {
@@ -218,3 +222,4 @@ export interface Options {
     borderOptions?: BorderOptions;
 }
 export declare function sanitizeOptions(options: Options): Options;
+export {};

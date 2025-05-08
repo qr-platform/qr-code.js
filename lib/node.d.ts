@@ -1,9 +1,10 @@
 import { QRCodeJs as _QRCodeJs } from './core/qr-code-js';
 import { type ValidationResult } from './license/LicenseManagerNode';
 import type * as _browserUtils from './tools/browser-utils';
-import { RecursivePartial } from './types/helper';
+import { MethodOverrideOptions, RecursivePartial } from './types/helper';
 import { StyleOptions } from './types/style-options';
-import { Options } from './utils/options';
+import { TextOptions } from './types/text-options';
+import { Options, type BorderOptions } from './utils/options';
 import { ImageDataLike } from './utils/scan-validator-worker';
 import { ScanValidatorResponse } from './utils/scan-validators/abstract-scan-validator';
 import { type DecodedLicenseToken } from './utils/token-validator';
@@ -13,9 +14,10 @@ export { FileExtension } from './tools/browser-utils';
 export { type RecursivePartial } from './types/helper';
 export { type CanvasOptions } from './utils/canvas-options';
 export { GradientType, type Gradient } from './utils/gradient';
-export { CornerDotType, CornerSquareType, DotType, ImageMode, ShapeType, type Options } from './utils/options';
+export { CornerDotType, CornerSquareType, DotType, ImageMode, ShapeType, type Options, type BorderOptions } from './utils/options';
 export { ErrorCorrectionPercents } from './utils/qrcode';
 export declare const browserUtils: typeof _browserUtils | undefined;
+type QRCodeJsConstructor = new (options: RecursivePartial<Options>, internal?: boolean) => QRCodeJs;
 export declare class QRCodeJs extends _QRCodeJs {
     static initializeIfNeeded(): Promise<boolean>;
     static get hls(): boolean;
@@ -40,11 +42,17 @@ export declare class QRCodeJs extends _QRCodeJs {
     /**
      * Creates a QRCodeBuilder instance initialized with a specific template.
      * Allows for fluent configuration chaining. We need it here to avoid circular dependency
-     * @param templateName - The name of the template to start with.
-     * @param templateNameOrOptions - The name of the template or a partial options object to start with.
+     * @param templateName - The user-friendly name of the template to start with.
      * @returns A new QRCodeBuilder instance.
      */
-    static useTemplate(templateNameOrOptions: string | RecursivePartial<Options>): QRCodeBuilder;
+    static useTemplate(templateName: string): QRCodeBuilder;
+    /**
+     * Creates a QRCodeBuilder instance initialized with a specific template by its ID.
+     * Allows for fluent configuration chaining.
+     * @param templateId - The ID (original key) of the template to start with.
+     * @returns A new QRCodeBuilder instance.
+     */
+    static useTemplateId(templateId: string): QRCodeBuilder;
     /**
      * Creates a QRCodeBuilder instance initialized with a specific style.
      * Allows for fluent configuration chaining.
@@ -52,31 +60,134 @@ export declare class QRCodeJs extends _QRCodeJs {
      * @returns A new QRCodeBuilder instance.
      */
     static useStyle(styleNameOrOptions: string | StyleOptions): QRCodeBuilder;
+    /**
+     * Creates a QRCodeBuilder instance initialized with a specific style by its ID.
+     * Allows for fluent configuration chaining.
+     * @param styleId - The ID of the predefined style.
+     * @returns A new QRCodeBuilder instance.
+     */
+    static useStyleId(styleId: string): QRCodeBuilder;
+    /**
+     * Creates a QRCodeBuilder instance initialized with specific border options.
+     * Allows for fluent configuration chaining.
+     * @param borderNameOrOptions - The name of the predefined border or a BorderOptions object.
+     * @returns A new QRCodeBuilder instance.
+     */
+    static useBorder(borderNameOrOptions: string | BorderOptions): QRCodeBuilder;
+    /**
+     * Creates a QRCodeBuilder instance initialized with a specific border by its ID.
+     * Allows for fluent configuration chaining.
+     * @param borderId - The ID of the predefined border.
+     * @returns A new QRCodeBuilder instance.
+     */
+    static useBorderId(borderId: string): QRCodeBuilder;
+    /**
+     * Creates a QRCodeBuilder instance initialized with a specific image.
+     * Allows for fluent configuration chaining.
+     * @param imageUrl - The URL or data URL of the image to use.
+     * @returns A new QRCodeBuilder instance.
+     */
+    static useImage(imageUrl: string, overrideOpts?: MethodOverrideOptions): QRCodeBuilder;
+    /**
+     * Creates a QRCodeBuilder instance initialized with specific text options.
+     * Allows for fluent configuration chaining.
+     * @param textNameOrOptions - The name of the predefined text template or a TextOptions object.
+     * @returns A new QRCodeBuilder instance.
+     */
+    static useText(textNameOrOptions: string | TextOptions, overrideOpts?: MethodOverrideOptions): QRCodeBuilder;
+    /**
+     * Creates a QRCodeBuilder instance initialized with a specific text template by its ID.
+     * Allows for fluent configuration chaining.
+     * @param textId - The ID of the predefined text template.
+     * @returns A new QRCodeBuilder instance.
+     */
+    static useTextId(textId: string, overrideOpts?: MethodOverrideOptions): QRCodeBuilder;
 }
-declare class QRCodeBuilder {
-    protected config: RecursivePartial<Options>;
+export declare class QRCodeBuilder {
+    private _qrCodeConstructor;
+    protected _templateSource: string | RecursivePartial<Options> | null;
+    protected _borderSource: string | BorderOptions | null;
+    protected _styleSource: string | StyleOptions | null;
+    protected _imageSource: string | null;
+    protected _imageOverride: boolean;
+    protected _textSource: string | TextOptions | null;
+    protected _textOverride: boolean;
+    protected _isTemplateById: boolean;
+    protected _isBorderById: boolean;
+    protected _isStyleById: boolean;
+    protected _isTextById: boolean;
+    protected _initialOptions: RecursivePartial<Options> | null;
     /**
      * Creates a new QRCodeBuilder instance.
+     * @param qrCodeConstructor - The constructor function (QRCodeJs or _) to use for the final instance.
      * @param templateNameOrOptions - Optional name of a predefined template or a partial options object to start with.
      */
-    constructor(templateNameOrOptions?: string | RecursivePartial<Options>);
+    constructor(qrCodeConstructor: QRCodeJsConstructor, templateNameOrOptions?: string | RecursivePartial<Options>);
     /**
-     * Applies a template to the builder's configuration. Template options
-     * will be overridden by subsequently chained .style() or .options() calls.
-     * @param templateNameOrOptions - The name of the template or a partial options object to apply.
+     * Sets the template to use by its name. Overwrites any previously set template.
+     * @param templateName - The user-friendly name of the template to apply.
      * @returns The builder instance for chaining.
      */
-    useTemplate(templateNameOrOptions: string | RecursivePartial<Options>): this;
+    useTemplate(templateName: string): this;
     /**
-     * Applies style options to the builder's configuration.
-     * @param styleNameOrOptions - Name of a predefined style or Style options object to apply.
+     * Sets the template to use by its ID. Overwrites any previously set template.
+     * @param templateId - The ID (original key) of the template to apply.
+     * @returns The builder instance for chaining.
+     */
+    useTemplateId(templateId: string): this;
+    /**
+     * Sets the style to use by its name or a style options object. Overwrites any previously set style.
+     * @param styleNameOrOptions - Name of a predefined style or a StyleOptions object to apply.
      * @returns The builder instance for chaining.
      */
     useStyle(styleNameOrOptions: string | StyleOptions): this;
     /**
-     * Merges the provided options into the builder's configuration.
-     * @param options - A partial options object to merge.
+     * Sets the style to use by its ID. Overwrites any previously set style.
+     * @param styleId - ID of the predefined style to apply.
      * @returns The builder instance for chaining.
+     */
+    useStyleId(styleId: string): this;
+    /**
+     * Sets the border to use by its name or a border options object. Overwrites any previously set border.
+     * @param borderNameOrOptions - Name of a predefined border or a BorderOptions object to apply.
+     * @returns The builder instance for chaining.
+     */
+    useBorder(borderNameOrOptions: string | BorderOptions): this;
+    /**
+     * Sets the border to use by its ID. Overwrites any previously set border.
+     * @param borderId - ID of the predefined border to apply.
+     * @returns The builder instance for chaining.
+     */
+    useBorderId(borderId: string): this;
+    /**
+     * Sets the image to use. Overwrites any previously set image from other sources like templates.
+     * @param imageUrl - The URL or data URL of the image to apply.
+     * @returns The builder instance for chaining.
+     */
+    useImage(imageUrl: string, overrideOpts?: MethodOverrideOptions): this;
+    /**
+     * Sets the text to use by its name or a text options object. Overwrites any previously set text.
+     * @param textNameOrOptions - Name of a predefined text template or a TextOptions object to apply.
+     * @returns The builder instance for chaining.
+     */
+    useText(textNameOrOptions: string | TextOptions, overrideOpts?: MethodOverrideOptions): this;
+    /**
+     * Sets the text to use by its ID. Overwrites any previously set text.
+     * @param textId - ID of the predefined text template to apply.
+     * @returns The builder instance for chaining.
+     */
+    useTextId(textId: string, overrideOpts?: MethodOverrideOptions): this;
+    /**
+     * Resolves the template, border, style, and image sources and merges them in the correct order.
+     * Order: Base Template -> Selected Template -> Selected Border -> Selected Text -> Selected Style -> Selected Image -> Final Options
+     * @param finalOptions - The final options object passed to .options() or .build().
+     * @returns The fully resolved and merged Options object.
+     */
+    private _resolveAndMergeConfig;
+    /**
+     * Merges the provided options into the builder's configuration and creates the QRCodeJs instance.
+     * @param options - A partial options object to merge as the final step.
+     * @returns The created QRCodeJs instance.
      */
     options(options: RecursivePartial<Options>): QRCodeJs;
     /**

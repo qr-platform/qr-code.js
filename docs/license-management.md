@@ -91,7 +91,7 @@ When using the basic border features in the free version, the library will autom
 - **Type**: `function(licenseKey: string): Promise<ValidationResult>`
 - **Process**:
   1. Calls `QRCodeJs.license('YOUR-LICENSE-KEY')`
-  2. Library sends key to backend endpoint (default: `POST /api/get-token`)
+  2. Library sends key to backend endpoint (default: `POST /api/license/get-token`)
   3. Backend validates key and returns signed JWT
   4. Library validates JWT signature and expiration date
   5. If valid, token and key are stored
@@ -192,7 +192,7 @@ When using the basic border features in the free version, the library will autom
 
 - **Purpose**: Configure the endpoint for license key validation
 - **Type**: `function(url: string): typeof QRCodeJs`
-- **Default**: `/api/get-token`
+- **Default**: `/api/license/get-token`
 - **Important**: Must be called before `QRCodeJs.license()`
 - **Returns**: `QRCodeJs` class for chaining
 - **Example**:
@@ -202,7 +202,7 @@ When using the basic border features in the free version, the library will autom
   ```
 - **Example** (chaining):
   ```typescript
-  await QRCodeJs.setLicenseUrl('/my-api/get-license').license('YOUR-LICENSE-KEY');
+  await QRCodeJs.setLicenseUrl('/my-api/license/get-token').license('YOUR-LICENSE-KEY');
   ```
 
 ### Custom License Fetcher
@@ -334,7 +334,7 @@ async function activateWithTokenNode(token) {
 
 ### Endpoint
 
-- **Default Path**: `/api/get-token`
+- **Default Path**: `/api/license/get-token`
 - **Method**: `POST`
 - **Content-Type**: `application/json`
 

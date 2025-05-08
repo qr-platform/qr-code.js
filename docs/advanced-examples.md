@@ -13,9 +13,7 @@ These examples focus on the fundamental QR code generation settings.
 
 **Example 1: High Error Correction & Specific Type Number**
 
-```typescript
-// filepath: /Users/kurdin/projects/qr-platform/qr-code-js/docs/advanced-examples.md
-const qrCoreHighEC = new QRCodeJs({
+```typescriptconst qrCoreHighEC = new QRCodeJs({
   data: 'https://example.com/high-ec',
   qrOptions: {
     typeNumber: 10, // Larger QR code version
@@ -30,9 +28,7 @@ qrCoreHighEC.append(document.getElementById('core-high-ec-container'));
 
 **Example 2: Auto Type Number & Medium Error Correction**
 
-```typescript
-// filepath: /Users/kurdin/projects/qr-platform/qr-code-js/docs/advanced-examples.md
-const qrCoreAutoEC = new QRCodeJs({
+```typescriptconst qrCoreAutoEC = new QRCodeJs({
   data: 'https://example.com/auto-ec-medium',
   qrOptions: {
     typeNumber: 0, // Auto-detect size
@@ -53,9 +49,7 @@ Demonstrates how to control the positioning and scaling within the container or 
 
 **Example 1: Scaled Down with Offsets**
 
-```typescript
-// filepath: /Users/kurdin/projects/qr-platform/qr-code-js/docs/advanced-examples.md
-const qrLayoutScaledOffset = new QRCodeJs({
+```typescriptconst qrLayoutScaledOffset = new QRCodeJs({
   data: 'https://example.com/layout-scaled-offset',
   scale: 0.75, // QR code occupies 75% of the space
   offset: -15, // Moves QR code 15px up relative to center
@@ -73,9 +67,7 @@ qrLayoutScaledOffset.append(document.getElementById('layout-scaled-offset-contai
 
 **Example 2: Responsive QR Code**
 
-```typescript
-// filepath: /Users/kurdin/projects/qr-platform/qr-code-js/docs/advanced-examples.md
-const qrLayoutResponsive = new QRCodeJs({
+```typescriptconst qrLayoutResponsive = new QRCodeJs({
   data: 'https://example.com/layout-responsive',
   isResponsive: true, // SVG will resize with container
   margin: 10, // Add a 10px quiet zone
@@ -100,9 +92,7 @@ Showcases different shapes and colors for the main data dots.
 
 **Example 1: Classy Rounded Dots**
 
-```typescript
-// filepath: /Users/kurdin/projects/qr-platform/qr-code-js/docs/advanced-examples.md
-const qrDotsClassy = new QRCodeJs({
+```typescriptconst qrDotsClassy = new QRCodeJs({
   data: 'https://example.com/dots-classy',
   dotsOptions: {
     type: 'classyRounded',
@@ -115,9 +105,7 @@ qrDotsClassy.append(document.getElementById('dots-classy-container'));
 
 **Example 2: Star Dots**
 
-```typescript
-// filepath: /Users/kurdin/projects/qr-platform/qr-code-js/docs/advanced-examples.md
-const qrDotsStar = new QRCodeJs({
+```typescriptconst qrDotsStar = new QRCodeJs({
   data: 'https://example.com/dots-star',
   dotsOptions: {
     type: 'star',
@@ -130,9 +118,7 @@ qrDotsStar.append(document.getElementById('dots-star-container'));
 
 **Example 3: Diamond Dots**
 
-```typescript
-// filepath: /Users/kurdin/projects/qr-platform/qr-code-js/docs/advanced-examples.md
-const qrDotsDiamond = new QRCodeJs({
+```typescriptconst qrDotsDiamond = new QRCodeJs({
   data: 'https://example.com/dots-diamond',
   dotsOptions: {
     type: 'diamond',
@@ -151,9 +137,7 @@ Customizes the three large corner squares.
 
 **Example 1: Outpoint Corner Squares**
 
-```typescript
-// filepath: /Users/kurdin/projects/qr-platform/qr-code-js/docs/advanced-examples.md
-const qrCornerSquareOutpoint = new QRCodeJs({
+```typescriptconst qrCornerSquareOutpoint = new QRCodeJs({
   data: 'https://example.com/corner-square-outpoint',
   dotsOptions: { color: '#444' },
   cornersSquareOptions: {
@@ -166,9 +150,7 @@ qrCornerSquareOutpoint.append(document.getElementById('corner-square-outpoint-co
 
 **Example 2: Rounded Corner Squares**
 
-```typescript
-// filepath: /Users/kurdin/projects/qr-platform/qr-code-js/docs/advanced-examples.md
-const qrCornerSquareRounded = new QRCodeJs({
+```typescriptconst qrCornerSquareRounded = new QRCodeJs({
   data: 'https://example.com/corner-square-rounded',
   dotsOptions: { type: 'dot', color: '#7B1FA2' }, // Purple dots
   cornersSquareOptions: {
@@ -187,9 +169,7 @@ Customizes the smaller dots within the corner squares.
 
 **Example 1: Heart Corner Dots**
 
-```typescript
-// filepath: /Users/kurdin/projects/qr-platform/qr-code-js/docs/advanced-examples.md
-const qrCornerDotHeart = new QRCodeJs({
+```typescriptconst qrCornerDotHeart = new QRCodeJs({
   data: 'https://example.com/corner-dot-heart',
   dotsOptions: { color: '#555' },
   cornersSquareOptions: { type: 'square', color: '#E64A19' }, // Orange square corners
@@ -203,9 +183,7 @@ qrCornerDotHeart.append(document.getElementById('corner-dot-heart-container'));
 
 **Example 2: Square Corner Dots with Different Color**
 
-```typescript
-// filepath: /Users/kurdin/projects/qr-platform/qr-code-js/docs/advanced-examples.md
-const qrCornerDotSquare = new QRCodeJs({
+```typescriptconst qrCornerDotSquare = new QRCodeJs({
   data: 'https://example.com/corner-dot-square',
   dotsOptions: { type: 'rounded', color: '#004D40' }, // Dark Teal dots
   cornersSquareOptions: { type: 'rounded', color: '#FBC02D' }, // Yellow rounded corners
@@ -225,9 +203,7 @@ Applies color, rounding, and gradients to the background.
 
 **Example 1: Colored and Rounded Background**
 
-```typescript
-// filepath: /Users/kurdin/projects/qr-platform/qr-code-js/docs/advanced-examples.md
-const qrBackgroundStyled = new QRCodeJs({
+```typescriptconst qrBackgroundStyled = new QRCodeJs({
   data: 'https://example.com/background-styled',
   dotsOptions: { color: '#FFFFFF' }, // White dots for contrast
   backgroundOptions: {
@@ -240,9 +216,7 @@ qrBackgroundStyled.append(document.getElementById('background-styled-container')
 
 **Example 2: Background with Subtle Radial Gradient**
 
-```typescript
-// filepath: /Users/kurdin/projects/qr-platform/qr-code-js/docs/advanced-examples.md
-const qrBackgroundGradient = new QRCodeJs({
+```typescriptconst qrBackgroundGradient = new QRCodeJs({
   data: 'https://example.com/background-gradient',
   dotsOptions: { color: '#333' },
   backgroundOptions: {
@@ -267,9 +241,7 @@ Applies linear and radial gradients to various elements.
 
 **Example 1: Linear Gradient on Dots**
 
-```typescript
-// filepath: /Users/kurdin/projects/qr-platform/qr-code-js/docs/advanced-examples.md
-const qrGradientDotsLinear = new QRCodeJs({
+```typescriptconst qrGradientDotsLinear = new QRCodeJs({
   data: 'https://example.com/gradient-dots-linear',
   dotsOptions: {
     type: 'rounded',
@@ -289,9 +261,7 @@ qrGradientDotsLinear.append(document.getElementById('gradient-dots-linear-contai
 
 **Example 2: Radial Gradient on Corner Squares & Linear on Dots**
 
-```typescript
-// filepath: /Users/kurdin/projects/qr-platform/qr-code-js/docs/advanced-examples.md
-const qrGradientMultiple = new QRCodeJs({
+```typescriptconst qrGradientMultiple = new QRCodeJs({
   data: 'https://example.com/gradient-multiple',
   dotsOptions: {
     type: 'square',
@@ -337,9 +307,7 @@ Embeds logos or images within the QR code.
 
 **Example 1: Centered Logo with Fill**
 
-```typescript
-// filepath: /Users/kurdin/projects/qr-platform/qr-code-js/docs/advanced-examples.md
-const qrImageCenter = new QRCodeJs({
+```typescriptconst qrImageCenter = new QRCodeJs({
   data: 'https://example.com/image-center',
   qrOptions: { errorCorrectionLevel: 'Q' }, // Higher EC recommended
   image: 'https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png', // Example: Instagram logo
@@ -357,9 +325,7 @@ qrImageCenter.append(document.getElementById('image-center-container'));
 
 **Example 2: Image as Background**
 
-```typescript
-// filepath: /Users/kurdin/projects/qr-platform/qr-code-js/docs/advanced-examples.md
-const qrImageBackground = new QRCodeJs({
+```typescriptconst qrImageBackground = new QRCodeJs({
   data: 'https://example.com/image-background',
   qrOptions: { errorCorrectionLevel: 'M' },
   image: 'https://source.unsplash.com/random/300x300?nature,water', // Example: Random nature image
@@ -379,17 +345,106 @@ const qrImageBackground = new QRCodeJs({
 qrImageBackground.append(document.getElementById('image-background-container'));
 ```
 
+**Example 3: Using the Override Option with Images**
+
+```typescript
+// Setting a global image with override that will take precedence
+// even over images specified in instance options
+QRCodeJs.setImage('https://example.com/global-priority-logo.png', { override: true });
+
+// Even when an instance specifies an image, the global one with override will be used
+const qrImageOverride = new QRCodeJs({
+  data: 'https://example.com/image-override-example',
+  image: 'https://example.com/this-will-be-ignored.png', // Will be ignored due to override
+  dotsOptions: { color: '#333333' }
+});
+qrImageOverride.append(document.getElementById('image-override-container'));
+
+// Using the builder pattern with image override
+const qrBuilderImageOverride = QRCodeJs.useImage('https://example.com/builder-priority-logo.png', { override: true })
+  .options({
+    data: 'https://example.com/builder-image-override-example',
+    image: 'https://example.com/another-ignored-image.png', // Will be ignored due to override
+    dotsOptions: { type: 'rounded', color: '#555555' }
+  });
+qrBuilderImageOverride.append(document.getElementById('builder-image-override-container'));
+
+// Reset the global image when done
+QRCodeJs.setImage(null);
+```
+
 ---
 
 ### Border Options and Decorations (Premium Feature)
 
 Uses premium border features for advanced styling and text. Requires a license.
 
-**Example 1: Elaborate Border with Multiple Decorations**
+**Example 1: Using Text Override Option**
 
 ```typescript
-// filepath: /Users/kurdin/projects/qr-platform/qr-code-js/docs/advanced-examples.md
 // Ensure license is activated first
+// await QRCodeJs.license('YOUR-LICENSE-KEY');
+
+// Setting global text with override that will take precedence 
+// even over text specified in instance options
+QRCodeJs.setText({
+  topValue: 'GLOBAL OVERRIDE TEXT',
+  bottomValue: 'PRIORITY FOOTER TEXT'
+}, { override: true });
+
+// Even when an instance specifies border text, the global one with override will be used
+const qrTextOverride = new QRCodeJs({
+  data: 'https://example.com/text-override-example',
+  borderOptions: {
+    hasBorder: true,
+    thickness: 30,
+    color: '#FF5722',
+    decorations: {
+      top: { 
+        enableText: true,
+        value: 'THIS TEXT WILL BE IGNORED' // Ignored due to global override
+      },
+      bottom: {
+        enableText: true,
+        value: 'THIS BOTTOM TEXT ALSO IGNORED' // Ignored due to global override
+      }
+    }
+  }
+});
+qrTextOverride.append(document.getElementById('text-override-container'));
+
+// Using the builder pattern with text override
+const qrBuilderTextOverride = QRCodeJs.useText({
+  leftValue: 'LEFT OVERRIDE TEXT',
+  rightValue: 'RIGHT OVERRIDE TEXT'
+}, { override: true })
+  .options({
+    data: 'https://example.com/builder-text-override-example',
+    borderOptions: {
+      hasBorder: true,
+      thickness: 30,
+      color: '#3F51B5',
+      decorations: {
+        left: { 
+          enableText: true,
+          value: 'IGNORED LEFT TEXT' // Will be ignored due to override
+        },
+        right: {
+          enableText: true,
+          value: 'IGNORED RIGHT TEXT' // Will be ignored due to override
+        }
+      }
+    }
+  });
+qrBuilderTextOverride.append(document.getElementById('builder-text-override-container'));
+
+// Reset the global text when done
+QRCodeJs.setText(null);
+```
+
+**Example 2: Elaborate Border with Multiple Decorations**
+
+```typescript// Ensure license is activated first
 // await QRCodeJs.license('YOUR-LICENSE-KEY');
 
 const qrBorderElaborate = new QRCodeJs({
@@ -532,13 +587,79 @@ const qrBuilderExample = new QRCodeJs({ data: 'https://example.com/class-instanc
 ```
 ---
 
+### Combining Global Defaults (`setTemplate`, `setStyle`, `setBorder`)
+
+This example shows how to set global defaults for a template, style, and border configuration. Subsequent `QRCodeJs` instances will inherit these settings unless overridden during instantiation.
+
+```typescript
+// 1. Define and set global defaults
+const globalTemplate = { backgroundOptions: { color: '#E8F5E9' } }; // Light Green background
+const globalStyle = { dotsOptions: { type: 'classy', color: '#1B5E20' } }; // Dark Green classy dots
+const globalBorder = { borderOptions: { hasBorder: true, thickness: 15, color: '#A5D6A7' } }; // Light Green border
+
+QRCodeJs.setTemplate(globalTemplate);
+QRCodeJs.setStyle(globalStyle);
+QRCodeJs.setBorder(globalBorder); // Set the global border
+QRCodeJs.setImage('https://example.com/global-default-logo.svg'); // Set a global default image or data URL
+
+// 2. Create instance - it inherits all global defaults, including the image
+const qrGlobalCombined = new QRCodeJs({
+  data: 'https://example.com/global-combined-with-image'
+  // No image option here, it will use the global default
+});
+qrGlobalCombined.append(document.getElementById('global-combined-container'));
+
+// 3. Create another instance, overriding the global image and border color
+const qrGlobalCombinedOverride = new QRCodeJs({
+  data: 'https://example.com/global-combined-override-image',
+  image: 'https://example.com/override-logo.png', // Override global image
+  borderOptions: { color: '#FF0000' } // Override border color to Red
+});
+qrGlobalCombinedOverride.append(document.getElementById('global-combined-override-container'));
+
+// Remember to clear defaults if needed for subsequent unrelated QR codes
+// QRCodeJs.setTemplate('basic');
+// QRCodeJs.setStyle(null);
+// QRCodeJs.setBorder(null);
+// QRCodeJs.setImage(null);
+```
+
+---
+
+### Combining Builder Methods (`useTemplate`, `useStyle`, `useBorder`, `useImage`)
+
+This example demonstrates chaining builder methods to combine a template, style, and border configuration for a single instance without affecting global defaults.
+
+```typescript
+// 1. Define components (optional, could be predefined names or IDs)
+const baseTpl = { qrOptions: { errorCorrectionLevel: 'M' }, margin: 5 };
+const dotsStyle = { dotsOptions: { type: 'dots', color: '#01579B' } }; // Light Blue dots
+const frameBorder = { borderOptions: { hasBorder: true, thickness: 20, color: '#B3E5FC', radius: '10%' } }; // Light Blue border
+
+// 2. Chain builder methods
+const qrBuilderCombined = QRCodeJs.useTemplate(baseTpl) // Start with base template
+  .useStyle(dotsStyle) // Apply dot style
+  .useBorder(frameBorder) // Apply border configuration
+  .useImage('https://example.com/builder-specific-logo.svg') // Add an image via builder
+  .options({ data: 'https://example.com/builder-combined-with-image' }); // Add final data
+
+qrBuilderCombined.append(document.getElementById('builder-combined-container'));
+
+// Example using predefined names (assuming 'rounded', 'blue-gradient', 'thick-frame' exist)
+// const qrBuilderNames = QRCodeJs.useTemplate('rounded')
+//   .useStyle('blue-gradient')
+//   .useBorder('thick-frame')
+//   .useImage('another-logo.png')
+//   .options({ data: 'https://example.com/builder-names-with-image' });
+// qrBuilderNames.append(document.getElementById('builder-names-container'));
+```
+---
+
 ### Scan Validation (Premium Feature)
 
 Validate if the generated QR code is scannable using the built-in validator. This requires a premium license.
 
-```typescript
-// filepath: /Users/kurdin/projects/qr-platform/qr-code-js/docs/advanced-examples.md
-// Ensure license is activated first
+```typescript// Ensure license is activated first
 // await QRCodeJs.license('YOUR-LICENSE-KEY');
 
 const qrCodeToValidate = new QRCodeJs({

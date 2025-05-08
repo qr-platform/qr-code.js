@@ -55,8 +55,8 @@ interface Options {
   /** Options for styling the background. Set to false to disable. */
   backgroundOptions?: BackgroundOptions | false;
 
-  /** URL, Buffer, or Blob of an image to embed in the QR code. */
-  image?: string | Buffer | Blob;
+  /** URL, Buffer, or Blob of an image to embed in the QR code. Can be influenced by `QRCodeJs.setImage()` or `QRCodeJs.useImage()`. */
+  image?: string | DataURL | Buffer | Blob;
 
   /** Options for the embedded image. */
   imageOptions: ImageOptions;

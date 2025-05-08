@@ -10,7 +10,7 @@ export interface ValidationResult {
 }
 export declare class LicenseManager {
     private static _instance;
-    private static _defaultLicenseApiUrl;
+    private static _customLicenseApiUrl;
     private static _currentHostname;
     private _hls;
     private _decodedToken;

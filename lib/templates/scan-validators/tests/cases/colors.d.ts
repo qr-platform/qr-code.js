@@ -6,9 +6,6 @@ export declare const baseOptions: {
     scale: number;
     margin: number;
     shape: string;
-    qrOptions: {
-        errorCorrectionLevel: string;
-    };
     dotsOptions: {
         type: string;
         color: string;
@@ -49,9 +46,6 @@ export declare const buildOptions: (elementColor: string, backgroundColor: strin
     scale: number;
     margin: number;
     shape: string;
-    qrOptions: {
-        errorCorrectionLevel: string;
-    };
 };
 export declare const alphas: number[];
 declare const cases: TestCase[];

@@ -1,5 +1,5 @@
 import { RecursivePartial } from '../types/helper';
-import { Options } from '../utils/options.js';
+import { Options } from '../utils/options';
 export interface ValidationWarning {
     path: string;
     message: string;

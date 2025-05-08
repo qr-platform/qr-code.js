@@ -278,6 +278,8 @@ const qrCodeWithGradient = new QRCodeJs({
 | `imageOptions.fill.color` | `string`                       | `'rgba(255,255,255,1)'` | Fill color for transparent areas.                                                                                |
 | `imageOptions.fill.gradient`| `Gradient` object            | `undefined`    | Apply a gradient fill to transparent areas. See [Gradients](#gradients) for configuration details.                                        |
 
+**Note on Image Source:** The `image` can be specified directly in the options, set globally for subsequent instances using `QRCodeJs.setImage('your_image_url')`, or set for a specific builder chain using `QRCodeJs.useImage('your_image_url').options(...)`. The builder's `useImage` typically overrides the global `setImage`, which in turn overrides an image set by a template. Direct options in the constructor or `.options()` call provide the final override.
+
 **`ImageMode` Enum Values:** `center`, `overlay`, `background`.
 
 **Important Considerations:**
@@ -515,76 +517,104 @@ if (validationResult.isValid) {
 - **`QRCodeJs.configureLicenseFetcher(fetcher: (licenseKey: string) => Promise<string>): void`**
   Configures a custom function for fetching license tokens.
 
+- **`QRCodeJs.setTemplate(templateNameOrOptions: string | RecursivePartial<Options>): void`**
+  Sets a global default template (by name or options object) for subsequent instances.
+
+- **`QRCodeJs.setTemplateId(templateId: string): void`**
+  Sets a global default template by its ID.
+
+- **`QRCodeJs.setStyle(styleNameOrOptions: string | StyleOptions): void`**
+  Sets a global default style (by name or options object) for subsequent instances.
+
+- **`QRCodeJs.setStyleId(styleId: string): void`**
+  Sets a global default style by its ID.
+
+- **`QRCodeJs.setBorder(borderNameOrOptions: string | RecursivePartial<BorderOptions>): void`**
+  Sets a global default border configuration (by name or options object) for subsequent instances.
+
+- **`QRCodeJs.setBorderId(borderId: string): void`**
+  Sets a global default border configuration by its ID.
+
 - **`QRCodeJs.useTemplate(templateNameOrOptions: string | RecursivePartial<Options>): QRCodeBuilder`**
-  Creates a `QRCodeBuilder` instance initialized with a specific template.
+  Initiates the builder pattern pre-configured with a template (by name or options object).
 
-  ```typescript
-  // Using a template name
-  const qrBuilder1 = QRCodeJs.useTemplate('rounded').options({
-    data: 'Built with rounded template',
-    dotsOptions: { color: '#FF8C00' } // DarkOrange override
-  });
-
-  // Using inline options
-  const qrBuilder2 = QRCodeJs.useTemplate({ shape: 'circle' }).options({
-    data: 'Built with inline circle shape'
-  });
-  ```
+- **`QRCodeJs.useTemplateId(templateId: string): QRCodeBuilder`**
+  Initiates the builder pattern pre-configured with a template by its ID.
 
 - **`QRCodeJs.useStyle(styleNameOrOptions: string | StyleOptions): QRCodeBuilder`**
-  Creates a `QRCodeBuilder` instance initialized with a specific style.
+  Initiates the builder pattern pre-configured with a style (by name or options object).
 
-- **`QRCodeJs.setTemplate(templateNameOrOptions: string | RecursivePartial<Options>): void`**
-  Sets a default template to be used for subsequent `QRCodeJs` instances. This template's options will be merged with the options provided during instantiation, with the instantiation options taking precedence. You can provide either the name of a predefined template (e.g., `'rounded'`, `'dots'`) or a custom options object.
+- **`QRCodeJs.useStyleId(styleId: string): QRCodeBuilder`**
+  Initiates the builder pattern pre-configured with a style by its ID.
 
-  ```typescript
-  // Set a predefined template by name
-  QRCodeJs.setTemplate('rounded');
-  const qr1 = new QRCodeJs({ data: 'Uses rounded template' });
+- **`QRCodeJs.useBorder(borderNameOrOptions: string | BorderOptions): QRCodeBuilder`**
+  Initiates the builder pattern pre-configured with a border configuration (by name or options object).
 
-  // Set a custom template object
-  const myTemplate = { dotsOptions: { type: 'classy', color: '#AA00AA' } };
-  QRCodeJs.setTemplate(myTemplate);
-  const qr2 = new QRCodeJs({ data: 'Uses custom classy template' });
+- **`QRCodeJs.useBorderId(borderId: string): QRCodeBuilder`**
+  Initiates the builder pattern pre-configured with a border configuration by its ID.
 
-  // Clear the template (falls back to basic)
-  // @ts-expect-error - Accessing private static for testing/clearing
-  QRCodeJs._selectedTemplate = null;
-  const qr3 = new QRCodeJs({ data: 'Uses basic template again' });
-  ```
+- **`QRCodeJs.setImage(imageUrl: string | DataURL | null): void`**
+  Sets a global default image URL for subsequent `QRCodeJs` instances.
 
+- **`QRCodeJs.useImage(imageUrl: string | DataURL): QRCodeBuilder`**
+  Initiates the builder pattern pre-configured with an image URL.
 
+### Setting Global Defaults for Styles, Borders, and Images (`setStyle`, `setBorder`, `setImage`)
 
+Similar to `setTemplate`, you can set global defaults for styles, border configurations, and images that will apply to subsequently created instances:
 
-## Fluent Builder Pattern (`useTemplate`, `useStyle`, `build`)
+- **`QRCodeJs.setStyle(styleNameOrOptions)` / `QRCodeJs.setStyleId(styleId)`**: Sets a default style by name, object, or ID.
+- **`QRCodeJs.setBorder(borderNameOrOptions)` / `QRCodeJs.setBorderId(borderId)`**: Sets a default border configuration by name, object, or ID.
+- **`QRCodeJs.setImage(imageUrl)`**: Sets a default image URL.
+
+Options provided directly to the `new QRCodeJs(...)` constructor or via builder methods will override these global defaults for that specific instance.
+```javascript
+// Example of setting global image
+QRCodeJs.setImage('https://example.com/default-logo.png');
+const qrWithGlobalImage = new QRCodeJs({ data: 'Uses global image' });
+// qrWithGlobalImage will use 'default-logo.png' unless overridden.
+```
+
+## Fluent Builder Pattern (`useTemplate`, `useStyle`, `useBorder`, `useImage`, `build`)
 
 For a more structured and readable configuration process, especially when combining predefined settings with custom overrides, QRCode.js offers a fluent builder pattern.
 
+
 **How it Works:**
 
-1.  **Start:** Begin by calling `QRCodeJs.useTemplate()` or `QRCodeJs.useStyle()` with either a predefined name (e.g., `'rounded'`) or a custom options/style object. This returns a `QRCodeBuilder` instance.
-2.  **Chain (Optional):** Call `.useTemplate()` or `.useStyle()` again on the builder instance to layer additional templates or styles. Options are merged, with later calls overriding earlier ones for the same properties.
+1.  **Start:** Begin by calling `QRCodeJs.useTemplate()`, `QRCodeJs.useStyle()`, `QRCodeJs.useBorder()`, or `QRCodeJs.useImage()` with either a predefined name/ID or a custom options/style/border/image URL object. This returns a `QRCodeBuilder` instance.
+2.  **Chain (Optional):** Call `.useTemplate()`, `.useStyle()`, `.useBorder()`, or `.useImage()` again on the builder instance to layer additional configurations. Options are merged, with later calls overriding earlier ones for the same properties.
 3.  **Finalize:**
     *   Call `.options(yourOptions)` to merge any final, specific options.
     *   Or call `.build()` to create the `QRCodeJs` instance with the accumulated configuration. This is optional if `.options(yourOptions)` is NOT called. If `.options(yourOptions)` is called, calling `.build()` is not necessary. You can use `.update()` after `.build()` to update the data.
 
-**Combining Templates and Styles:**
+**Combining Builder Methods:**
 
-When you chain `useTemplate` and `useStyle`, their options are merged. If both define the same property (e.g., `dotsOptions.color`), the value from the `useStyles` is always applied over the `useTemplate` options (e.g., `dotsOptions.color` from the `useTemplate` is overridden by the `dotsOptions.color` from the `useStyle`).
+When you chain multiple `use...` methods, their options are merged. If different methods define the same property (e.g., `image` from `useImage()` and an image defined in a template via `useTemplate()`), the value from the method called *later* in the chain for that specific property generally takes precedence. The final `.options()` call provides the ultimate override.
 
 **Example:**
 
 ```typescript
-// Start with 'dots' template, override color with a style, add final data
+// Start with 'dots' template, override color with a style, add an image, then final data
 const qrCode = QRCodeJs.useTemplate('dots')       // Base: dots template (e.g., black square dots)
   .useStyle({ dotsOptions: { color: 'navy' } }) // Style: Change dot color to navy
-  .options({ data: 'Built with Template and Style' }) // Final data
+  .useImage('https://example.com/my-logo.png') // Image: Set a logo
+  .options({ data: 'Built with Template, Style, and Image' }) // Final data
 
 qrCode.append(document.getElementById('builder-example-container'));
+
+### Builder Pattern for Styles, Borders, and Images (`useStyle`, `useBorder`, `useImage`)
+
+The builder pattern fully supports styles, borders, and images:
+
+- **`QRCodeJs.useStyle(styleNameOrOptions)` / `QRCodeJs.useStyleId(styleId)`**: Starts the builder pre-configured with a style.
+- **`QRCodeJs.useBorder(borderNameOrOptions)` / `QRCodeJs.useBorderId(borderId)`**: Starts the builder pre-configured with a border configuration.
+- **`QRCodeJs.useImage(imageUrl)`**: Starts the builder pre-configured with an image.
+
+You can chain these methods (e.g., `QRCodeJs.useTemplate(...).useStyle(...).useBorder(...).useImage(...)`) before finalizing with `.options(...)` or `.build()`. Options are merged progressively, with later calls overriding earlier ones.
 ```
 
 ## FAQ
-
 ### How do I handle CORS issues with embedded images?
 
 Set `crossOrigin` in `imageOptions`:

@@ -16,6 +16,7 @@ QRCode.js is a professional JavaScript/TypeScript library for creating customize
 *   **Gradients:** Apply linear or radial gradients to dots, corners, and backgrounds.
 *   **Image Embedding:** Embed logos or other images in the center, as an overlay, or as a background.
 *   **Borders (Free & Premium):** Add basic borders (with branding in free version) or advanced, customizable borders with text/images (Premium).
+*   **Flexible Border Configuration:** Set global border defaults (`setBorder`/`setBorderId`) or use the builder pattern (`useBorder`/`useBorderId`) for instance-specific borders.
 *   **Flexible Output:** Generate QR codes as SVG elements in the browser or SVG strings in Node.js.
 *   **Download Options:** Download QR codes as SVG, PNG, JPEG, or WEBP.
 *   **TypeScript Support:** Fully typed for a better development experience.
