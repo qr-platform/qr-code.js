@@ -1,5 +1,11 @@
 # @qr-platform/qr-code-js
 
+## 0.10.5
+
+### Patch Changes
+
+- 52ed0b5: getSettings should not return undefined props
+
 ## 0.10.4
 
 ### Patch Changes
