@@ -1204,85 +1204,195 @@ When using the basic border features in the free version, the library will autom
   });
   ```
 
+## Centralized Configuration with Settings (`SettingsOptions`, `setSettings`, `useSettings`)
 
-## Using Templates
+For a comprehensive way to define or apply a complete QR code configuration in one go, QRCode.js provides:
+- A `SettingsOptions` interface to structure a full configuration.
+- A static `QRCodeJs.setSettings()` method for establishing global defaults using a `SettingsOptions` object.
+- A `useSettings()` method for the `QRCodeBuilder` to apply a `SettingsOptions` object as a baseline for a specific builder chain.
 
-Templates offer a convenient way to apply a consistent set of styling and configuration options across multiple QR codes. QRCode.js provides two primary methods for working with templates:
+### `SettingsOptions` Object
 
-### Setting Global Defaults (`setTemplate`)
+The `SettingsOptions` object allows you to define multiple aspects of a QR code configuration simultaneously:
 
-The static method `QRCodeJs.setTemplate(templateNameOrOptions)` allows you to define a default template that will be automatically applied to all `QRCodeJs` instances created *after* the template is set. This is useful for establishing a baseline style for your application.
+- `id?: string`: Optional unique identifier for the settings preset.
+- `name?: string`: Optional descriptive name for the settings preset.
+- `description?: string`: Optional detailed description of the settings preset.
+- `data?: string`: The primary data to encode. This will be applied as the main `data` option.
+- `image?: string | Buffer | Blob`: Image to embed. This will be applied as the main `image` option.
+- `template?: string | RecursivePartial<Options>`: Template by name or options object. Maps to `QRCodeJs.setTemplate()` when used with `QRCodeJs.setSettings()`.
+- `templateId?: string`: Template by ID. Maps to `QRCodeJs.setTemplateId()`.
+- `style?: string | StyleOptions`: Style by name or `StyleOptions` object. Maps to `QRCodeJs.setStyle()`.
+- `styleId?: string`: Style by ID. Maps to `QRCodeJs.setStyleId()`.
+- `text?: string | TextOptions`: Text configuration by name or `TextOptions` object. Maps to `QRCodeJs.setText()`.
+- `textId?: string`: Text configuration by ID. Maps to `QRCodeJs.setTextId()`.
+- `border?: string | RecursivePartial<BorderOptions>`: Border configuration by name or options object. Maps to `QRCodeJs.setBorder()`.
+- `borderId?: string`: Border configuration by ID. Maps to `QRCodeJs.setBorderId()`.
+- `options?: RecursivePartial<Options>`: Direct overrides for any main `Options` properties. These are deeply merged. Maps to `QRCodeJs.setOptions()`.
 
-- You can provide the name of a predefined template (e.g., `'rounded'`, `'dots'`, `'classy'`).
-- You can provide a custom partial options object (`RecursivePartial<Options>`).
-- Any options provided during the instantiation of `new QRCodeJs({...})` will override the global template defaults for that specific instance.
-- Call `QRCodeJs.setTemplate(null)` or `QRCodeJs.setTemplate('basic')` to reset to the default behavior.
+Refer to the [TypeScript Types and Definitions](./typescript-types-definitions.md#settingsoptions) for the full structure.
 
+### Static `QRCodeJs.setSettings()`
+
+The `QRCodeJs.setSettings(settings: SettingsOptions | null)` static method sets multiple global defaults at once.
+
+- **Behavior**: It acts as a macro, internally calling other static setters (like `QRCodeJs.setTemplate()`, `QRCodeJs.setStyle()`, `QRCodeJs.setData()`, `QRCodeJs.setImage()`, `QRCodeJs.setOptions()`, etc.) based on the properties provided in the `settings` object.
+- It will **override/reset** any previously set static configurations for the aspects it covers. For example, if `settings` includes a `templateId`, any previous global template set by `QRCodeJs.setTemplate()` will be replaced. Similarly, if `settings.data` is provided, it calls `QRCodeJs.setData(settings.data)`, and if `settings.options` is provided, it calls `QRCodeJs.setOptions(settings.options)`.
+- Passing `null` will clear all static configurations (template, style, text, border, image, data, and options).
+
+**Example:**
 ```typescript
-// Set a global template
+const myGlobalPreset: SettingsOptions = {
+  name: 'CompanyStandard',
+  data: 'https://company.com/default-link', // Will call QRCodeJs.setData()
+  image: 'https://company.com/assets/logo.png', // Will call QRCodeJs.setImage()
+  templateId: 'company-wide-template', // Assumes this template ID exists, will call QRCodeJs.setTemplateId()
+  options: { // Will call QRCodeJs.setOptions()
+    qrOptions: { errorCorrectionLevel: 'H' },
+    margin: 5
+  }
+};
+
+QRCodeJs.setSettings(myGlobalPreset);
+
+// Subsequent QRCodeJs instances will use these global defaults
+const qr1 = new QRCodeJs({ /* data will be 'https://company.com/default-link' */ });
+const qr2 = new QRCodeJs({ data: 'https://company.com/specific-page' }); // Overrides data from preset
+
+// To clear all global settings:
+// QRCodeJs.setSettings(null);
+```
+
+### Builder `useSettings()`
+
+The `QRCodeBuilder.useSettings(settings: SettingsOptions)` method applies a `SettingsOptions` object as a new baseline for a specific builder chain.
+
+- **Behavior**: Calling `useSettings()` on a builder instance will **reset** any configurations previously applied to *that builder instance* via methods like `useTemplate()`, `useStyle()`, `useBorder()`, `useText()`, `useImage()`, `useData()`, or `useOptions()`. The provided `settings` object then establishes the new comprehensive baseline for that builder.
+- Subsequent builder methods chained *after* `useSettings()` (e.g., `.useStyle()`, `.options()`) will then modify this new baseline.
+
+**Example:**
+```typescript
+const eventSpecificSettings: SettingsOptions = {
+  name: 'ConferenceQR',
+  data: 'https://conference-event.com/details', // Baseline data for this builder
+  image: 'event-logo.png', // Baseline image
+  style: { dotsOptions: { type: 'classy', color: '#005FAB' } }, // Baseline style
+  borderId: 'event-frame' // Baseline border
+};
+
+const qrEvent = QRCodeJs.useTemplate('basic') // Initial template (will be reset by useSettings)
+  .useStyle({ dotsOptions: { color: 'red'} }) // This style will also be reset
+  .useSettings(eventSpecificSettings) // Resets builder and applies eventSpecificSettings as baseline
+  .useOptions({ margin: 20 }) // Further customizes the baseline from eventSpecificSettings
+  .options({ data: 'https://conference-event.com/live-updates' }) // Final data override
+  .build();
+
+qrEvent.append(document.getElementById('event-qr-container'));
+```
+
+## Using Templates, Styles, Borders, Data, Options, and Settings
+
+QRCode.js offers flexible ways to manage configurations, from setting global defaults that apply to all new instances to using a fluent builder pattern for specific instances.
+
+### Setting Global Defaults
+
+Static methods on the `QRCodeJs` class allow you to define default configurations that will be automatically applied to all `QRCodeJs` instances created *after* these defaults are set. This is useful for establishing a baseline style or configuration for your application.
+
+- **`QRCodeJs.setTemplate(templateNameOrOptions | null)` / `QRCodeJs.setTemplateId(id | null)`**: Sets a global default template.
+- **`QRCodeJs.setStyle(styleNameOrOptions | null)` / `QRCodeJs.setStyleId(id | null)`**: Sets a global default style.
+- **`QRCodeJs.setBorder(borderNameOrOptions | null)` / `QRCodeJs.setBorderId(id | null)`**: Sets a global default border configuration.
+- **`QRCodeJs.setText(textNameOrOptions | null, overrideOpts?: MethodOverrideOptions)` / `QRCodeJs.setTextId(id | null, overrideOpts?: MethodOverrideOptions)`**: Sets global default border text. The `overrideOpts` (e.g., `{ override: true }`) ensures this text takes precedence over text set by other means (e.g., in instance options).
+- **`QRCodeJs.setImage(imageUrl | null, overrideOpts?: MethodOverrideOptions)`**: Sets a global default image. `overrideOpts` ensures this image takes precedence over images set by other means.
+- **`QRCodeJs.setData(data | null, overrideOpts?: MethodOverrideOptions)`**: Sets a global default data string. `overrideOpts` ensures this data takes precedence.
+- **`QRCodeJs.setOptions(options | null, overrideOpts?: MethodOverrideOptions)`**: Sets global default options that are merged deeply. `overrideOpts` ensures higher precedence for these options over those set by other means for the properties they cover.
+- **`QRCodeJs.setSettings(settings | null)`**: A powerful static method to set multiple global defaults at once using a comprehensive `SettingsOptions` object (see [Centralized Configuration with Settings](#centralized-configuration-with-settings)). This method acts as a macro, calling the other static setters (like `setTemplate`, `setStyle`, `setData`, `setImage`, `setOptions`, etc.) based on the provided `settings` object. It will override/reset any previously set static configurations for the aspects it covers.
+
+Any options provided during the instantiation of `new QRCodeJs({...})` or through builder methods will override these global defaults for that specific instance, **unless** an `override: true` was used with a static setter for that specific property. Call any of these setters with `null` to clear the respective global default.
+
+**Example: Setting various global defaults**
+```typescript
+// Set a global template and data with override
 QRCodeJs.setTemplate('dots');
+QRCodeJs.setData('https://example-global.com', { override: true }); // This data will be hard to override
 
-// This QR code will use the 'dots' template
-const qr1 = new QRCodeJs({ data: 'Uses global dots template' });
+const qr1 = new QRCodeJs({ /* data will be https://example-global.com */ });
+const qrWithDifferentData = new QRCodeJs({ data: 'https://another-link.com' }); // data will still be https://example-global.com due to override
 
-// Override the global template's color for this instance
-const qr2 = new QRCodeJs({
-  data: 'Overrides global dots color',
-  dotsOptions: { color: '#FF4500' } // OrangeRed
-});
+// Using setSettings to define multiple global defaults
+const globalBrandSettings: SettingsOptions = {
+  templateId: 'brand-template', // Assumes this ID exists
+  style: { dotsOptions: { color: '#AA0000' } }, // Dark red dots
+  image: 'https://brand.com/logo.svg', // Global brand logo
+  data: 'https://brand-default.com', // Default data for this setting
+  options: { margin: 10, qrOptions: { errorCorrectionLevel: 'M' } }
+};
+QRCodeJs.setSettings(globalBrandSettings);
+// This will override the previous QRCodeJs.setTemplate('dots').
+// However, the data 'https://example-global.com' (set with override:true) will persist.
+// All other aspects from globalBrandSettings (style, image, options) will apply.
 
-// Reset to basic template
-QRCodeJs.setTemplate('basic');
+const qrBrand = new QRCodeJs({ /* data is 'https://example-global.com', other options from globalBrandSettings apply */ });
+
+// Reset all global settings
+QRCodeJs.setSettings(null); // This clears all static defaults, including the overridden data.
+const qrAfterClear = new QRCodeJs({ data: 'https://new-data.com' }); // Now uses 'https://new-data.com'
 ```
 
-### Using the Builder Pattern (`useTemplate`)
+### Using the Builder Pattern
 
-The static method `QRCodeJs.useTemplate(templateNameOrOptions)` initiates a builder pattern. It returns a builder object pre-configured with the specified template (either by name or by providing a partial options object directly). 
+The static `use` methods (e.g., `QRCodeJs.useTemplate()`, `QRCodeJs.useStyle()`, `QRCodeJs.useSettings()`) initiate a builder pattern. They return a `QRCodeBuilder` instance pre-configured with the specified settings. This approach does **not** set global defaults.
 
-- This method **does not** set a global default.
-- You **must** chain this call with the `.options({...})` method on the returned builder.
-- The `.options()` method takes the final configuration, including the required `data` property and any overrides specific to this instance.
+- **`QRCodeJs.useTemplate(templateNameOrOptions)` / `QRCodeJs.useTemplateId(id)`**: Initiates a builder with a template.
+- **`QRCodeJs.useStyle(styleNameOrOptions)` / `QRCodeJs.useStyleId(id)`**: Initiates a builder with a style.
+- **`QRCodeJs.useBorder(borderNameOrOptions)` / `QRCodeJs.useBorderId(id)`**: Initiates a builder with border settings.
+- **`QRCodeJs.useText(textNameOrOptions, overrideOpts?: MethodOverrideOptions)` / `QRCodeJs.useTextId(id, overrideOpts?: MethodOverrideOptions)`**: Initiates a builder with border text settings. `overrideOpts` ensures precedence over text in final `.options()`.
+- **`QRCodeJs.useImage(imageUrl, overrideOpts?: MethodOverrideOptions)`**: Initiates a builder with an image. `overrideOpts` ensures precedence over image in final `.options()`.
+- **`QRCodeJs.useData(data, overrideOpts?: MethodOverrideOptions)`**: Applies a data string to the current builder configuration. `overrideOpts` ensures precedence over data in final `.options()`.
+- **`QRCodeJs.useOptions(options, overrideOpts?: MethodOverrideOptions)`**: Applies a partial options object to the current builder configuration. `overrideOpts` ensures higher precedence for these options over those in final `.options()` for the properties they cover.
+- **`QRCodeJs.useSettings(settings)`**: Applies a comprehensive `SettingsOptions` object as a new baseline for the builder chain, **resetting** any configurations previously applied to *that builder instance* via other `use` methods (see [Centralized Configuration with Settings](#centralized-configuration-with-settings)).
 
+You **must** chain these calls with `.options(finalOptions)` (which also builds the instance) or `.build()` to get the final `QRCodeJs` instance. The `.options()` method takes the final configuration, including the required `data` property (unless provided by `useData`, `useSettings`, or a global default with override) and any ultimate overrides.
+
+**Example: Builder Pattern Usage**
 ```typescript
-// Start with the 'rounded' template, provide data and override color
-const qrBuilder1 = QRCodeJs.useTemplate('rounded').options({
-  data: 'Built with rounded template',
-  dotsOptions: { color: '#007BFF' } // Blue override
-});
+// Start with a template, then layer styles and data
+const qrBuilder1 = QRCodeJs.useTemplate('rounded')
+  .useStyle({ dotsOptions: { color: '#007BFF' } }) // Blue override for dots
+  .useData('Built with template and style')
+  .options({ margin: 10 }); // Final options and build
 
-// Start with inline custom options, then provide data
-const qrBuilder2 = QRCodeJs.useTemplate({
-  shape: 'circle',
-  dotsOptions: { type: 'star', color: '#DC3545' } // Red stars
-}).options({
-  data: 'Built with inline circle/star template'
-});
+// Using useSettings to establish a baseline for the builder
+const eventSettings: SettingsOptions = {
+  data: 'https://myevent.com',
+  image: 'event-logo.png',
+  styleId: 'event-style' // Assumes 'event-style' is a defined style
+};
+const qrEvent = QRCodeJs.useSettings(eventSettings) // Establishes baseline from eventSettings
+  .useText({ topValue: 'SCAN FOR EVENT DETAILS' }) // Adds text to the baseline
+  .useOptions({ qrOptions: { errorCorrectionLevel: 'H' } }, { override: true }) // These options take high precedence over final .options()
+  .options({ data: 'Final Event Data Override', qrOptions: { errorCorrectionLevel: 'M' } });
+  // Final data overrides eventSettings.data.
+  // errorCorrectionLevel 'M' from .options() is overridden by 'H' from .useOptions() with override:true.
 ```
 
-Choosing between `setTemplate` and `useTemplate` depends on whether you need a persistent global default or a one-off configuration based on a template.
+### Configuration Precedence
 
-## Using Styles and Borders (Global Defaults vs. Builder)
+Understanding the order in which options are applied is key:
+1.  **Base Defaults**: The library's inherent defaults (`baseQRTemplateOptions`).
+2.  **Static Global Defaults**: Set by `QRCodeJs.setTemplate()`, `QRCodeJs.setStyle()`, `QRCodeJs.setData()`, `QRCodeJs.setOptions()`, `QRCodeJs.setSettings()`, etc.
+    *   `QRCodeJs.setSettings()` calls individual static setters, so its components follow this rule.
+    *   Static setters with `{ override: true }` (e.g., `setData('data', { override: true })`) will have their specific property take precedence over less specific global defaults or later non-overriding instance options.
+3.  **Builder Methods**:
+    *   If `QRCodeBuilder.useSettings(settings)` is called, it **resets** previous builder steps for that instance and establishes `settings` as the new baseline.
+    *   Other builder methods (`useTemplate`, `useStyle`, `useData`, `useOptions`, etc.) are applied sequentially. If multiple methods affect the same property, later calls generally override earlier ones *within the builder chain* (either before `useSettings` or after it on the new baseline).
+    *   Builder methods with `{ override: true }` (e.g., `useData('data', { override: true })`) will have their specific property take precedence within the builder's accumulated state before the final `.options()` call, overriding values from the final `.options()` for those specific properties.
+4.  **Final `.options()` call on Builder / Constructor Options**: Options passed directly here (e.g., `new QRCodeJs(options)` or `builder.options(options)`) override global defaults and accumulated builder configurations, **unless** a global or builder setting for a specific property was set with `{ override: true }`.
 
-Similar to templates, styles and border configurations can be applied globally or using the builder pattern.
-
-### Setting Global Defaults (`setStyle`, `setBorder`)
-
-- **`QRCodeJs.setStyle(styleNameOrOptions)`**: Sets a default style (by name or object) that applies to subsequent instances. Options provided during instantiation override the global style.
-- **`QRCodeJs.setBorder(borderNameOrOptions)`**: Sets a default border configuration (by name or object) that applies to subsequent instances. Options provided during instantiation override the global border settings.
-- **`QRCodeJs.setStyleId(styleId)` / `QRCodeJs.setBorderId(borderId)`**: Similar to the above, but uses the predefined ID of the style or border.
-
-These methods are useful for establishing a consistent look and feel across multiple QR codes in your application.
-
-### Using the Builder Pattern (`useStyle`, `useBorder`)
-
-- **`QRCodeJs.useStyle(styleNameOrOptions)`**: Initiates a builder pre-configured with the specified style.
-- **`QRCodeJs.useBorder(borderNameOrOptions)`**: Initiates a builder pre-configured with the specified border configuration.
-- **`QRCodeJs.useStyleId(styleId)` / `QRCodeJs.useBorderId(borderId)`**: Similar, but uses the predefined ID.
-
-These methods return a `QRCodeBuilder` instance, allowing you to chain configurations and finalize with `.options({...})` or `.build()`. This approach is ideal for creating specific QR code instances with unique combinations of templates, styles, and borders without affecting global defaults.
-
-
-**Combining Methods:** You can combine global defaults with builder methods. For example, you could set a global template and then use the builder to apply a specific style, border, and image to an individual instance. Options are merged, with later steps in the configuration process (e.g., builder methods, final `.options()` call) overriding earlier ones (e.g., global defaults). The general precedence for the image source is: Builder's `useImage()` > Static `setImage()` > Template's image > Direct `options.image` in constructor.
+**In summary for a single property (e.g., `data` or `image`):**
+- A value set with `{ override: true }` (either static or builder) is very sticky and will generally win.
+- Otherwise, instance-specific options (from constructor or `.options()`) override builder-accumulated options (that were not set with override).
+- Builder-accumulated options (not set with override) override global static defaults (not set with override).
+- Global static defaults (not set with override) override base library defaults.
 
 ## Complete Examples
 ### Basic QR Code with Custom Dots
@@ -1590,26 +1700,11 @@ qrCode.validateScanning(
 ): Promise<ScanValidatorResponse>
 ```
 
-### Static Methods (License Management)
+### Static Methods
 
+These methods are called directly on the `QRCodeJs` class (e.g., `QRCodeJs.setTemplate()`).
 
-
-#### `useTemplate()`
-
-Creates a `QRCodeBuilder` instance initialized with a specific template.
-
-```typescript
-QRCodeJs.useTemplate(templateNameOrOptions: string | RecursivePartial<Options>): QRCodeBuilder
-```
-
-#### `useStyle()`
-
-Creates a `QRCodeBuilder` instance initialized with a specific style.
-
-```typescript
-QRCodeJs.useStyle(styleNameOrOptions: string | StyleOptions): QRCodeBuilder
-```
-These methods are called directly on the `QRCodeJs` class (or `QRCodeJs` imported from `qrcode-js/node`).
+#### License Management
 
 #### `initializeIfNeeded()`
 
@@ -1659,71 +1754,52 @@ Sets the URL endpoint for license key validation.
 QRCodeJs.setLicenseUrl(url: string): void
 ```
 
-#### `setTemplate()`
+#### Configuration Defaults & Builder Initiators
 
-Sets a global default template for subsequent `QRCodeJs` instances.
+The following static methods are available on the `QRCodeJs` class.
 
+##### Global Defaults:
+- **`setTemplate(templateNameOrOptions | null)` / `setTemplateId(id | null)`**: Sets a global default template.
+- **`setStyle(styleNameOrOptions | null)` / `setStyleId(id | null)`**: Sets a global default style.
+- **`setBorder(borderNameOrOptions | null)` / `setBorderId(id | null)`**: Sets a global default border configuration.
+- **`setText(textNameOrOptions | null, overrideOpts?)` / `setTextId(id | null, overrideOpts?)`**: Sets global default border text. `overrideOpts` (e.g., `{ override: true }`) ensures precedence.
+- **`setImage(imageUrl | null, overrideOpts?)`**: Sets a global default image. `overrideOpts` ensures precedence.
+- **`setData(data | null, overrideOpts?)`**: Sets a global default data string. `overrideOpts` ensures precedence.
+- **`setOptions(options | null, overrideOpts?)`**: Sets global default options (merged deeply). `overrideOpts` ensures higher precedence.
+- **`setSettings(settings | null)`**: Sets multiple global defaults from a `SettingsOptions` object. Acts as a macro, calling other static setters. Clears all static defaults if `null` is passed.
+
+*All `set...` methods return `typeof QRCodeJs` for chaining.*
+
+##### Builder Initiators:
+These methods initiate a `QRCodeBuilder` instance.
+
+- **`useTemplate(templateNameOrOptions)` / `useTemplateId(id)`**: Starts builder with a template.
+- **`useStyle(styleNameOrOptions)` / `useStyleId(id)`**: Starts builder with a style.
+- **`useBorder(borderNameOrOptions)` / `useBorderId(id)`**: Starts builder with border settings.
+- **`useText(textNameOrOptions, overrideOpts?)` / `useTextId(id, overrideOpts?)`**: Starts builder with border text. `overrideOpts` ensures precedence over text in final `.options()`.
+- **`useImage(imageUrl, overrideOpts?)`**: Starts builder with an image. `overrideOpts` ensures precedence over image in final `.options()`.
+- **`useData(data, overrideOpts?)`**: Applies data to the builder. `overrideOpts` ensures precedence over data in final `.options()`.
+- **`useOptions(options, overrideOpts?)`**: Applies options to the builder. `overrideOpts` ensures precedence over options in final `.options()`.
+- **`useSettings(settings)`**: Applies a `SettingsOptions` object as a new baseline for the builder, resetting prior builder configurations.
+
+*All `use...` methods return a `QRCodeBuilder` instance for chaining.*
+
+**Example Signatures (Illustrative):**
 ```typescript
-QRCodeJs.setTemplate(templateNameOrOptions: string | RecursivePartial<Options>): void
+// Global Defaults
+static setData(data: string | null, overrideOpts?: { override?: boolean }): typeof QRCodeJs;
+static setOptions(options: RecursivePartial<Options> | null, overrideOpts?: { override?: boolean }): typeof QRCodeJs;
+static setSettings(settings: SettingsOptions | null): typeof QRCodeJs;
+
+// Builder Initiators & Methods
+static useData(data: string, overrideOpts?: { override?: boolean }): QRCodeBuilder;
+static useOptions(options: RecursivePartial<Options>, overrideOpts?: { override?: boolean }): QRCodeBuilder;
+static useSettings(settings: SettingsOptions): QRCodeBuilder;
+
+// (Other set... and use... methods follow similar patterns)
 ```
 
-#### `useTemplate()`
-
-Initiates a builder pattern pre-configured with a template.
-
-```typescript
-QRCodeJs.useTemplate(templateNameOrOptions: string | RecursivePartial<Options>): QRCodeBuilder
-```
-
-#### `setStyle()`
-
-Sets a global default style for subsequent `QRCodeJs` instances.
-
-```typescript
-QRCodeJs.setStyle(styleNameOrOptions: string | RecursivePartial<StyleOptions>): void
-```
-
-#### `useStyle()`
-
-Initiates a builder pattern pre-configured with a style.
-
-```typescript
-QRCodeJs.useStyle(styleNameOrOptions: string | StyleOptions): QRCodeBuilder
-```
-
-#### `setBorder()`
-
-Sets a global default border configuration for subsequent `QRCodeJs` instances.
-
-```typescript
-QRCodeJs.setBorder(borderNameOrOptions: string | RecursivePartial<BorderOptions>): void
-```
-
-#### `setBorderId()`
-
-Sets a global default border configuration by its ID for subsequent `QRCodeJs` instances.
-
-```typescript
-QRCodeJs.setBorderId(borderId: string): void
-```
-
-#### `useBorder()`
-
-Initiates a builder pattern pre-configured with a border configuration.
-
-```typescript
-QRCodeJs.useBorder(borderNameOrOptions: string | BorderOptions): QRCodeBuilder
-```
-
-#### `useBorderId()`
-
-Initiates a builder pattern pre-configured with a border configuration by its ID.
-
-```typescript
-QRCodeJs.useBorderId(borderId: string): QRCodeBuilder
-```
-
-## Fluent Builder Pattern (`useTemplate`, `useStyle`, `build`)
+## Fluent Builder Pattern (`useTemplate`, `useStyle`, `useSettings`, `build`, etc.)
 
 QRCode.js offers a fluent builder pattern for a more readable and chainable way to configure and create QR codes, especially when combining templates, styles, and custom options.
 

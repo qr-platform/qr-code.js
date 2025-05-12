@@ -501,7 +501,177 @@ const qrWithGlobalOverride = new QRCodeJs({
 qrWithGlobalOverride.append(document.getElementById('global-override-container'));
 
 // Clear the global image when done
-QRCodeJs.setImage(null);
+// QRCodeJs.setImage(null);
+```
+
+---
+
+### Static Methods for Data, Options, and Settings (`setData`, `setOptions`, `setSettings`)
+
+These static methods allow setting global defaults for data, general options, or a comprehensive settings object. These defaults apply to all `QRCodeJs` instances created *after* the static method is called, until cleared or overridden.
+
+**Example 1: Using `QRCodeJs.setData()`**
+```javascript
+// Set global default data
+QRCodeJs.setData('https://global-default-link.com');
+
+const qrGlobalData1 = new QRCodeJs({
+  // Data will be 'https://global-default-link.com'
+  dotsOptions: { color: 'purple' }
+});
+qrGlobalData1.append(document.getElementById('global-data-container-1'));
+
+// Override global data for a specific instance
+const qrOverrideGlobalData1 = new QRCodeJs({
+  data: 'https://specific-instance-link.com' // This overrides the global data
+});
+qrOverrideGlobalData1.append(document.getElementById('override-global-data-container-1'));
+
+// Set global data with override:true (makes it harder to override by instance options)
+QRCodeJs.setData('https://forced-global-link.com', { override: true });
+const qrForcedData1 = new QRCodeJs({
+  data: 'https://this-link-is-ignored.com' // Ignored due to global override:true
+});
+qrForcedData1.append(document.getElementById('forced-data-container-1'));
+
+QRCodeJs.setData(null); // Clear global data default
+```
+
+**Example 2: Using `QRCodeJs.setOptions()`**
+```javascript
+// Set global default options
+QRCodeJs.setOptions({
+  margin: 20,
+  qrOptions: { errorCorrectionLevel: 'H' },
+  dotsOptions: { type: 'rounded', color: 'navy' }
+});
+
+const qrGlobalOptions1 = new QRCodeJs({
+  data: 'Uses global margin, EC level, and dots'
+  // margin will be 20, errorCorrectionLevel 'H', dots 'rounded' and 'navy'
+});
+qrGlobalOptions1.append(document.getElementById('global-options-container-1'));
+
+// Override specific global options for an instance
+const qrOverrideGlobalOptions1 = new QRCodeJs({
+  data: 'Overrides global margin and dot color',
+  margin: 5, // Overrides the global margin of 20
+  dotsOptions: { color: 'green' } // Overrides dot color, type 'rounded' still applies
+  // errorCorrectionLevel will still be 'H' from global options
+});
+qrOverrideGlobalOptions1.append(document.getElementById('override-global-options-container-1'));
+
+// Set global options with override:true
+QRCodeJs.setOptions(
+  { dotsOptions: { type: 'star', color: 'gold' }, backgroundOptions: { color: '#eee'} },
+  { override: true }
+);
+const qrForcedOptions1 = new QRCodeJs({
+  data: 'Uses forced star dots and background',
+  dotsOptions: { type: 'square', color: 'black'}, // These dotOptions will be overridden
+  backgroundOptions: { color: '#fff' } // This background will be overridden
+});
+qrForcedOptions1.append(document.getElementById('forced-options-container-1'));
+
+QRCodeJs.setOptions(null); // Clear global options defaults
+```
+
+**Example 3: Using `QRCodeJs.setSettings()`**
+```javascript
+const myGlobalCompanySettings = {
+  name: 'CompanyWideStandard',
+  data: 'https://company-standard.com',
+  image: 'https://company.com/assets/standard-logo.png',
+  templateId: 'classy', // Assumes 'classy' template exists
+  style: { backgroundOptions: { color: '#f0f0f0' } },
+  options: { margin: 12, qrOptions: { errorCorrectionLevel: 'Q' } }
+};
+
+// Set comprehensive global defaults using setSettings
+QRCodeJs.setSettings(myGlobalCompanySettings);
+
+const qrFromGlobalSettings1 = new QRCodeJs({
+  // data, image, template, style, and options (margin, EC) will come from myGlobalCompanySettings
+});
+qrFromGlobalSettings1.append(document.getElementById('global-settings-container-1'));
+
+// Instance options can still override parts of the global settings (if not set with override by setSettings)
+const qrOverrideGlobalSettings1 = new QRCodeJs({
+  data: 'https://specific-campaign.company-standard.com', // Overrides data from myGlobalCompanySettings
+  dotsOptions: { color: 'darkred' } // Adds/overrides dot color (style from setSettings might have other dot props)
+});
+qrOverrideGlobalSettings1.append(document.getElementById('override-global-settings-container-1'));
+
+QRCodeJs.setSettings(null); // Clear all global settings established by setSettings
+```
+
+---
+
+### Builder Methods for Data, Options, and Settings (`useData`, `useOptions`, `useSettings`)
+
+These builder methods allow applying data, general options, or comprehensive settings to a specific builder chain. They do *not* affect global defaults.
+
+**Example 1: Using `useData()` in Builder**
+```javascript
+const qrUseData1 = QRCodeJs.useData('https://data-via-builder.com')
+  .options({ // Final options, including data from useData
+    dotsOptions: { type: 'classyRounded', color: 'darkblue' }
+  });
+qrUseData1.append(document.getElementById('builder-usedata-container-1'));
+
+// useData with override:true
+const qrUseDataOverride1 = QRCodeJs.useData('https://forced-data-for-builder.com', { override: true })
+  .options({
+    data: 'https://this-data-is-ignored-by-builder.com', // Ignored due to useData override:true
+    dotsOptions: { color: 'darkgreen' }
+  });
+qrUseDataOverride1.append(document.getElementById('builder-usedata-override-container-1'));
+```
+
+**Example 2: Using `useOptions()` in Builder**
+```javascript
+const qrUseOptions1 = QRCodeJs.useOptions({ // Apply some options via useOptions
+  margin: 22,
+  backgroundOptions: { color: '#fafafa' },
+  shape: 'circle'
+}).options({ // Final options, including data
+  data: 'Built with useOptions for margin, background, and shape'
+});
+qrUseOptions1.append(document.getElementById('builder-useoptions-container-1'));
+
+// useOptions with override:true
+const qrUseOptionsOverride1 = QRCodeJs.useOptions(
+    { qrOptions: { errorCorrectionLevel: 'L' }, dotsOptions: { type: 'diamond'} }, // These will override final .options()
+    { override: true }
+  )
+  .options({
+    data: 'Built with forced low EC and diamond dots',
+    qrOptions: { errorCorrectionLevel: 'H' }, // This 'H' will be overridden by 'L'
+    dotsOptions: { type: 'square' } // This 'square' will be overridden by 'diamond'
+  });
+qrUseOptionsOverride1.append(document.getElementById('builder-useoptions-override-container-1'));
+```
+
+**Example 3: Using `useSettings()` in Builder**
+```javascript
+const eventBuilderSettings = {
+  name: 'EventBuilderSpecial',
+  data: 'https://eventsite.com/special-event',
+  image: 'https://eventsite.com/assets/event-logo.svg',
+  style: { dotsOptions: { type: 'extraRounded', color: '#FF6347' } }, // Tomato color
+  options: { margin: 10, isResponsive: true }
+};
+
+// useSettings resets prior builder steps (like useTemplate below) and establishes a new baseline
+const qrUseSettings1 = QRCodeJs.useTemplate('dots') // This 'dots' template will be reset by useSettings
+  .useSettings(eventBuilderSettings) // Applies the comprehensive settings as the new baseline
+  .useStyle({ backgroundOptions: { color: '#FFF5EE' }}) // Modifies the baseline from useSettings (adds background)
+  .options({ // Final options, data comes from eventBuilderSettings unless overridden here
+    // data, image, most dotsOptions, margin, and isResponsive come from eventBuilderSettings
+    // background color comes from the subsequent useStyle
+    qrOptions: { typeNumber: 0, errorCorrectionLevel: 'M' } // Add/override specific QR options
+  });
+qrUseSettings1.append(document.getElementById('builder-usesettings-container-1'));
 ```
 
 ---
@@ -567,7 +737,7 @@ qrBuiltWithBorderId.append(document.getElementById('builder-border-id-container'
 QRCodeJs.setText({
   topValue: 'TOP PRIORITY TEXT', 
   bottomValue: 'BOTTOM PRIORITY TEXT'
-}, { override: true });
+}, { override: true } as MethodOverrideOptions); // Using MethodOverrideOptions type for clarity
 
 // Even though this instance specifies different text values in the border decorations,
 // the global text with override option will take precedence
@@ -592,10 +762,13 @@ const qrWithTextOverride = new QRCodeJs({
 qrWithTextOverride.append(document.getElementById('text-override-container'));
 
 // Using the builder pattern with text override
-const qrBuilderWithTextOverride = QRCodeJs.useText({
-  leftValue: 'LEFT OVERRIDE',
-  rightValue: 'RIGHT OVERRIDE'
-}, { override: true })
+const qrBuilderWithTextOverride = QRCodeJs.useText(
+  {
+    leftValue: 'LEFT OVERRIDE',
+    rightValue: 'RIGHT OVERRIDE'
+  }, 
+  { override: true } as MethodOverrideOptions // Using MethodOverrideOptions type for clarity
+)
   .useBorder('fancy-border') // Assumes this is a predefined border
   .options({
     data: 'Builder Text Override Example',

@@ -299,51 +299,90 @@ Options for configuring multiple aspects of the QR code in a centralized way via
 
 ```typescript
 interface SettingsOptions {
-  /** Optional ID for the settings preset. */
+  /** Optional unique identifier for this settings configuration. */
   id?: string;
 
-  /** Optional name for the settings preset. */
+  /** Optional descriptive name for this settings configuration. */
   name?: string;
 
-  /** Optional description for the settings preset. */
+  /** Optional detailed description of this settings configuration. */
   description?: string;
 
   /**
-   * Template to apply. Can be a template name (string) or a
-   * `RecursivePartial<Options>` object.
-   * This will be applied via `QRCodeJs.setTemplate()` or `QRCodeJs.setTemplateId()`.
+   * The primary data to be encoded in the QR code (e.g., URL, text).
+   * This will be applied as the main `data` option for the QR code.
+   */
+  data?: string;
+
+  /**
+   * Image to be embedded in the QR code. Can be a URL, DataURL, Buffer, or Blob.
+   * This will be applied as the main `image` option for the QR code.
+   */
+  image?: string | DataURL | Buffer | Blob;
+
+  /**
+   * Specifies a template to apply. Can be a predefined template name (string) or a
+   * custom `RecursivePartial<Options>` object.
+   * When `QRCodeJs.setSettings()` is used, this influences the global template default (similar to `QRCodeJs.setTemplate()`).
+   * When `QRCodeBuilder.useSettings()` is used, this forms part of the builder's baseline.
    */
   template?: string | RecursivePartial<Options>;
+  /** Specifies a template by its ID to apply (similar to `QRCodeJs.setTemplateId()`). */
   templateId?: string;
 
   /**
-   * Style to apply. Can be a style name (string) or a `StyleOptions` object.
-   * This will be applied via `QRCodeJs.setStyle()` or `QRCodeJs.setStyleId()`.
+   * Specifies a style to apply. Can be a predefined style name (string) or a `StyleOptions` object.
+   * When `QRCodeJs.setSettings()` is used, this influences the global style default (similar to `QRCodeJs.setStyle()`).
+   * When `QRCodeBuilder.useSettings()` is used, this forms part of the builder's baseline.
    */
   style?: string | StyleOptions;
+  /** Specifies a style by its ID to apply (similar to `QRCodeJs.setStyleId()`). */
   styleId?: string;
 
   /**
-   * Text configuration to apply. Can be a text template name (string) or a `TextOptions` object.
-   * This will be applied via `QRCodeJs.setText()` or `QRCodeJs.setTextId()`.
+   * Specifies text configuration for borders. Can be a predefined text template name (string) or a `TextOptions` object.
+   * When `QRCodeJs.setSettings()` is used, this influences the global text default (similar to `QRCodeJs.setText()`).
+   * When `QRCodeBuilder.useSettings()` is used, this forms part of the builder's baseline.
    */
   text?: string | TextOptions;
+  /** Specifies a text configuration by its ID to apply (similar to `QRCodeJs.setTextId()`). */
   textId?: string;
 
   /**
-   * Border configuration to apply. Can be a border template name (string) or a
+   * Specifies border configuration. Can be a predefined border template name (string) or a
    * `RecursivePartial<BorderOptions>` object.
-   * This will be applied via `QRCodeJs.setBorder()` or `QRCodeJs.setBorderId()`.
+   * When `QRCodeJs.setSettings()` is used, this influences the global border default (similar to `QRCodeJs.setBorder()`).
+   * When `QRCodeBuilder.useSettings()` is used, this forms part of the builder's baseline.
    */
   border?: string | RecursivePartial<BorderOptions>;
+  /** Specifies a border configuration by its ID to apply (similar to `QRCodeJs.setBorderId()`). */
   borderId?: string;
 
   /**
    * A `RecursivePartial<Options>` object that will be deeply merged into
-   * the QR code's main options. This allows for direct overrides of any specific
-   * properties within the `Options` interface.
+   * the QR code's final options, allowing for direct overrides of any specific
+   * properties within the main `Options` interface.
    */
   options?: RecursivePartial<Options>;
+}
+```
+
+### MethodOverrideOptions
+
+Options for methods that support overriding behavior, typically used to ensure a specific setting takes precedence.
+
+```typescript
+/**
+ * Options for methods that support overriding behavior.
+ */
+interface MethodOverrideOptions {
+  /**
+   * If true, the setting applied by the method using these options
+   * will take precedence over other configurations for the same property,
+   * potentially overriding values from templates, styles, or even subsequent
+   * non-overriding option calls.
+   */
+  override?: boolean;
 }
 ```
 

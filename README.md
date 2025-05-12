@@ -14,9 +14,13 @@ QRCode.js is a professional JavaScript/TypeScript library for creating customize
 *   **Core QR Code Generation**: Encode any text, URL, or data.
 *   **Highly Customizable:** Control dot shapes, colors, sizes, corner styles, and background.
 *   **Gradients:** Apply linear or radial gradients to dots, corners, and backgrounds.
-*   **Image Embedding:** Embed logos or other images in the center, as an overlay, or as a background.
-*   **Borders (Free & Premium):** Add basic borders (with branding in free version) or advanced, customizable borders with text/images (Premium).
+*   **Image Embedding:** Embed logos or other images in the center, as an overlay, or as a background. Control image precedence with global `QRCodeJs.setImage()` or builder `useImage()`, both supporting an `override` option.
+*   **Borders (Free & Premium):** Add basic borders (with branding in free version) or advanced, customizable borders with text/images (Premium). Control text precedence with `QRCodeJs.setText()` or builder `useText()`, both supporting an `override` option.
 *   **Flexible Border Configuration:** Set global border defaults (`setBorder`/`setBorderId`) or use the builder pattern (`useBorder`/`useBorderId`) for instance-specific borders.
+*   **Templates & Styles**: Use predefined templates and styles, or create your own for consistent branding. Apply them globally with `QRCodeJs.setTemplate()` / `QRCodeJs.setStyle()` or per-instance with the builder's `useTemplate()` / `useStyle()`.
+*   **Comprehensive Configuration:**
+    *   Use `QRCodeJs.setData()`, `QRCodeJs.setOptions()`, and `QRCodeJs.setSettings()` for powerful global default configurations, with `override` options for strong precedence.
+    *   Employ the builder pattern's `useData()`, `useOptions()`, and `useSettings()` for instance-specific comprehensive setups, also with `override` capabilities. `useSettings()` resets prior builder steps to establish a new baseline.
 *   **Flexible Output:** Generate QR codes as SVG elements in the browser or SVG strings in Node.js.
 *   **Download Options:** Download QR codes as SVG, PNG, JPEG, or WEBP.
 *   **TypeScript Support:** Fully typed for a better development experience.
@@ -104,8 +108,9 @@ qrCode.serialize().then(svgString => {
 | `image`                | URL/Buffer/Blob of image to embed.               | `'logo.png'`         |
 | `imageOptions`         | Options for the embedded image (size, margin).   | `{ imageSize: 0.3, margin: 2 }` |
 | `borderOptions`        | **Premium.** Options for decorative borders.     | `{ hasBorder: true, thickness: 20, ... }` |
+| `SettingsOptions`      | Comprehensive object for `setSettings`/`useSettings`. | `{ templateId: '...', data: '...', ...}` |
 
-#### For a full list of options, see the [API Reference Guide](https://qr-platform.github.io/qr-code.js/docs/api-reference-guide.html).
+#### For a full list of options and detailed explanations of `SettingsOptions`, `setData`, `setOptions`, and their builder counterparts, see the [API Reference Guide](https://qr-platform.github.io/qr-code.js/docs/api-reference-guide.html) and [Usage Guide](https://qr-platform.github.io/qr-code.js/docs/usage-guide.html).
 
 ## 🎨 Examples
 
@@ -200,12 +205,12 @@ const qrPremium = new QRCodeJs({
 
 ## 📚 Documentation
 
-*   ##### [Usage Guide](https://qr-platform.github.io/qr-code.js/docs/usage-guide.html) Comprehensive guide covering all options.
-*   ##### [API Reference](https://qr-platform.github.io/qr-code.js/docs/api-reference-guide.html) Detailed reference for all options, methods, and enums.
-*   ##### [TypeScript Definitions](https://qr-platform.github.io/qr-code.js/docs/typescript-types-definitions.html) Full TypeScript type definitions.
-*   ##### [Basic Examples](https://qr-platform.github.io/qr-code.js/docs/examples.html) Simple examples to get started.
-*   ##### [Advanced Examples](https://qr-platform.github.io/qr-code.js/docs/advanced-examples.html) Complex customization examples.
-*   ##### [License Management](https://qr-platform.github.io/qr-code.js/docs/license-management.html) Details on free vs. premium features and activation. 
+*   **[Full Documentation](./docs/documentation.md#start)**: The main guide covering all features, options, and concepts.
+*   **[API Reference](./docs/api-reference-guide.md#start)**: Detailed reference for all classes, methods, and types.
+*   **[Usage Guide](./docs/usage-guide.md#start)**: Practical examples and explanations for common use cases.
+*   **[Basic Examples](./docs/examples.md#start)**: Simple examples to get started quickly.
+*   **[Advanced Examples](./docs/advanced-examples.md#start)**: Demonstrations of complex configurations and feature combinations, including `setSettings` and `useSettings`.
+*   **[License Management](./docs/license-management.md#start)**: Information on activating and managing premium features.
 
 ## 📜 License
 

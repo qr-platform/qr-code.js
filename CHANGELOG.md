@@ -1,5 +1,11 @@
 # @qr-platform/qr-code-js
 
+## 0.10.3
+
+### Patch Changes
+
+- 093f83a: Updated documentation for useSettings, setSettings, setData, useData, setOptions, useOptions methods
+
 ## 0.10.2
 
 ### Patch Changes

@@ -375,6 +375,127 @@ QRCodeJs.setImage(null);
 
 ---
 
+### Comprehensive Configuration with `SettingsOptions` (`setSettings` and `useSettings`)
+
+Demonstrates using `QRCodeJs.setSettings()` for establishing global presets and `QRCodeJs.useSettings()` for applying comprehensive configurations within a builder chain. These methods utilize the `SettingsOptions` interface.
+
+**Example 1: Defining and Applying a Global Preset with `QRCodeJs.setSettings()`**
+
+`QRCodeJs.setSettings()` acts as a macro, calling other static setters like `setData()`, `setImage()`, `setTemplate()`, `setStyle()`, `setOptions()`, etc., based on the provided `SettingsOptions`. It overrides/resets previous static configurations for the aspects it covers.
+
+```typescript
+// Define a comprehensive global preset using SettingsOptions
+const companyGlobalPreset: SettingsOptions = {
+  name: 'CompanyStandardGlobalQR',
+  data: 'https://company.com/global-default', // Will call QRCodeJs.setData()
+  image: 'https://company.com/assets/global-logo.png', // Will call QRCodeJs.setImage()
+  templateId: 'dots', // Assumes 'dots' template exists, will call QRCodeJs.setTemplateId()
+  style: { // Will call QRCodeJs.setStyle()
+    dotsOptions: { color: '#003366' }, // Company dark blue
+    backgroundOptions: { color: '#EFEFEF' }
+  },
+  borderOptions: { // Will call QRCodeJs.setBorder()
+    hasBorder: true,
+    thickness: 12,
+    color: '#003366'
+  },
+  options: { // Will call QRCodeJs.setOptions()
+    margin: 8,
+    qrOptions: { errorCorrectionLevel: 'Q' }
+  }
+};
+
+// Apply the preset globally
+QRCodeJs.setSettings(companyGlobalPreset);
+
+// This QR code will inherit all settings from companyGlobalPreset
+const qrFromGlobalSettings = new QRCodeJs({
+  // Data is inherited from companyGlobalPreset.data
+  // Image, template, style, border, margin, EC level are also inherited.
+});
+qrFromGlobalSettings.append(document.getElementById('global-settings-preset-container'));
+
+// Another instance, overriding only the data from the global preset
+const qrOverrideGlobalData = new QRCodeJs({
+  data: 'https://company.com/specific-product-page' // Overrides companyGlobalPreset.data
+});
+qrOverrideGlobalData.append(document.getElementById('global-settings-override-data-container'));
+
+// Clear all global settings when done if they are not needed for subsequent QRs
+// QRCodeJs.setSettings(null);
+```
+
+**Example 2: Using `QRCodeJs.useSettings()` in a Builder Chain**
+
+`QRCodeBuilder.useSettings()` resets any configurations previously applied to *that builder instance* and establishes the provided `SettingsOptions` as the new baseline.
+
+```typescript
+const eventSpecificBuilderConfig: SettingsOptions = {
+  name: 'TechConferenceBuilderQR',
+  data: 'https://techconf.example/main-schedule', // Baseline data for this builder
+  image: 'https://techconf.example/assets/event-logo-qr.png', // Baseline image
+  styleId: 'modern-dark', // Assumes 'modern-dark' style ID exists
+  text: { // Border text configuration (will be part of the baseline)
+    topValue: 'Tech Conference 2024',
+    bottomValue: 'Scan for Schedule & Info'
+  },
+  borderOptions: { // Baseline border
+    hasBorder: true,
+    thickness: 20,
+    color: '#2C3E50',
+    radius: '8px'
+  },
+  options: { // Baseline general options
+    qrOptions: { errorCorrectionLevel: 'H' },
+    isResponsive: true,
+    margin: 12
+  }
+};
+
+// Start with a base template (will be reset), apply comprehensive settings, then further customize
+const qrEventSpecialBuilder = QRCodeJs.useTemplate('dots') // This 'dots' template will be reset by useSettings
+  .useStyle({ dotsOptions: { color: 'red' }}) // This style will also be reset
+  .useSettings(eventSpecificBuilderConfig) // Applies the full eventSpecificConfig, resetting prior builder steps
+  .useStyle({ // Further refine the style from the useSettings baseline
+    dotsOptions: { gradient: { type: 'linear', colorStops: [{offset:0, color:'#5DADE2'}, {offset:1, color:'#2E86C1'}] } }
+  })
+  .options({ // Final data override and other specific options
+    data: 'https://techconf.example/live-updates-feed', // Overrides data from eventSpecificBuilderConfig
+    margin: 6 // Overrides margin from eventSpecificBuilderConfig.options
+  });
+
+qrEventSpecialBuilder.append(document.getElementById('builder-usesettings-container'));
+```
+
+**Example 3: Showcasing `overrideOpts` with Static `setData` and `setOptions`**
+
+The `overrideOpts: { override: true }` parameter makes static settings "sticky", meaning they are harder to override by instance options or non-overriding builder methods.
+
+```typescript
+// Set data with override:true; it will take precedence over instance data
+QRCodeJs.setData('https://permanent-global-link.com', { override: true });
+
+// Set some options with override:true
+QRCodeJs.setOptions(
+    { dotsOptions: { type: 'star', color: 'gold' }, margin: 0, shape: 'circle' },
+    { override: true }
+);
+
+const qrStaticOverridesDemo = new QRCodeJs({
+    data: 'https://this-data-is-ignored-by-instance.com', // Will use 'https://permanent-global-link.com'
+    dotsOptions: { type: 'square', color: 'black' }, // Will use star, gold (type and color overridden)
+    margin: 20, // Will use 0 (overridden)
+    shape: 'square' // Will use 'circle' (overridden)
+});
+qrStaticOverridesDemo.append(document.getElementById('static-override-example-container'));
+
+// Clear static settings when done to avoid affecting other examples
+QRCodeJs.setData(null); // This clears the override as well
+QRCodeJs.setOptions(null); // This clears the override as well
+```
+
+---
+
 ### Border Options and Decorations (Premium Feature)
 
 Uses premium border features for advanced styling and text. Requires a license.
@@ -387,10 +508,13 @@ Uses premium border features for advanced styling and text. Requires a license.
 
 // Setting global text with override that will take precedence 
 // even over text specified in instance options
-QRCodeJs.setText({
-  topValue: 'GLOBAL OVERRIDE TEXT',
-  bottomValue: 'PRIORITY FOOTER TEXT'
-}, { override: true });
+QRCodeJs.setText(
+  {
+    topValue: 'GLOBAL OVERRIDE TEXT',
+    bottomValue: 'PRIORITY FOOTER TEXT'
+  }, 
+  { override: true } // MethodOverrideOptions
+);
 
 // Even when an instance specifies border text, the global one with override will be used
 const qrTextOverride = new QRCodeJs({
@@ -414,10 +538,13 @@ const qrTextOverride = new QRCodeJs({
 qrTextOverride.append(document.getElementById('text-override-container'));
 
 // Using the builder pattern with text override
-const qrBuilderTextOverride = QRCodeJs.useText({
-  leftValue: 'LEFT OVERRIDE TEXT',
-  rightValue: 'RIGHT OVERRIDE TEXT'
-}, { override: true })
+const qrBuilderTextOverride = QRCodeJs.useText(
+  {
+    leftValue: 'LEFT OVERRIDE TEXT',
+    rightValue: 'RIGHT OVERRIDE TEXT'
+  }, 
+  { override: true } // MethodOverrideOptions
+)
   .options({
     data: 'https://example.com/builder-text-override-example',
     borderOptions: {
