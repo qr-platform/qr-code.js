@@ -270,6 +270,7 @@ interface DecorationOptions {
     fontSize: number;
     fontColor: string;
     letterSpacing: number;
+    textTransform: 'uppercase' | 'lowercase' | 'capitalize';
     fontWeight: 'normal' | 'bold';
   };
 }
@@ -289,6 +290,60 @@ interface Gradient {
 
   /** Array of color stops defining the gradient (offset: 0-1, color: CSS string). */
   colorStops: Array<{ offset: number; color: string }>;
+}
+```
+
+### SettingsOptions
+
+Options for configuring multiple aspects of the QR code in a centralized way via `QRCodeJs.settings()` (static) or `instance.setSettings()` (instance).
+
+```typescript
+interface SettingsOptions {
+  /** Optional ID for the settings preset. */
+  id?: string;
+
+  /** Optional name for the settings preset. */
+  name?: string;
+
+  /** Optional description for the settings preset. */
+  description?: string;
+
+  /**
+   * Template to apply. Can be a template name (string) or a
+   * `RecursivePartial<Options>` object.
+   * This will be applied via `QRCodeJs.setTemplate()` or `QRCodeJs.setTemplateId()`.
+   */
+  template?: string | RecursivePartial<Options>;
+  templateId?: string;
+
+  /**
+   * Style to apply. Can be a style name (string) or a `StyleOptions` object.
+   * This will be applied via `QRCodeJs.setStyle()` or `QRCodeJs.setStyleId()`.
+   */
+  style?: string | StyleOptions;
+  styleId?: string;
+
+  /**
+   * Text configuration to apply. Can be a text template name (string) or a `TextOptions` object.
+   * This will be applied via `QRCodeJs.setText()` or `QRCodeJs.setTextId()`.
+   */
+  text?: string | TextOptions;
+  textId?: string;
+
+  /**
+   * Border configuration to apply. Can be a border template name (string) or a
+   * `RecursivePartial<BorderOptions>` object.
+   * This will be applied via `QRCodeJs.setBorder()` or `QRCodeJs.setBorderId()`.
+   */
+  border?: string | RecursivePartial<BorderOptions>;
+  borderId?: string;
+
+  /**
+   * A `RecursivePartial<Options>` object that will be deeply merged into
+   * the QR code's main options. This allows for direct overrides of any specific
+   * properties within the `Options` interface.
+   */
+  options?: RecursivePartial<Options>;
 }
 ```
 

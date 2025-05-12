@@ -39,5 +39,6 @@ export interface StyleOptions {
     borderFontSize?: number;
     borderFontColor?: string;
     borderLetterSpacing?: number;
+    borderTextTransform?: 'uppercase' | 'lowercase' | 'capitalize';
     borderFontWeight?: string;
 }

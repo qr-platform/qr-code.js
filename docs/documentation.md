@@ -698,6 +698,7 @@ Options for adding decorative borders around the QR code. Borders can be configu
           fontFace: 'Helvetica',
           fontSize: 28,
           fontColor: '#ffffff',
+          textTransform: 'uppercase',
           letterSpacing: 2,
           fontWeight: 'bold'
         }
@@ -826,10 +827,10 @@ QRCode.js provides dedicated methods for managing text on QR code borders, allow
 - **Example**:
   ```typescript
   // Set global text using a predefined template ID
-  QRCodeJs.setTextId('visit-website-bottom');
+  QRCodeJs.setTextId('scan-to-visit-website');
   
   // With override option
-  QRCodeJs.setTextId('lost-found-all-sides', { override: true });
+  QRCodeJs.setTextId('lost-found', { override: true });
   
   // Clear global text
   QRCodeJs.setTextId(null);
@@ -884,11 +885,11 @@ QRCode.js provides dedicated methods for managing text on QR code borders, allow
 - **Example**:
   ```typescript
   // Start builder with a predefined text template by ID
-  const qrCode = QRCodeJs.useTextId('visit-website-bottom')
+  const qrCode = QRCodeJs.useTextId('scan-to-visit-website')
     .options({ data: 'https://example.com' });
     
   // With override option
-  const qrWithOverride = QRCodeJs.useTextId('scan-me-top', { override: true })
+  const qrWithOverride = QRCodeJs.useTextId('scan-me', { override: true })
     .options({ data: 'https://example.com' });
   ```
 

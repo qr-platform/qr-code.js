@@ -1,5 +1,11 @@
 # @qr-platform/qr-code-js
 
+## 0.10.2
+
+### Patch Changes
+
+- 45342a8: added useSettings and setSettings to combine all options and templates into one json object
+
 ## 0.10.0
 
 ### Minor Changes

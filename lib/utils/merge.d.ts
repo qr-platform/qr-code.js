@@ -1,3 +1,4 @@
+export declare const isEmptyObject: (obj: Record<string, unknown> | undefined) => boolean;
 export type UnknownObject = {
     [key: string]: any;
 } | undefined;

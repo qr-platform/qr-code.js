@@ -5,6 +5,7 @@ export interface QRBorderPluginStyleOptions {
     fontFace?: string;
     fontSize?: number;
     fontColor?: string;
+    textTransform?: string;
     letterSpacing?: number;
     fontWeight?: string;
 }

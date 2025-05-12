@@ -26,7 +26,7 @@ export interface BorderOptions {
     innerScale?: number;
     innerHorizontalOffset?: number;
     innerVerticalOffset?: number;
-    thickness: number;
+    thickness?: number;
     noBorderThickness?: number;
     color?: string;
     background?: string;
@@ -35,11 +35,11 @@ export interface BorderOptions {
     };
     borderOuter?: {
         color?: string;
-        thickness: number;
+        thickness?: number;
     };
     borderInner?: {
         color?: string;
-        thickness: number;
+        thickness?: number;
     };
 }
 export declare enum DotType {

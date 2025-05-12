@@ -1,5 +1,6 @@
 import { CanvasOptions } from '~/utils/canvas-options';
 import { MethodOverrideOptions, RecursivePartial } from '../types/helper';
+import { SettingsOptions } from '../types/settings-options';
 import { StyleOptions } from '../types/style-options';
 import { QRTextTemplateDefinition, TextOptions } from '../types/text-options';
 import { BorderOptions, Options } from '../utils/options';
@@ -25,6 +26,10 @@ export declare class QRCodeJs {
     private static _selectedImageOverride;
     private static _selectedText;
     private static _selectedTextOverride;
+    private static _selectedData;
+    private static _selectedDataOverride;
+    private static _selectedOptions;
+    private static _selectedOptionsOverride;
     private options;
     private container?;
     private qr?;
@@ -36,7 +41,7 @@ export declare class QRCodeJs {
         width: number;
         height: number;
     } | undefined;
-    constructor(options: RecursivePartial<Options>, _?: boolean);
+    constructor(options: RecursivePartial<Options> | undefined, _?: boolean);
     /**
      * Sets the static template to be used as a base for new instances,
      * accepting either a template name or a template options object.
@@ -98,6 +103,13 @@ export declare class QRCodeJs {
      */
     static setImage(imageUrl: string | null, overrideOpts?: MethodOverrideOptions): typeof QRCodeJs;
     /**
+     * Sets the static Data to be used by new instances.
+     * @param data - The data to be encoded in the QR code.
+     * @returns The QRCodeJs class for chaining.
+     */
+    static setData(data: string | null, overrideOpts?: MethodOverrideOptions): typeof QRCodeJs;
+    static setOptions(options: RecursivePartial<Options> | null, overrideOpts?: MethodOverrideOptions): typeof QRCodeJs;
+    /**
      * Sets the static text template or options to be used for new instances.
      * @param textNameOrOptions - The name of the text template, a TextOptions object, or null to clear.
      * @returns The QRCodeJs class for chaining.
@@ -109,6 +121,7 @@ export declare class QRCodeJs {
      * @returns The QRCodeJs class for chaining.
      */
     static setTextId(textId: string | null, overrideOpts?: MethodOverrideOptions): typeof QRCodeJs;
+    static setSettings(settings: SettingsOptions | null): typeof QRCodeJs;
     getOptions(): Options;
     update(options?: RecursivePartial<Options>): Promise<void>;
     append(container?: HTMLElement): this;

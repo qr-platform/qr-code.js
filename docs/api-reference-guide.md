@@ -95,6 +95,8 @@ qrCode.append(document.getElementById('qr-container'));
 | `setBorder`         | `borderNameOrOptions: string \| RecursivePartial<BorderOptions>`           | Sets a global default border configuration (by name or options object) for subsequent instances. Returns `void`. |
 | `setBorderId`       | `borderId: string`                                                         | Sets a global default border configuration by its ID. Returns `void`. |
 | `setImage`          | `imageUrl: string \| DataURL \| null, options?: { override?: boolean }`    | Sets a global default image URL for subsequent instances. With `{ override: true }`, the image will take precedence over any instance-specific images.
+| `settings`          | `settings: SettingsOptions \| null`                                        | **(Static)** Sets global default settings from a `SettingsOptions` object. This will override/reset any previously set static template, style, text, or border. Returns `typeof QRCodeJs`. |
+| `setSettings`       | `settings: SettingsOptions`                                                | **(Instance)** Applies settings from a `SettingsOptions` object to the current instance, completely replacing its current options. Returns `Promise<void>`. |
 | `useTemplate`       | `templateNameOrOptions: string \| RecursivePartial<Options>`             | Initiates a builder pattern pre-configured with a template (by name or options object). Returns `QRCodeBuilder`. |
 | `useTemplateId`     | `templateId: string`                                                       | Initiates a builder pattern pre-configured with a template by its ID. Returns `QRCodeBuilder`. |
 | `useStyle`          | `styleNameOrOptions: string \| StyleOptions`                               | Initiates a builder pattern pre-configured with a style (by name or options object). Returns `QRCodeBuilder`. |
@@ -158,7 +160,8 @@ The `borderOptions` object is a premium feature that allows you to add decorativ
 | `style.fontSize`   | `number`                               | `28`           | The font size for the text in pixels.                                       |
 | `style.fontColor`  | `string`                               | `'#ffffff'`    | The color of the text.                                                      |
 | `style.letterSpacing` | `number`                            | `0`            | The letter spacing for the text in pixels.                                  |
-| `style.fontWeight` | `'normal' \| 'bold'`                   | `'normal'`     | The font weight for the text.                                               |
+| `style.textTransform` | `'uppercase' \| 'lowercase' \| 'capitalize'` | `uppercase` | The text transformation style.                                             |
+| `style.fontWeight` | `'normal' \| 'bold'`                   | `'bold'`     | The font weight for the text.                                               |
 
 ### Enums
 
@@ -300,6 +303,7 @@ const qr3 = QRCodeJs.useTemplate('basic')
 | `useBorder`   | `borderNameOrOptions: string \| BorderOptions`                             | Applies border configuration (by name or options object) to the current configuration. Returns `this`.     |
 | `useBorderId` | `borderId: string`                                                         | Applies border configuration by its ID to the current configuration. Returns `this`.                       |
 | `useImage`    | `imageUrl: string, options?: { override?: boolean }`                       | Sets the image URL for the current configuration. With `{ override: true}`, the image will take precedence over any image set in final options. Returns `this`. |
+| `useSettings` | `settings: SettingsOptions`                                                | Applies a comprehensive `SettingsOptions` object to the builder. This will override/reset any previously set builder configurations (template, style, text, border, image, data). Returns `this`. |
 | `options`     | `options: RecursivePartial<Options>`                                       | Merges the provided `Options` into the current configuration and returns the final `QRCodeJs` instance.    |
 | `build`       | -                                                                          | Creates and returns the final `QRCodeJs` instance based on the accumulated configuration.                  |
 ### See Also

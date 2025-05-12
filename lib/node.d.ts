@@ -2,6 +2,7 @@ import { QRCodeJs as _QRCodeJs } from './core/qr-code-js';
 import { type ValidationResult } from './license/LicenseManagerNode';
 import type * as _browserUtils from './tools/browser-utils';
 import { MethodOverrideOptions, RecursivePartial } from './types/helper';
+import { SettingsOptions } from './types/settings-options';
 import { StyleOptions } from './types/style-options';
 import { TextOptions } from './types/text-options';
 import { Options, type BorderOptions } from './utils/options';
@@ -88,6 +89,7 @@ export declare class QRCodeJs extends _QRCodeJs {
      * @returns A new QRCodeBuilder instance.
      */
     static useImage(imageUrl: string, overrideOpts?: MethodOverrideOptions): QRCodeBuilder;
+    static useData(data: string, overrideOpts?: MethodOverrideOptions): QRCodeBuilder;
     /**
      * Creates a QRCodeBuilder instance initialized with specific text options.
      * Allows for fluent configuration chaining.
@@ -102,6 +104,8 @@ export declare class QRCodeJs extends _QRCodeJs {
      * @returns A new QRCodeBuilder instance.
      */
     static useTextId(textId: string, overrideOpts?: MethodOverrideOptions): QRCodeBuilder;
+    static useOptions(options: RecursivePartial<Options>, overrideOpts?: MethodOverrideOptions): QRCodeBuilder;
+    static useSettings(settings: SettingsOptions): QRCodeBuilder;
 }
 export declare class QRCodeBuilder {
     private _qrCodeConstructor;
@@ -116,6 +120,10 @@ export declare class QRCodeBuilder {
     protected _isBorderById: boolean;
     protected _isStyleById: boolean;
     protected _isTextById: boolean;
+    protected _optionsSource: RecursivePartial<Options> | null;
+    protected _optionsOverride: boolean;
+    protected _dataSource: string | null;
+    protected _dataOverride: boolean;
     protected _initialOptions: RecursivePartial<Options> | null;
     /**
      * Creates a new QRCodeBuilder instance.
@@ -166,6 +174,12 @@ export declare class QRCodeBuilder {
      */
     useImage(imageUrl: string, overrideOpts?: MethodOverrideOptions): this;
     /**
+     * Sets the data to use by its name or a text options object. Overwrites any previously set data.
+     * @param data - The data to be encoded in the QR code.
+     * @returns The builder instance for chaining.
+     */
+    useData(data: string, overrideOpts?: MethodOverrideOptions): this;
+    /**
      * Sets the text to use by its name or a text options object. Overwrites any previously set text.
      * @param textNameOrOptions - Name of a predefined text template or a TextOptions object to apply.
      * @returns The builder instance for chaining.
@@ -177,6 +191,8 @@ export declare class QRCodeBuilder {
      * @returns The builder instance for chaining.
      */
     useTextId(textId: string, overrideOpts?: MethodOverrideOptions): this;
+    useOptions(options: RecursivePartial<Options>, overrideOpts?: MethodOverrideOptions): this;
+    useSettings(settings: SettingsOptions): this;
     /**
      * Resolves the template, border, style, and image sources and merges them in the correct order.
      * Order: Base Template -> Selected Template -> Selected Border -> Selected Text -> Selected Style -> Selected Image -> Final Options

@@ -1,4 +1,5 @@
 export interface TextOptions {
+    value?: string | null;
     topValue?: string | null;
     leftValue?: string | null;
     rightValue?: string | null;

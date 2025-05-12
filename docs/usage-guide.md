@@ -341,12 +341,13 @@ const qrCodeWithLogo = new QRCodeJs({
 | `value`                | `string`             | `''`           | The text content or image URL/data URI.                                                                                                |
 | `enableText`           | `boolean`            | `false`        | Enables the decoration for this side.                                                                                                  |
 | `disabled`             | `boolean`            | `false`        | Disables the decoration for this side.                                                                                                 |
-| `style`                | `object`             | `{}`           | Text styling options (`fontFace`, `fontSize`, `fontColor`, `letterSpacing`, `fontWeight`).                                              |
+| `style`                | `object`             | `{}`           | Text styling options (`fontFace`, `fontSize`, `fontColor`, `letterSpacing`, `fontWeight`).                                             |
 | `style.fontFace`       | `string`             | `'Helvetica'`  | The font face for the text.                                                                                                            |
 | `style.fontSize`       | `number`             | `28`           | The font size for the text in pixels.                                                                                                  |
 | `style.fontColor`      | `string`             | `'#ffffff'`    | The color of the text.                                                                                                                 |
 | `style.letterSpacing`  | `number`             | `0`            | The letter spacing for the text in pixels.                                                                                             |
-| `style.fontWeight`     | `'normal' \| 'bold'` | `'normal'`     | The font weight for the text.                                                                                                          |
+| `style.fontWeight`     | `'normal' \| 'bold'` | `'bold'`       | The font weight for the text.                                                                                                          |
+| `style.textTransform`  | `'uppercase' \| 'lowercase' \| 'capitalize'` | `'uppercase'` | The text transformation style.                                                                                  |
 | `offset`               | `number`             | `0`            | Vertical (top/bottom) or horizontal (left/right) offset from the border center.                                                        |
 | `curveDisabled`        | `boolean`            | `false`        | If `true`, text is drawn straight instead of curved along the border.                                                                  |
 | `curveRadius`          | `string`             | `'50%'`        | Overrides the curve radius for text (e.g., `'50%'`). Defaults to `borderOptions.radius`.                                               |
@@ -614,6 +615,96 @@ The builder pattern fully supports styles, borders, and images:
 You can chain these methods (e.g., `QRCodeJs.useTemplate(...).useStyle(...).useBorder(...).useImage(...)`) before finalizing with `.options(...)` or `.build()`. Options are merged progressively, with later calls overriding earlier ones.
 ```
 
+---
+
+## Centralized Settings Configuration (`settings` and `setSettings`)
+
+For a comprehensive way to define or apply a complete QR code configuration in one go, QRCode.js provides a static `settings()` method for the builder pattern and an instance `setSettings()` method. These methods use a `SettingsOptions` object which can specify a template, style, text, border, and direct option overrides.
+
+### `SettingsOptions` Object
+
+The `SettingsOptions` interface allows you to define:
+- `id`, `name`, `description`: Metadata for the settings preset.
+- `template`, `templateId`: To apply a base template.
+- `style`, `styleId`: To apply styling.
+- `text`, `textId`: To configure border text.
+- `border`, `borderId`: To apply border configurations.
+- `options`: A `RecursivePartial<Options>` object for direct, fine-grained overrides of any core QR code options.
+
+Refer to the [TypeScript Types and Definitions](./typescript-types-definitions.md#settingsoptions) for the full structure.
+
+### Static `QRCodeJs.settings(settings: SettingsOptions | null)`
+
+This static method is used to set a global default configuration that will be used by subsequently created `QRCodeJs` instances or as a starting point for the builder pattern.
+
+- **Behavior**: Calling `QRCodeJs.settings()` will **completely replace** any configurations previously set by other static methods like `QRCodeJs.setTemplate()`, `QRCodeJs.setStyle()`, `QRCodeJs.setText()`, or `QRCodeJs.setBorder()`. The new `SettingsOptions` object becomes the sole source for these static defaults.
+- If `null` is passed, all static configurations (template, style, text, border, and settings) are cleared.
+
+**Example: Using Static `settings()`**
+
+```typescript
+const myPreset: SettingsOptions = {
+  name: 'BrandStandard',
+  description: 'Standard QR code style for our brand',
+  templateId: 'modern-rounded', // Assuming this template exists
+  style: { dotsOptions: { color: '#AA0000' } }, // Dark red dots
+  border: { hasBorder: true, thickness: 5, color: '#333333' },
+  options: {
+    qrOptions: { errorCorrectionLevel: 'H' },
+    margin: 10
+  }
+};
+
+QRCodeJs.settings(myPreset);
+
+// This instance will use the 'BrandStandard' preset
+const qrFromPreset = new QRCodeJs({ data: 'Data for preset' });
+qrFromPreset.append(document.getElementById('qr-preset-container'));
+
+// You can still override parts of the preset or add data via the constructor
+const qrModifiedPreset = new QRCodeJs({
+  data: 'Data with slight modification',
+  // Overriding margin from the preset
+  margin: 20
+});
+qrModifiedPreset.append(document.getElementById('qr-modified-preset-container'));
+
+// Clearing static settings
+QRCodeJs.settings(null);
+const qrAfterClear = new QRCodeJs({ data: 'Defaults after clear' }); // Uses base defaults
+qrAfterClear.append(document.getElementById('qr-cleared-container'));
+```
+
+### Instance `instance.setSettings(settings: SettingsOptions)`
+
+This instance method allows you to apply a `SettingsOptions` object to an existing `QRCodeJs` instance.
+
+- **Behavior**: Calling `instance.setSettings()` will **completely replace** the instance's current entire options configuration with a new one derived from the provided `SettingsOptions`. It does not merge with the existing instance options but rather rebuilds them from `baseQRTemplateOptions` and then applies the `SettingsOptions` layers.
+
+**Example: Using Instance `setSettings()`**
+
+```typescript
+const qrInstance = new QRCodeJs({ data: 'Initial Data', dotsOptions: { color: 'blue'} });
+qrInstance.append(document.getElementById('qr-initial-container'));
+
+const newLookSettings: SettingsOptions = {
+  name: 'NewLook',
+  styleId: 'dark-contrast', // Assuming this style exists
+  options: {
+    dotsOptions: { type: 'classy' }, // Overrides dot type from 'dark-contrast' style if any
+    backgroundOptions: { color: '#111111' }
+  }
+};
+
+// Apply the new look, completely replacing previous options
+await qrInstance.setSettings(newLookSettings);
+// The QR code will re-render with 'dark-contrast' style, classy dots, and dark background.
+// The original blue dots are gone because options were replaced, not merged.
+// The data 'Initial Data' will be preserved if not specified in newLookSettings.options.data
+```
+
+---
+
 ## FAQ
 ### How do I handle CORS issues with embedded images?
 
@@ -710,7 +801,7 @@ const qrCodePremium = new QRCodeJs({
       bottom: {
         type: 'text',
         value: 'LICENSED FEATURE',
-        style: { fontColor: '#FFFFFF', fontSize: 18, fontWeight: '500' },
+        style: { fontColor: '#FFFFFF', fontSize: 18, fontWeight: 'bold' },
         curveDisabled: true // Straight text
       }
     }
@@ -728,3 +819,55 @@ const qrCodePremium = new QRCodeJs({
 - [License Management](./license-management.md#start)
 - [Basic Examples](./examples.md#start)
 - [Advanced Examples](./advanced-examples.md#start)
+
+</file_content>
+
+Now that you have the latest state of the file, try the operation again with fewer, more precise SEARCH blocks. For large files especially, it may be prudent to try to limit yourself to <5 SEARCH/REPLACE blocks at a time, then wait for the user to respond with the result of the operation before following up with another replace_in_file call to make additional edits.
+(If you run into this error 3 times in a row, you may use the write_to_file tool as a fallback.)
+</error><environment_details>
+# VSCode Visible Files
+docs/usage-guide.md
+
+# VSCode Open Tabs
+src/types/text-options.ts
+src/core/templates/qr-templates.ts
+src/core/qr-code-js.ts
+src/index.ts
+src/node.ts
+docs/ft009-settings-option-continuation-plan.md
+tests/node/node.settings.test.ts
+docs/api-reference-guide.md
+docs/usage-guide.md
+src/types/settings-options.ts
+src/index.html
+src/node-pdf-demo.js
+src/options-demo.ts
+src/templates/borders-templates.html
+docs/documentation.md
+tests/node/node.text-image.test.ts
+docs/ft009-settings-option-plan.md
+../../../../../Untitled-2
+../../../../../Untitled-1
+docs/typescript-types-definitions.md
+src/license/LicenseManager.ts
+rollup.config.ts
+package.json
+node_modules/rollup-plugin-minify-template-literals/dist/index.d.ts
+src/config/runtime-config.js
+src/core/templates/qr-styles-dark.ts
+src/core/qr-svg.ts
+src/templates/borders-inner-outter.ts
+src/demo.ts
+src/core/templates/qr-template-borders.ts
+src/core/templates/qr-styles.ts
+docs/border-text-implementation-plan.md
+
+# Current Time
+5/11/2025, 5:15:20 PM (America/New_York, UTC-4:00)
+
+# Context Window Usage
+258,040 / 1,048.576K tokens used (25%)
+
+# Current Mode
+ACT MODE
+</environment_details>
