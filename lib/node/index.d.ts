@@ -142,6 +142,10 @@ export declare class QRCodeBuilder {
     protected _optionsOverride: boolean;
     protected _dataSource: string | null;
     protected _dataOverride: boolean;
+    protected _idSource: string | null;
+    protected _nameSource: string | null;
+    protected _descriptionSource: string | null;
+    protected _metadataSource: Record<string, any> | null;
     protected _initialOptions: RecursivePartial<Options> | null;
     constructor(qrCodeConstructor: QRCodeJsConstructor, templateNameOrOptions?: string | RecursivePartial<Options>);
     useTemplate(templateName: string): this;
@@ -155,6 +159,10 @@ export declare class QRCodeBuilder {
     useText(textNameOrOptions: string | TextOptions, overrideOpts?: MethodOverrideOptions): this;
     useTextId(textId: string, overrideOpts?: MethodOverrideOptions): this;
     useOptions(options: RecursivePartial<Options>, overrideOpts?: MethodOverrideOptions): this;
+    useId(id: string): this;
+    useName(name: string): this;
+    useDescription(description: string): this;
+    useMetadata(metadata: Record<string, any>): this;
     useSettings(settings: SettingsOptions): this;
     private _resolveAndMergeConfig;
     options(options: RecursivePartial<Options>): QRCodeJs;

@@ -1,5 +1,11 @@
 # @qr-platform/qr-code-js
 
+## 0.10.4
+
+### Patch Changes
+
+- 1692491: Add metadata support (id, name, description) in QRCodeJs and QRCodeBuilder for enhanced configuration options
+
 ## 0.10.3
 
 ### Patch Changes

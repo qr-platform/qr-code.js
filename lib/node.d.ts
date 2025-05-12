@@ -124,6 +124,10 @@ export declare class QRCodeBuilder {
     protected _optionsOverride: boolean;
     protected _dataSource: string | null;
     protected _dataOverride: boolean;
+    protected _idSource: string | null;
+    protected _nameSource: string | null;
+    protected _descriptionSource: string | null;
+    protected _metadataSource: Record<string, any> | null;
     protected _initialOptions: RecursivePartial<Options> | null;
     /**
      * Creates a new QRCodeBuilder instance.
@@ -192,6 +196,10 @@ export declare class QRCodeBuilder {
      */
     useTextId(textId: string, overrideOpts?: MethodOverrideOptions): this;
     useOptions(options: RecursivePartial<Options>, overrideOpts?: MethodOverrideOptions): this;
+    useId(id: string): this;
+    useName(name: string): this;
+    useDescription(description: string): this;
+    useMetadata(metadata: Record<string, any>): this;
     useSettings(settings: SettingsOptions): this;
     /**
      * Resolves the template, border, style, and image sources and merges them in the correct order.

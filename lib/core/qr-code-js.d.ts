@@ -30,6 +30,12 @@ export declare class QRCodeJs {
     private static _selectedDataOverride;
     private static _selectedOptions;
     private static _selectedOptionsOverride;
+    private static _selectedInfo;
+    private static _selectedMetadata;
+    id?: string;
+    name?: string;
+    description?: string;
+    metadata?: Record<string, any>;
     private options;
     private container?;
     private qr?;
@@ -123,6 +129,17 @@ export declare class QRCodeJs {
     static setTextId(textId: string | null, overrideOpts?: MethodOverrideOptions): typeof QRCodeJs;
     static setSettings(settings: SettingsOptions | null): typeof QRCodeJs;
     getOptions(): Options;
+    getId(): string | undefined;
+    getName(): string | undefined;
+    getDescription(): string | undefined;
+    getMetadata(): Record<string, any> | undefined;
+    getSettings(): SettingsOptions & {
+        options: Options;
+    };
+    setId(id?: string): this;
+    setName(name?: string): this;
+    setDescription(description?: string): this;
+    setMetadata(metadata?: Record<string, any>): this;
     update(options?: RecursivePartial<Options>): Promise<void>;
     append(container?: HTMLElement): this;
     applyExtension(extension: ExtensionFunction): Promise<void>;

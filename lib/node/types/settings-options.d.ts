@@ -6,6 +6,7 @@ export interface SettingsOptions {
     id?: string;
     name?: string;
     description?: string;
+    metadata?: Record<string, any>;
     data?: string;
     image?: string;
     template?: string | RecursivePartial<Options>;
