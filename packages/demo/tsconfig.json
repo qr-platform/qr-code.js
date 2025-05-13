@@ -1,0 +1,47 @@
+{
+  "compilerOptions": {
+    "strictPropertyInitialization": true,
+    "noUnusedParameters": true,
+    "skipLibCheck": true,
+    "importHelpers": false,
+    "outDir": "./dist/",
+    "declarationDir": "./dist/",
+    "sourceMap": true,
+    "module": "esnext",
+    "target": "es2020",
+    "allowJs": true,
+    "moduleResolution": "node",
+    "emitDeclarationOnly": false,
+    "declaration": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "strictNullChecks": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "esModuleInterop": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "resolveJsonModule": true,
+    "baseUrl": "src",
+    "typeRoots": [
+      "./node_modules/@types",
+      "./node_modules/sharp/lib"
+    ],
+
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+
+    /* Bundler mode */
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+  },
+  "include": ["src", "eslint.config.js", "plugins"],
+  "references": [{"path": "./tsconfig.node.json"}]
+}

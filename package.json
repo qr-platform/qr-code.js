@@ -26,7 +26,8 @@
     "file-type": "20.1.0",
     "jose": "6.0.10",
     "jimp": "^1.6.0",
-    "@resvg/resvg-js": "2.6.2"
+    "@resvg/resvg-js": "2.6.2",
+    "@qr-platform/qr-code-js-demo": "0.10.5"
   },
   "keywords": [
     "qr",
