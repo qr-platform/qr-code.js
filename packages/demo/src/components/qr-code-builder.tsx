@@ -1,32 +1,40 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Card, CardBody, Input, Select, SelectItem, Switch } from '@heroui/react'
 import { Icon } from '@iconify/react'
+import { useAtomValue } from 'jotai'
+import { useDebounceCallback } from 'usehooks-ts'
 
-import { useQRCode } from '../context/qr-code-context'
 import {
   imageOptions,
+  qrBorderTemplates, // Added
   qrStyleDefinitions,
   qrTemplates,
   qrTextTemplates
 } from '../data/qr-data'
+import { qrConfigAtom } from '../store'
 import { AdvancedCustomization } from './advanced-customization'
 import { QRCodePreview } from './qr-code-preview'
 
 export const QRCodeBuilder: React.FC = () => {
+  const qrConfig = useAtomValue(qrConfigAtom) // Removed unused setQrConfig
   const {
     selectedTemplateId,
-    setSelectedTemplateId,
     selectedStyleId,
-    setSelectedStyleId,
     selectedImageId,
-    setSelectedImageId,
     selectedTextTemplateId,
-    setSelectedTextTemplateId,
+    selectedBorderId,
     qrData,
+    setIsAdvancedMode,
     setQrData,
-    isAdvancedMode,
-    setIsAdvancedMode
-  } = useQRCode()
+    isAdvancedMode
+  } = qrConfig
+
+  const [qrCodeData, setQrCodeData] = useState(qrData)
+  const debouncedSetQrData = useDebounceCallback(setQrData, 500)
+
+  useEffect(() => {
+    debouncedSetQrData(qrCodeData)
+  }, [qrCodeData, debouncedSetQrData])
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -40,7 +48,9 @@ export const QRCodeBuilder: React.FC = () => {
                 <Switch
                   size="sm"
                   isSelected={isAdvancedMode}
-                  onValueChange={setIsAdvancedMode}
+                  onValueChange={checked => {
+                    setIsAdvancedMode(checked)
+                  }}
                   color="primary"
                 />
               </div>
@@ -52,9 +62,15 @@ export const QRCodeBuilder: React.FC = () => {
                   <Input
                     label="QR Code Data"
                     placeholder="Enter URL or text"
-                    value={qrData}
-                    onValueChange={setQrData}
-                    variant="bordered"
+                    value={qrCodeData}
+                    onValueChange={value => {
+                      setQrCodeData(value)
+                    }}
+                    classNames={{
+                      inputWrapper: 'border-blue-200',
+                      label: 'mb-1'
+                    }}
+                    variant="faded"
                     startContent={
                       <Icon icon="lucide:link" className="text-default-400" />
                     }
@@ -64,10 +80,16 @@ export const QRCodeBuilder: React.FC = () => {
                 <Select
                   label="Base Template"
                   placeholder="Select a base template"
+                  classNames={{
+                    label: 'mb-1'
+                  }}
+                  itemHeight={40}
                   selectedKeys={selectedTemplateId ? [selectedTemplateId] : []}
                   onSelectionChange={keys => {
                     const selected = Array.from(keys)[0]?.toString() || ''
-                    setSelectedTemplateId(selected)
+                    if (qrConfig.setSelectedTemplateId) {
+                      qrConfig.setSelectedTemplateId(selected)
+                    }
                   }}
                   variant="bordered"
                   startContent={
@@ -89,10 +111,14 @@ export const QRCodeBuilder: React.FC = () => {
                 <Select
                   label="Base Style"
                   placeholder="Select a base style"
+                  itemHeight={40}
                   selectedKeys={selectedStyleId ? [selectedStyleId] : []}
+                  classNames={{
+                    label: 'mb-1'
+                  }}
                   onSelectionChange={keys => {
                     const selected = Array.from(keys)[0]?.toString() || ''
-                    setSelectedStyleId(selected)
+                    if (qrConfig.setSelectedStyleId) qrConfig.setSelectedStyleId(selected)
                   }}
                   variant="bordered"
                   startContent={
@@ -114,10 +140,14 @@ export const QRCodeBuilder: React.FC = () => {
                 <Select
                   label="Logo Image"
                   placeholder="Select a logo image"
+                  itemHeight={40}
                   selectedKeys={selectedImageId ? [selectedImageId] : []}
+                  classNames={{
+                    label: 'mb-1'
+                  }}
                   onSelectionChange={keys => {
                     const selected = Array.from(keys)[0]?.toString() || 'none'
-                    setSelectedImageId(selected)
+                    if (qrConfig.setSelectedImageId) qrConfig.setSelectedImageId(selected)
                   }}
                   variant="bordered"
                   startContent={<Icon icon="lucide:image" className="text-default-400" />}
@@ -130,12 +160,18 @@ export const QRCodeBuilder: React.FC = () => {
                 </Select>
 
                 <Select
-                  label="Text Template (Overrides Border Text)"
+                  label="Text Template"
                   placeholder="Select a text template"
+                  classNames={{
+                    label: 'mb-1'
+                  }}
+                  itemHeight={40}
                   selectedKeys={selectedTextTemplateId ? [selectedTextTemplateId] : []}
                   onSelectionChange={keys => {
                     const selected = Array.from(keys)[0]?.toString() || ''
-                    setSelectedTextTemplateId(selected)
+                    if (qrConfig.setSelectedTextTemplateId) {
+                      qrConfig.setSelectedTextTemplateId(selected)
+                    }
                   }}
                   variant="bordered"
                   startContent={<Icon icon="lucide:text" className="text-default-400" />}
@@ -147,6 +183,37 @@ export const QRCodeBuilder: React.FC = () => {
                     ...qrTextTemplates.map(textTemplate => (
                       <SelectItem key={textTemplate.id} textValue={textTemplate.name}>
                         {textTemplate.name} ({textTemplate.id})
+                      </SelectItem>
+                    ))
+                  ]}
+                </Select>
+
+                <Select
+                  label="Border Template"
+                  placeholder="Select a border template"
+                  classNames={{
+                    label: 'mb-1'
+                  }}
+                  selectedKeys={selectedBorderId ? [selectedBorderId] : []}
+                  onSelectionChange={keys => {
+                    const selected = Array.from(keys)[0]?.toString() || ''
+                    if (qrConfig.setSelectedBorderId) {
+                      qrConfig.setSelectedBorderId(selected)
+                    }
+                  }}
+                  itemHeight={40}
+                  variant="bordered"
+                  startContent={
+                    <Icon icon="lucide:square" className="text-default-400" />
+                  }
+                >
+                  {[
+                    <SelectItem key="" textValue="-- No Border --">
+                      -- No Border --
+                    </SelectItem>,
+                    ...qrBorderTemplates.map(border => (
+                      <SelectItem key={border.id} textValue={border.name}>
+                        {border.name} ({border.id})
                       </SelectItem>
                     ))
                   ]}

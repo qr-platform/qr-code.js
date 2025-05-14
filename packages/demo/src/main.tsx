@@ -9,7 +9,7 @@ import './index.css'
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <HeroUIProvider>
-      <ToastProvider />
+      <ToastProvider placement={'top-center'} />
       <App />
     </HeroUIProvider>
   </React.StrictMode>

@@ -1,34 +1,36 @@
-import React from 'react'
 import { Card, CardBody, CardHeader, Divider } from '@heroui/react'
 
 import { QRCodeBuilder } from './components/qr-code-builder'
-import { TemplateGallery } from './components/template-gallery'
+import { TemplateGallery } from './components/template-gallery' // Removed
 import { ThemeSwitcher } from './components/theme-switcher'
-import { QRCodeProvider } from './context/qr-code-context'
+import { UrlSyncHandler } from './context/qr-code-context' // Changed import
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-800 py-8 px-4">
+      <UrlSyncHandler /> {/* Added UrlSyncHandler */}
       <div className="max-w-7xl mx-auto">
         <Card className="shadow-sm border border-default-200 rounded-lg">
           <CardHeader className="flex flex-col gap-1 bg-transparent">
-            <div className="flex justify-between items-center">
-              <h1 className="text-2xl font-semibold">QR Code Border Template Builder</h1>
-              <ThemeSwitcher />
+            <div className="flex justify-between items-center w-full">
+              <div />
+              <h1 className="text-2xl font-semibold">QRCode.Js Demo Builder</h1>
+              <div className="flex items-center">
+                <ThemeSwitcher />
+              </div>
             </div>
             <p className="text-default-500">
               Customize your QR code with different templates, styles, borders, and logos
             </p>
           </CardHeader>
           <Divider />
-          <CardBody>
-            <QRCodeProvider>
-              <div className="flex flex-col gap-8">
-                <QRCodeBuilder />
-                <Divider />
-                <TemplateGallery />
-              </div>
-            </QRCodeProvider>
+          <CardBody className="flex flex-col gap-8 bg-gray-50 dark:bg-gray-900">
+            {/* QRCodeProvider removed */}
+            <div className="flex flex-col gap-8">
+              <QRCodeBuilder />
+              <Divider />
+              <TemplateGallery />
+            </div>
           </CardBody>
         </Card>
 

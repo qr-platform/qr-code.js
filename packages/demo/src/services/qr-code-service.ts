@@ -1,93 +1,23 @@
 // QR Code Service to handle interactions with the QR-Code.js library
-import { QRCodeJs as QRCodeJsLib } from '@qr-platform/qr-code.js' // Renaming to avoid conflict with local variable
+import { QRCodeJs as QRCodeJsLib, QRCodeJsOptions } from '@qr-platform/qr-code.js' // Renaming to avoid conflict with local variable
+import { SettingsOptions } from '@qr-platform/qr-code.js/lib/types/settings-options'
 
 // Define the QRCodeJs interface based on the usage in the example
 // We'll assume the imported QRCodeJsLib matches this structure for now.
 // If not, this interface might need to be updated or removed in favor of types from the library.
-interface QRCodeJsStatic {
-  setTemplate: (template: string) => typeof QRCodeJsLib
-  setStyle: (style: any) => typeof QRCodeJsLib
-  setStyleId: (styleId: string | null) => Promise<typeof QRCodeJsLib>
-  setTemplateId: (templateId: string | null) => Promise<typeof QRCodeJsLib>
-  setBorderId: (borderId: string | null) => Promise<typeof QRCodeJsLib>
-  setTextId: (textId: string | null) => Promise<typeof QRCodeJsLib>
-  setImage: (imageUrl: string | null) => Promise<typeof QRCodeJsLib>
-  token: (token: string) => Promise<void>
-  useStyle: (style: any) => typeof QRCodeJsLib
-  useTemplate: (template: string) => typeof QRCodeJsLib
-  useSettings: (settings: QRCodeSettings) => typeof QRCodeJsLib
-  build: () => QRCodeInstance
-  new (options: QRCodeOptions): QRCodeInstance // This is the constructor signature
-  setOptions: (options: any, overrideOpts?: any) => Promise<typeof QRCodeJsLib>
-}
 
-interface QRCodeSettings {
-  id?: string
-  description?: string
-  style?: { primaryColor?: string; secondaryColor?: string }
-  template?: string
-  data: string
-  image?: string
-  imageOptions?: {
-    imageSize?: number
-    margin?: number
-    roundedValue?: number
-  }
+interface GenerateQRCodeOptions {
+  element: HTMLElement
+  data?: string
+  templateId?: string | null
+  template?: string | null
+  styleId?: string | null
+  style?: string | null
+  image?: string | null
+  text?: string | null
+  textId?: string | null
+  options?: QRCodeJsOptions
 }
-
-interface QRCodeOptions {
-  data: string
-  image?: string
-  imageOptions?: {
-    imageSize?: number
-    margin?: number
-    roundedValue?: number
-  }
-  shape?: string
-  margin?: number
-  qrOptions?: {
-    errorCorrectionLevel?: 'L' | 'M' | 'Q' | 'H'
-    typeNumber?: number
-  }
-  dotsOptions?: {
-    type?: string
-    color?: string
-    size?: number
-  }
-  cornersSquareOptions?: {
-    type?: string
-    color?: string
-  }
-  cornersDotOptions?: {
-    type?: string
-    color?: string
-  }
-  backgroundOptions?: {
-    color?: string
-    round?: number
-  }
-}
-
-interface QRCodeInstance {
-  append: (element: HTMLElement) => Promise<void>
-  validateScanning: (
-    validatorId?: string
-  ) => Promise<{ isValid: boolean; reason?: string }>
-  download: (options: {
-    extension: 'svg' | 'png'
-    width?: number
-    height?: number
-  }) => void
-  getSettings: () => QRCodeSettings
-  getId: () => string
-}
-
-// Global declaration is no longer needed as we import the module.
-// declare global {
-//   interface Window {
-//     QRCodeJs?: QRCodeJsStatic
-//   }
-// }
 
 // Token for authentication
 const AUTH_TOKEN =
@@ -97,8 +27,7 @@ const AUTH_TOKEN =
 export class QRCodeService {
   private static instance: QRCodeService
   private isInitialized = false
-  private currentQRCode: QRCodeInstance | null = null
-  private QRCodeJs: QRCodeJsStatic | null = null // Will hold the imported QRCodeJsLib module
+  private qr: QRCodeJsLib | null = null
 
   private constructor() {}
 
@@ -115,16 +44,12 @@ export class QRCodeService {
     }
 
     try {
-      // QRCodeJs is now imported directly
       if (!QRCodeJsLib) {
         throw new Error('QRCodeJs library not loaded via import')
       }
 
-      this.QRCodeJs = QRCodeJsLib as unknown as QRCodeJsStatic // Assign imported module
-
-      // Set authentication token
       try {
-        await this.QRCodeJs.token(AUTH_TOKEN)
+        await QRCodeJsLib.token(AUTH_TOKEN)
       } catch (tokenError) {
         console.error('Error setting token:', tokenError)
         throw new Error(
@@ -144,17 +69,20 @@ export class QRCodeService {
   // loadQRCodeJsScript is no longer needed.
   // setupMockQRCode is no longer needed as the library is imported.
 
-  public async generateQRCode(
-    element: HTMLElement,
-    data: string,
-    templateId: string | null,
-    styleId: string | null,
-    imageUrl: string | null,
-    textTemplateId: string | null,
-    advancedOptions?: any
-  ): Promise<boolean> {
+  public async generateQRCode({
+    element,
+    data,
+    templateId,
+    template,
+    styleId,
+    style,
+    image,
+    text,
+    textId,
+    options
+  }: GenerateQRCodeOptions): Promise<boolean> {
+    console.log('element', element)
     if (!element) {
-      console.error('generateQRCode called with a null element.')
       return false
     }
 
@@ -174,88 +102,57 @@ export class QRCodeService {
             </div>
           `
         }
-        return false
+        console.error('QR Code service initialization failed')
+        throw new Error('QR Code service initialization failed')
       }
     }
 
     try {
-      if (!this.QRCodeJs) {
+      if (QRCodeJsLib == null) {
         throw new Error('QRCodeJs not initialized in generateQRCode')
       }
-      // Clear the element
-      if (element) {
-        element.innerHTML = ''
-      } else {
-        // This path should ideally not be reached if the top-level guard is effective
-        console.error(
-          'Element is null immediately before clearing innerHTML in generateQRCode try block.'
-        )
-        return false // Prevent further execution if element is unexpectedly null here
-      }
 
-      // Apply settings
+      const qrCodeSettings = {
+        data: data ?? 'https://qr-platform.com'
+      } as SettingsOptions
+
       if (templateId) {
-        await this.QRCodeJs.setTemplateId(templateId)
+        qrCodeSettings.templateId = templateId
+      } else if (template) {
+        qrCodeSettings.template = template
+      }
+      if (style) {
+        qrCodeSettings.style = style
+      } else if (styleId) {
+        qrCodeSettings.styleId = styleId
       }
 
-      if (styleId) {
-        await this.QRCodeJs.setStyleId(styleId)
+      if (image) {
+        qrCodeSettings.image = image
       }
 
-      if (textTemplateId) {
-        await this.QRCodeJs.setTextId(textTemplateId)
+      if (textId) {
+        qrCodeSettings.textId = textId
+      } else if (text) {
+        qrCodeSettings.text = text
       }
 
-      await this.QRCodeJs.setImage(imageUrl)
-
-      // Apply advanced options if provided
-      if (advancedOptions) {
-        const options = {
-          shape: advancedOptions.shape?.type,
-          margin: advancedOptions.shape?.margin,
-          qrOptions: {
-            errorCorrectionLevel: advancedOptions.errorCorrection
-          },
-          dotsOptions: {
-            type: advancedOptions.dots?.type,
-            color: advancedOptions.dots?.color,
-            size: advancedOptions.dots?.size
-          },
-          cornersSquareOptions: {
-            type: advancedOptions.corners?.squareType,
-            color: advancedOptions.corners?.squareColor
-          },
-          cornersDotOptions: {
-            type: advancedOptions.corners?.dotType,
-            color: advancedOptions.corners?.dotColor
-          },
-          backgroundOptions: {
-            color: advancedOptions.background?.color,
-            round: advancedOptions.background?.round
-          }
-        }
-
-        await this.QRCodeJs.setOptions(options)
+      if (options) {
+        qrCodeSettings.options = options
       }
 
-      // Create QR code instance
-      const qrOptions = {
-        data: data || 'https://example.com',
-        imageOptions: {
-          imageSize: 0.4,
-          margin: 0.5,
-          roundedValue: 0.5
-        }
-      }
+      this.qr = QRCodeJsLib.useSettings(qrCodeSettings).build()
 
-      // QRCodeJs from the library is expected to be a class with a constructor
-      this.currentQRCode = new (this.QRCodeJs as any)(qrOptions)
-
-      if (!this.currentQRCode) {
+      if (!this.qr) {
         throw new Error('Failed to create QR code instance')
       }
 
-      await this.currentQRCode.append(element)
+      // Clear the element before appending the QR code
+      if (element) {
+        element.innerHTML = ''
+      }
+
+      await this.qr.append(element)
 
       return true
     } catch (error) {
@@ -277,13 +174,12 @@ export class QRCodeService {
   }
 
   public async validateQRCode(): Promise<{ isValid: boolean; reason?: string }> {
-    if (!this.currentQRCode) {
+    if (!this.qr) {
       return { isValid: false, reason: 'No QR code has been generated' }
     }
 
     try {
-      const defaultValidatorId = 'default'
-      return await this.currentQRCode.validateScanning(defaultValidatorId)
+      return await this.qr.validateScanning()
     } catch (error) {
       console.error('Failed to validate QR code:', error)
       return {
@@ -293,16 +189,16 @@ export class QRCodeService {
     }
   }
 
-  public downloadQRCode(format: 'svg' | 'png'): boolean {
-    if (!this.currentQRCode) {
+  public async downloadQRCode(format: 'svg' | 'png'): Promise<boolean> {
+    if (!this.qr) {
       return false
     }
 
     try {
       if (format === 'png') {
-        this.currentQRCode.download({ extension: 'png', width: 535, height: 460 })
+        await this.qr.download({ extension: 'png' })
       } else {
-        this.currentQRCode.download({ extension: 'svg' })
+        await this.qr.download({ extension: 'svg' })
       }
       return true
     } catch (error) {

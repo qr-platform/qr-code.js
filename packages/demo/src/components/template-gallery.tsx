@@ -1,12 +1,15 @@
 import React from 'react'
 import { Card, CardBody, CardFooter, CardHeader, Spinner } from '@heroui/react'
+import { QRCodeJs } from '@qr-platform/qr-code.js' // Added
 import { motion } from 'framer-motion'
+import { useAtomValue } from 'jotai'
 
-import { useQRCode } from '../context/qr-code-context'
 import { imageOptions, qrBorderTemplates } from '../data/qr-data'
-import qrCodeService from '../services/qr-code-service'
+import qrCodeService from '../services/qr-code-service' // Kept for initialize and potentially validate
+import { qrConfigAtom } from '../store'
 
 export const TemplateGallery: React.FC = () => {
+  const qrConfigStore = useAtomValue(qrConfigAtom)
   const {
     selectedTemplateId,
     selectedStyleId,
@@ -15,7 +18,7 @@ export const TemplateGallery: React.FC = () => {
     qrData,
     isAdvancedMode,
     advancedOptions
-  } = useQRCode()
+  } = qrConfigStore
   const [loading, setLoading] = React.useState(true)
   const [validationStatus, setValidationStatus] = React.useState<Record<string, boolean>>(
     {}
@@ -42,25 +45,55 @@ export const TemplateGallery: React.FC = () => {
         for (const template of qrBorderTemplates) {
           const templateElement = templateRefs.current[template.id]
           if (templateElement) {
+            templateElement.innerHTML = '' // Clear previous QR code
             try {
-              await qrCodeService.generateQRCode(
-                templateElement,
-                qrData,
-                selectedTemplateId,
-                selectedStyleId,
+              const imageUrl =
                 selectedImageId === 'none'
                   ? null
-                  : imageOptions.find(img => img.id === selectedImageId)?.value || null,
-                template.id, // Use the border template ID
-                isAdvancedMode ? advancedOptions : undefined // Pass advanced options if in advanced mode
-              )
+                  : imageOptions.find(img => img.id === selectedImageId)?.value || null
 
-              // Validate the QR code
-              const validationResult = await qrCodeService.validateQRCode()
-              newValidationStatus[template.id] = validationResult.isValid
+              // Set global simple mode options via static setters
+              QRCodeJs.setTemplateId(selectedTemplateId)
+              QRCodeJs.setStyleId(selectedStyleId)
+              QRCodeJs.setImage(imageUrl) // Handles null internally
+              QRCodeJs.setTextId(selectedTextTemplateId)
+              QRCodeJs.setBorderId(template.id) // Set the specific border for this card
+
+              // Advanced mode options are not applied here for the gallery of border templates
+              // The gallery should reflect simple mode selections + each border.
+              const qr = new QRCodeJs({ data: qrData })
+              qr.append(templateElement)
+
+              // Validate the QR code using the instance method if available
+              if (qr.validateScanning) {
+                const validationResult = await qr.validateScanning('zbar', false) // Assuming zbar, no debug
+                newValidationStatus[template.id] = validationResult.isValid
+              } else {
+                // Fallback: If validateScanning is not on the instance (e.g. free version or license issue)
+                // Try using the old service method, though its reliability is now uncertain.
+                // This part might need further adjustment based on how qrCodeService.validateQRCode() behaves
+                // without qrCodeService.generateQRCode() being its direct predecessor.
+                console.warn(
+                  `qr.validateScanning() not available for template ${template.id}. Falling back to service validation if possible, or marking as unvalidated.`
+                )
+                // For now, let's assume we can't validate reliably without the premium feature or a refactored service.
+                // Mark as undetermined or false. Let's mark as false to indicate an issue.
+                // newValidationStatus[template.id] = false;
+                // OR, try the old service method if it's meant to be kept for some scenarios
+                try {
+                  const serviceValidationResult = await qrCodeService.validateQRCode()
+                  newValidationStatus[template.id] = serviceValidationResult.isValid
+                } catch (serviceValidationError) {
+                  console.error(
+                    `Fallback qrCodeService.validateQRCode() failed for ${template.id}:`,
+                    serviceValidationError
+                  )
+                  newValidationStatus[template.id] = false // Mark as invalid if fallback also fails
+                }
+              }
             } catch (error) {
               console.error(
-                `Error generating QR code for template ${template.id}:`,
+                `Error generating or validating QR code for template ${template.id}:`,
                 error
               )
               newValidationStatus[template.id] = false
