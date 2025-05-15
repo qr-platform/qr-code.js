@@ -14,6 +14,7 @@ export default defineConfig({
     vitePluginInjectDataLocator()
   ],
   server: {
+    port: 3000,
     allowedHosts: true
   }
 })

@@ -71,7 +71,6 @@ const defaultAdvancedOptions: AdvancedQROptions = {
 export interface QRCodePreset {
   name: string
   qrData: string
-  isAdvancedMode: boolean
   selectedTemplateId?: string
   selectedStyleId?: string
   selectedBorderId?: string
@@ -87,7 +86,10 @@ export interface QRConfigState {
   selectedBorderId: string
   selectedTextTemplateId: string
   selectedImageId: string
+  editMode: string
   isAdvancedMode: boolean
+  isCodeMode: boolean
+  isPreviewMode: boolean
   advancedOptions: AdvancedQROptions
 
   initialDefaultQrData: string
@@ -96,7 +98,7 @@ export interface QRConfigState {
   initialDefaultSelectedBorderId: string
   initialDefaultSelectedTextTemplateId: string
   initialDefaultSelectedImageId: string
-  initialDefaultIsAdvancedMode: boolean
+  initialDefaultEditMode: string
   initialDefaultAdvancedOptions: AdvancedQROptions
 
   setQrData: (data: string) => void
@@ -105,7 +107,7 @@ export interface QRConfigState {
   setSelectedBorderId: (id: string) => void
   setSelectedTextTemplateId: (id: string) => void
   setSelectedImageId: (id: string) => void
-  setIsAdvancedMode: (isAdvanced: boolean) => void
+  setEditMode: (mode: string) => void
   setAdvancedOptions: (options: Partial<AdvancedQROptions>) => void
   setAdvancedOption: <K extends keyof AdvancedQROptions>(
     key: K,
@@ -163,7 +165,11 @@ const useQrConfigStore = create<QRConfigState>((set, get) => ({
   selectedBorderId: initialBorderId,
   selectedTextTemplateId: initialTextTemplateId,
   selectedImageId: initialImageId,
+  editMode: 'Templates',
   isAdvancedMode: false,
+  isCodeMode: false,
+  isPreviewMode: false,
+  initialDefaultEditMode: 'Templates',
   advancedOptions: JSON.parse(JSON.stringify(defaultAdvancedOptions)), // Deep copy
 
   initialDefaultQrData: initialQrData,
@@ -172,7 +178,6 @@ const useQrConfigStore = create<QRConfigState>((set, get) => ({
   initialDefaultSelectedBorderId: initialBorderId,
   initialDefaultSelectedTextTemplateId: initialTextTemplateId,
   initialDefaultSelectedImageId: initialImageId,
-  initialDefaultIsAdvancedMode: false,
   initialDefaultAdvancedOptions: JSON.parse(JSON.stringify(defaultAdvancedOptions)), // Deep copy
 
   setQrData: data => {
@@ -183,7 +188,13 @@ const useQrConfigStore = create<QRConfigState>((set, get) => ({
   setSelectedBorderId: id => set({ selectedBorderId: id }),
   setSelectedTextTemplateId: id => set({ selectedTextTemplateId: id }),
   setSelectedImageId: id => set({ selectedImageId: id }),
-  setIsAdvancedMode: isAdvanced => set({ isAdvancedMode: isAdvanced }),
+  setEditMode: mode =>
+    set({
+      editMode: mode,
+      isAdvancedMode: mode === 'Advanced',
+      isCodeMode: mode === 'Code',
+      isPreviewMode: mode === 'Preview'
+    }),
   setAdvancedOptions: options =>
     set(state => ({
       advancedOptions: { ...state.advancedOptions, ...options }
@@ -260,7 +271,7 @@ const useQrConfigStore = create<QRConfigState>((set, get) => ({
       selectedBorderId: state.initialDefaultSelectedBorderId,
       selectedTextTemplateId: state.initialDefaultSelectedTextTemplateId,
       selectedImageId: state.initialDefaultSelectedImageId,
-      isAdvancedMode: state.initialDefaultIsAdvancedMode,
+      editMode: state.initialDefaultEditMode,
       advancedOptions: JSON.parse(JSON.stringify(state.initialDefaultAdvancedOptions)) // Deep copy
     })),
 
@@ -269,7 +280,6 @@ const useQrConfigStore = create<QRConfigState>((set, get) => ({
     const preset: QRCodePreset = {
       name: presetName,
       qrData: state.qrData,
-      isAdvancedMode: state.isAdvancedMode,
       selectedTemplateId: state.selectedTemplateId,
       selectedStyleId: state.selectedStyleId,
       selectedBorderId: state.selectedBorderId,
@@ -298,7 +308,6 @@ const useQrConfigStore = create<QRConfigState>((set, get) => ({
       if (preset) {
         set({
           qrData: preset.qrData,
-          isAdvancedMode: preset.isAdvancedMode,
           selectedTemplateId:
             preset.selectedTemplateId || get().initialDefaultSelectedTemplateId,
           selectedStyleId: preset.selectedStyleId || get().initialDefaultSelectedStyleId,
@@ -344,7 +353,6 @@ const useQrConfigStore = create<QRConfigState>((set, get) => ({
     const preset: QRCodePreset = {
       name: `QRCodePreset_${new Date().toISOString().slice(0, 10)}`, // Default name
       qrData: state.qrData,
-      isAdvancedMode: state.isAdvancedMode,
       selectedTemplateId: state.selectedTemplateId,
       selectedStyleId: state.selectedStyleId,
       selectedBorderId: state.selectedBorderId,
@@ -377,17 +385,12 @@ const useQrConfigStore = create<QRConfigState>((set, get) => ({
       const preset = JSON.parse(text) as QRCodePreset
 
       // Basic validation
-      if (
-        typeof preset.name !== 'string' ||
-        typeof preset.qrData !== 'string' ||
-        typeof preset.isAdvancedMode !== 'boolean'
-      ) {
+      if (typeof preset.name !== 'string' || typeof preset.qrData !== 'string') {
         throw new Error('Invalid preset file format.')
       }
 
       set({
         qrData: preset.qrData,
-        isAdvancedMode: preset.isAdvancedMode,
         selectedTemplateId:
           preset.selectedTemplateId || get().initialDefaultSelectedTemplateId,
         selectedStyleId: preset.selectedStyleId || get().initialDefaultSelectedStyleId,

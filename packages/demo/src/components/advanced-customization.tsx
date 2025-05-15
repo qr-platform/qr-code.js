@@ -119,11 +119,15 @@ export const AdvancedCustomization: React.FC = () => {
   return (
     <div className="space-y-6">
       <Input
-        label="QR Code Data (Advanced)"
-        placeholder="Enter URL or text for advanced QR"
+        label="QR Code Link or Data"
+        placeholder="Enter URL or text"
         value={advancedOptions.data}
+        classNames={{
+          inputWrapper: 'border-blue-200',
+          label: 'mb-1'
+        }}
         onValueChange={value => handleAdvancedOptionChange('data', value)}
-        variant="bordered"
+        variant="faded"
         className="mb-4"
       />
       <Tabs aria-label="QR Code Advanced Options" color="primary" variant="underlined">

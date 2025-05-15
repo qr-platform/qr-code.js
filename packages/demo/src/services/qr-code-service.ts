@@ -81,7 +81,6 @@ export class QRCodeService {
     textId,
     options
   }: GenerateQRCodeOptions): Promise<boolean> {
-    console.log('element', element)
     if (!element) {
       return false
     }

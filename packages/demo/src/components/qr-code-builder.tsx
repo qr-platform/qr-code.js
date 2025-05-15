@@ -1,7 +1,16 @@
 import React, { useEffect, useState } from 'react'
-import { Card, CardBody, Input, Select, SelectItem, Switch } from '@heroui/react'
-import { Icon } from '@iconify/react'
+import { Card, CardBody, Input, Select, SelectItem, Tab, Tabs } from '@heroui/react'
 import { useAtomValue } from 'jotai'
+import {
+  Code,
+  Image,
+  LayoutTemplate,
+  Link as LinkIcon,
+  Palette,
+  Settings,
+  Square,
+  Text
+} from 'lucide-react'
 import { useDebounceCallback } from 'usehooks-ts'
 
 import {
@@ -24,12 +33,13 @@ export const QRCodeBuilder: React.FC = () => {
     selectedTextTemplateId,
     selectedBorderId,
     qrData,
-    setIsAdvancedMode,
-    setQrData,
-    isAdvancedMode
+    editMode,
+    setEditMode,
+    setQrData
   } = qrConfig
 
   const [qrCodeData, setQrCodeData] = useState(qrData)
+  // const [editMode, setEditMode] = useState('Templates')
   const debouncedSetQrData = useDebounceCallback(setQrData, 500)
 
   useEffect(() => {
@@ -44,23 +54,50 @@ export const QRCodeBuilder: React.FC = () => {
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-semibold">QR Code Configuration</h2>
               <div className="flex items-center gap-2">
-                <span className="text-sm text-default-600">Advanced Mode</span>
-                <Switch
-                  size="sm"
-                  isSelected={isAdvancedMode}
-                  onValueChange={checked => {
-                    setIsAdvancedMode(checked)
+                <Tabs
+                  key="solid"
+                  aria-label="Tabs variants"
+                  variant="solid"
+                  onSelectionChange={selectedMode => {
+                    setEditMode(selectedMode as string)
                   }}
-                  color="primary"
-                />
+                >
+                  <Tab
+                    key="Templates"
+                    title={
+                      <div className="flex items-center space-x-2">
+                        <LayoutTemplate className="text-default-400 w-4 h-4" />
+                        <span>Templates</span>
+                      </div>
+                    }
+                  />
+                  <Tab
+                    key="Advanced"
+                    title={
+                      <div className="flex items-center space-x-2">
+                        <Settings className="text-default-400 w-4 h-4" />
+                        <span>Advanced</span>
+                      </div>
+                    }
+                  />
+                  <Tab
+                    key="Code"
+                    title={
+                      <div className="flex items-center space-x-2">
+                        <Code className="text-default-400 w-4 h-4" />
+                        <span>Code</span>
+                      </div>
+                    }
+                  />
+                </Tabs>
               </div>
             </div>
 
-            {!isAdvancedMode ? (
+            {editMode === 'Templates' ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Input
-                    label="QR Code Data"
+                    label="QR Code Link or Data"
                     placeholder="Enter URL or text"
                     value={qrCodeData}
                     onValueChange={value => {
@@ -71,9 +108,7 @@ export const QRCodeBuilder: React.FC = () => {
                       label: 'mb-1'
                     }}
                     variant="faded"
-                    startContent={
-                      <Icon icon="lucide:link" className="text-default-400" />
-                    }
+                    startContent={<LinkIcon className="text-default-400 w-5 h-5" />}
                   />
                 </div>
 
@@ -92,9 +127,7 @@ export const QRCodeBuilder: React.FC = () => {
                     }
                   }}
                   variant="bordered"
-                  startContent={
-                    <Icon icon="lucide:layout-template" className="text-default-400" />
-                  }
+                  startContent={<LayoutTemplate className="text-default-400 w-5 h-5" />}
                 >
                   {[
                     <SelectItem key="start" textValue="-- Dynamic (Original Logic) --">
@@ -121,9 +154,7 @@ export const QRCodeBuilder: React.FC = () => {
                     if (qrConfig.setSelectedStyleId) qrConfig.setSelectedStyleId(selected)
                   }}
                   variant="bordered"
-                  startContent={
-                    <Icon icon="lucide:palette" className="text-default-400" />
-                  }
+                  startContent={<Palette className="text-default-400 w-5 h-5" />}
                 >
                   {[
                     <SelectItem key="" textValue="-- Use Template's Style --">
@@ -150,7 +181,7 @@ export const QRCodeBuilder: React.FC = () => {
                     if (qrConfig.setSelectedImageId) qrConfig.setSelectedImageId(selected)
                   }}
                   variant="bordered"
-                  startContent={<Icon icon="lucide:image" className="text-default-400" />}
+                  startContent={<Image className="text-default-400 w-5 h-5" />}
                 >
                   {imageOptions.map(img => (
                     <SelectItem key={img.id} textValue={img.name} title={img.name}>
@@ -174,7 +205,7 @@ export const QRCodeBuilder: React.FC = () => {
                     }
                   }}
                   variant="bordered"
-                  startContent={<Icon icon="lucide:text" className="text-default-400" />}
+                  startContent={<Text className="text-default-400 w-5 h-5" />}
                 >
                   {[
                     <SelectItem key="" textValue="-- No Text Override --">
@@ -203,9 +234,7 @@ export const QRCodeBuilder: React.FC = () => {
                   }}
                   itemHeight={40}
                   variant="bordered"
-                  startContent={
-                    <Icon icon="lucide:square" className="text-default-400" />
-                  }
+                  startContent={<Square className="text-default-400 w-5 h-5" />}
                 >
                   {[
                     <SelectItem key="" textValue="-- No Border --">
@@ -219,8 +248,25 @@ export const QRCodeBuilder: React.FC = () => {
                   ]}
                 </Select>
               </div>
-            ) : (
+            ) : editMode === 'Advanced' ? (
               <AdvancedCustomization />
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Input
+                  label="QR Code Link or Data"
+                  placeholder="Enter URL or text"
+                  value={qrCodeData}
+                  classNames={{
+                    inputWrapper: 'border-blue-200',
+                    label: 'mb-1'
+                  }}
+                  onValueChange={value => {
+                    setQrCodeData(value)
+                  }}
+                  variant="faded"
+                  startContent={<LinkIcon className="text-default-400 w-5 h-5" />}
+                />
+              </div>
             )}
           </CardBody>
         </Card>

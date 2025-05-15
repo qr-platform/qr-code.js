@@ -9,9 +9,9 @@ import {
   Spinner,
   Tooltip
 } from '@heroui/react'
-import { Icon } from '@iconify/react'
 import { Options as QRCodeJsOptions } from '@qr-platform/qr-code.js' // QRCodeJs direct import removed
 import { useAtomValue } from 'jotai'
+import { CheckCircle, Download, Image } from 'lucide-react'
 
 // import { imageOptions } from '../data/qr-data'
 import qrCodeService from '../services/qr-code-service'
@@ -89,7 +89,6 @@ export const QRCodePreview: React.FC = () => {
             }
           } else {
             // Simple Mode
-            console.log('qrData', qrData)
             if (qrData) {
               generationSuccess = await qrCodeService.generateQRCode({
                 element: qrContainerRef.current!,
@@ -291,7 +290,7 @@ export const QRCodePreview: React.FC = () => {
               }
               isLoading={isValidating}
               onPress={handleValidate}
-              startContent={<Icon icon="lucide:check-circle" />}
+              startContent={<CheckCircle className="w-4 h-4" />}
             >
               Validate
             </Button>
@@ -300,7 +299,7 @@ export const QRCodePreview: React.FC = () => {
           <Tooltip content="Download as SVG">
             <Button
               onPress={() => void handleDownload('svg')}
-              startContent={<Icon icon="lucide:download" />}
+              startContent={<Download className="w-4 h-4" />}
             >
               SVG
             </Button>
@@ -309,7 +308,7 @@ export const QRCodePreview: React.FC = () => {
           <Tooltip content="Download as PNG">
             <Button
               onPress={() => void handleDownload('png')}
-              startContent={<Icon icon="lucide:image" />}
+              startContent={<Image className="w-4 h-4" />}
             >
               PNG
             </Button>
