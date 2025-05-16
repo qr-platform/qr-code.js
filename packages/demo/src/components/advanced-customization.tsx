@@ -23,6 +23,7 @@ import {
   ShapeType
 } from '@qr-platform/qr-code.js'
 import { useAtomValue } from 'jotai'
+import { LinkIcon } from 'lucide-react'
 
 import { qrConfigAtom } from '../store'
 import GradientEditor from './GradientEditor'
@@ -128,7 +129,7 @@ export const AdvancedCustomization: React.FC = () => {
         }}
         onValueChange={value => handleAdvancedOptionChange('data', value)}
         variant="faded"
-        className="mb-4"
+        startContent={<LinkIcon className="text-default-400 w-5 h-5" />}
       />
       <Tabs aria-label="QR Code Advanced Options" color="primary" variant="underlined">
         <Tab key="general" title="General">

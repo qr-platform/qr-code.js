@@ -24,7 +24,7 @@ export const QRCodePreview: React.FC = () => {
     selectedStyleId,
     selectedImageId,
     selectedTextTemplateId,
-    selectedBorderId, // Note: qrCodeService.generateQRCode doesn't explicitly use this.
+    selectedBorderId,
     qrData,
     isAdvancedMode,
     advancedOptions
@@ -100,6 +100,7 @@ export const QRCodePreview: React.FC = () => {
                 image: null,
                 text: null, // text (raw content)
                 textId: selectedTextTemplateId,
+                borderId: selectedBorderId,
                 options: { isResponsive: true }
               })
               generationAttempted = true

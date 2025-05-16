@@ -7,7 +7,7 @@ import { UrlSyncHandler } from './context/qr-code-context' // Changed import
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-800 py-8 px-4">
+    <div className="bg-gray-100 dark:bg-gray-800 py-8 px-4">
       <UrlSyncHandler /> {/* Added UrlSyncHandler */}
       <div className="max-w-7xl mx-auto">
         <Card className="shadow-sm border border-default-200 rounded-lg">
@@ -24,7 +24,7 @@ export default function App() {
             </p>
           </CardHeader>
           <Divider />
-          <CardBody className="flex flex-col gap-8 bg-gray-50 dark:bg-gray-900">
+          <CardBody className="flex flex-col gap-8 bg-gray-50 dark:bg-gray-900 h-full overflow-y-hidden">
             {/* QRCodeProvider removed */}
             <div className="flex flex-col gap-8">
               <QRCodeBuilder />

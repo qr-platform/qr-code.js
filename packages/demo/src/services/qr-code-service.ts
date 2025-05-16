@@ -16,6 +16,8 @@ interface GenerateQRCodeOptions {
   image?: string | null
   text?: string | null
   textId?: string | null
+  borderId?: string | null
+  border?: string | null
   options?: QRCodeJsOptions
 }
 
@@ -74,6 +76,8 @@ export class QRCodeService {
     data,
     templateId,
     template,
+    borderId,
+    border,
     styleId,
     style,
     image,
@@ -136,11 +140,23 @@ export class QRCodeService {
         qrCodeSettings.text = text
       }
 
-      if (options) {
-        qrCodeSettings.options = options
+      if (borderId) {
+        qrCodeSettings.borderId = borderId
+      } else if (border) {
+        qrCodeSettings.border = border
       }
 
-      this.qr = QRCodeJsLib.useSettings(qrCodeSettings).build()
+      // if (options) {
+      //   qrCodeSettings.options = options
+      // }
+
+      console.log('qrCodeSettings', qrCodeSettings)
+
+      QRCodeJsLib.setSettings(qrCodeSettings)
+
+      this.qr = new QRCodeJsLib(options ?? {})
+
+      // this.qr = QRCodeJsLib.useSettings(qrCodeSettings).build()
 
       if (!this.qr) {
         throw new Error('Failed to create QR code instance')

@@ -44,7 +44,7 @@
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "10.4.20",
     "babel-plugin-react-compiler": "^19.1.0-rc.2",
-    "eslint": "^8",
+    "eslint": "^9",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-jsdoc": "^50.6.3",
