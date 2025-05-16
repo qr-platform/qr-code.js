@@ -1,7 +1,5 @@
-import * as _browserUtils from '../tools/browser-utils.js';
 export { ErrorCorrectionLevel, Mode, TypeNumber } from '~/lib/qrcode/QRCodeMinimal.js';
 export { QRCodeJs, type ExtensionFunction } from '../core/qr-code-js.js';
-export { FileExtension } from '../tools/browser-utils.js';
 export { type RecursivePartial } from '../types/helper.js';
 export { type CanvasOptions } from '../utils/canvas-options.js';
 export { GradientType, type Gradient } from '../utils/gradient';
@@ -126,4 +124,3 @@ export declare const codes: {
         };
     };
 }[];
-export declare const browserUtils: typeof _browserUtils | undefined;

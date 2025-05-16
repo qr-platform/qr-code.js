@@ -1,5 +1,11 @@
 # @qr-platform/qr-code-js
 
+## 0.10.6
+
+### Patch Changes
+
+- f3f47fc: Streamline QR code decoration options and enhance canvas rendering capabilities
+
 ## 0.10.5
 
 ### Patch Changes
