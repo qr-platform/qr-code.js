@@ -16,7 +16,7 @@
   "dependencies": {
     "@heroui/react": "2.7.8",
     "@iconify/react": "latest",
-    "@qr-platform/qr-code.js": "^0.10.5",
+    "@qr-platform/qr-code.js": "file:../..",
     "framer-motion": "^11.18.2",
     "install": "^0.13.0",
     "jotai": "^2.12.4",

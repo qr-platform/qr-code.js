@@ -146,9 +146,9 @@ export class QRCodeService {
         qrCodeSettings.border = border
       }
 
-      // if (options) {
-      //   qrCodeSettings.options = options
-      // }
+      if (options) {
+        qrCodeSettings.options = options
+      }
 
       console.log('qrCodeSettings', qrCodeSettings)
 
@@ -156,7 +156,9 @@ export class QRCodeService {
 
       this.qr = new QRCodeJsLib(options ?? {})
 
-      // this.qr = QRCodeJsLib.useSettings(qrCodeSettings).build()
+      // this.qr = QRCodeJsLib.useSettings(qrCodeSettings).options(options ?? {})
+
+      // console.log('this.qr.getSettings()', this.qr.getSettings())
 
       if (!this.qr) {
         throw new Error('Failed to create QR code instance')
@@ -211,7 +213,12 @@ export class QRCodeService {
 
     try {
       if (format === 'png') {
-        await this.qr.download({ extension: 'png' })
+        await this.qr.download(
+          { extension: 'png' },
+          {
+            width: 600
+          }
+        )
       } else {
         await this.qr.download({ extension: 'svg' })
       }
