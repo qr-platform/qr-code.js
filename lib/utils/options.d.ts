@@ -3,6 +3,12 @@ import { ErrorCorrectionLevel, Mode, TypeNumber } from '~/lib/qrcode/QRCodeMinim
 import { QRBorderPluginStyleOptions } from '../plugins/QRBorderPlugin';
 import { browserImageTools } from '../tools/browser-image-tools';
 import { Gradient } from './gradient';
+export declare enum FileExtension {
+    svg = "svg",
+    png = "png",
+    jpeg = "jpeg",
+    webp = "webp"
+}
 export interface DecorationOption {
     disabled?: boolean;
     offset?: number;

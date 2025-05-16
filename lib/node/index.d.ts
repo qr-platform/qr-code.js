@@ -8,7 +8,6 @@ import { ScanValidatorResponse } from './utils/scan-validators/abstract-scan-val
 import { type DecodedLicenseToken } from './utils/token-validator';
 export { ErrorCorrectionLevel, Mode, TypeNumber } from './lib/qrcode/QRCodeMinimal';
 export { type ExtensionFunction } from './core/qr-code-js';
-export { FileExtension } from './tools/browser-utils';
 export { type RecursivePartial } from './types/helper';
 export { type CanvasOptions } from './utils/canvas-options';
 export { GradientType, type Gradient } from './utils/gradient';

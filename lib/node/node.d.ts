@@ -1,6 +1,5 @@
 import { QRCodeJs as _QRCodeJs } from './core/qr-code-js';
 import { type ValidationResult } from './license/LicenseManagerNode';
-import type * as _browserUtils from './tools/browser-utils';
 import { MethodOverrideOptions, RecursivePartial } from './types/helper';
 import { SettingsOptions } from './types/settings-options';
 import { StyleOptions } from './types/style-options';
@@ -11,13 +10,11 @@ import { ScanValidatorResponse } from './utils/scan-validators/abstract-scan-val
 import { type DecodedLicenseToken } from './utils/token-validator';
 export { ErrorCorrectionLevel, Mode, TypeNumber } from '~/lib/qrcode/QRCodeMinimal';
 export { type ExtensionFunction } from './core/qr-code-js';
-export { FileExtension } from './tools/browser-utils';
 export { type RecursivePartial } from './types/helper';
 export { type CanvasOptions } from './utils/canvas-options';
 export { GradientType, type Gradient } from './utils/gradient';
 export { CornerDotType, CornerSquareType, DotType, ImageMode, ShapeType, type Options, type BorderOptions } from './utils/options';
 export { ErrorCorrectionPercents } from './utils/qrcode';
-export declare const browserUtils: typeof _browserUtils | undefined;
 type QRCodeJsConstructor = new (options: RecursivePartial<Options>, internal?: boolean) => QRCodeJs;
 export declare class QRCodeJs extends _QRCodeJs {
     static initializeIfNeeded(): Promise<boolean>;

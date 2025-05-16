@@ -151,6 +151,10 @@ export declare class QRCodeJs {
         canvas: HTMLCanvasElement;
         canvasDrawingPromise: Promise<void> | undefined;
     } | undefined>;
+    protected _drawToCanvasPrevious(options?: RecursivePartial<CanvasOptions>): Promise<{
+        canvas: HTMLCanvasElement;
+        canvasDrawingPromise: Promise<void> | undefined;
+    } | undefined>;
     private downloadURI;
     download(downloadOptions?: {
         name?: string;
