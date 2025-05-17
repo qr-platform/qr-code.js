@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, Select, SelectItem } from '@heroui/react'
 import type { Key as AriaKey, Selection } from '@react-types/shared'
-import { ChevronLeft, ChevronRight, LayoutList, Shuffle, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Shuffle, X } from 'lucide-react'
 
 import { useQrConfigStore } from '../../store/qrConfigStore' // Corrected path
 import { Box, Flex } from './boxes'
@@ -148,16 +148,6 @@ const TemplateControls: React.FC<TemplateControlsProps> = ({
         >
           <Shuffle size={18} />
         </Button>
-        {/* <Button
-          isIconOnly
-          variant="light"
-          onPress={() => setActiveGalleryTabId(galleryTabId)}
-          className="border shadow-none"
-          aria-label="Browse Templates"
-          title="Browse Templates"
-        >
-          <LayoutList size={18} />
-        </Button> */}
       </Flex>
     </Box>
   )

@@ -8,7 +8,7 @@ import { UrlSyncHandler } from './context/qr-code-context' // Changed import
 export default function App() {
   return (
     <div className="bg-gray-100 dark:bg-gray-800 py-8 px-4">
-      <UrlSyncHandler /> {/* Added UrlSyncHandler */}
+      <UrlSyncHandler />
       <div className="max-w-7xl mx-auto">
         <Card className="shadow-sm border border-default-200 rounded-lg">
           <CardHeader className="flex flex-col gap-1 bg-transparent">
