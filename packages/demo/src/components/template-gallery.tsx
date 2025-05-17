@@ -131,6 +131,7 @@ export const TemplateGallery: React.FC = () => {
         }
 
         const itemsToRender = activeCategory.source || []
+        const itemsToRender = activeCategory.source || []
         const newValidationStatus: Record<string, boolean> = {}
 
         for (const item of itemsToRender) {
@@ -182,6 +183,7 @@ export const TemplateGallery: React.FC = () => {
               }
             } catch (error) {
               console.error(
+                `Error generating QR code for item ${item.id} in category ${activeCategoryId}:`,
                 `Error generating QR code for item ${item.id} in category ${activeCategoryId}:`,
                 error
               )
