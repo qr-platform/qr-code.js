@@ -131,7 +131,6 @@ export const TemplateGallery: React.FC = () => {
         }
 
         const itemsToRender = activeCategory.source || []
-        const itemsToRender = activeCategory.source || []
         const newValidationStatus: Record<string, boolean> = {}
 
         for (const item of itemsToRender) {
