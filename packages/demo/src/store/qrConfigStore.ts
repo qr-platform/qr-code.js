@@ -7,7 +7,6 @@ import {
   QRCodeJs,
   ShapeType
 } from '@qr-platform/qr-code.js'
-import { atom } from 'jotai'
 import { atomWithStore } from 'jotai-zustand'
 import { create } from 'zustand'
 
@@ -22,8 +21,6 @@ import {
   CornerSquareOptions,
   DotsOptions
 } from '../types/qr-options'
-
-export const requestedGalleryTabIdAtom = atom<string | null>(null)
 
 // Default Advanced Options
 const defaultAdvancedOptions: AdvancedQROptions = {
@@ -90,6 +87,7 @@ export interface QRConfigState {
   isCodeMode: boolean
   isPreviewMode: boolean
   advancedOptions: AdvancedQROptions
+  activeGalleryTabId?: string
 
   initialDefaultQrData: string
   initialDefaultSelectedTemplateId: string
@@ -189,6 +187,8 @@ export interface QRConfigState {
   getSelectedBorderTemplateName: () => string
   getSelectedTextTemplateName: () => string
   getSelectedImageName: () => string
+
+  setActiveGalleryTabId: (tabId: string) => void
 }
 
 // Get templates from QRCodeJs library
@@ -240,6 +240,7 @@ export const useQrConfigStore = create<QRConfigState>((set, get) => {
     isPreviewMode: false,
     initialDefaultEditMode: 'Templates',
     advancedOptions: JSON.parse(JSON.stringify(defaultAdvancedOptions)), // Deep copy
+    activeGalleryTabId: 'base',
 
     initialDefaultQrData: initialQrData,
     initialDefaultSelectedTemplateId: initialTemplateId,
@@ -721,7 +722,8 @@ export const useQrConfigStore = create<QRConfigState>((set, get) => {
       }
       const image = imageOptions.find(img => img.id === state.selectedImageId)
       return image ? image.name : 'Default'
-    }
+    },
+    setActiveGalleryTabId: tabId => set({ activeGalleryTabId: tabId })
   }
 })
 

@@ -5,24 +5,18 @@ import {
   CardFooter,
   CardHeader,
   ScrollShadow,
-  Spinner,
   Tab,
   Tabs
 } from '@heroui/react'
 // Corrected import order, Added Tabs, Tab
 import { motion } from 'framer-motion'
-import { useAtom, useAtomValue } from 'jotai' // Added useAtom
+import { useAtomValue } from 'jotai' // Added useAtom
 
 import { ImageIcon, LayoutTemplate, Palette, Square, TextIcon } from 'lucide-react'
 
 import { imageOptions } from '../data/qr-data'
 import qrCodeService from '../services/qr-code-service'
-import {
-  qrConfigAtom,
-  requestedGalleryTabIdAtom,
-  templatesData,
-  useQrConfigStore
-} from '../store'
+import { qrConfigAtom, templatesData, useQrConfigStore } from '../store'
 import { Flex } from './ui/boxes'
 
 // Define gallery categories
@@ -60,15 +54,17 @@ const galleryCategories = [
 ]
 
 export const TemplateGallery: React.FC = () => {
-  const [requestedTab, setRequestedTab] = useAtom(requestedGalleryTabIdAtom)
   const qrConfigStoreState = useAtomValue(qrConfigAtom)
   const tabsContentRef = useRef<HTMLDivElement | null>(null)
+  const isInternalTabClickRef = useRef(false) // Added to track internal tab clicks
   const {
     setSelectedTemplateId,
     setSelectedBorderId,
     setSelectedStyleId,
     setSelectedImageId,
-    setSelectedTextTemplateId
+    setSelectedTextTemplateId,
+    activeGalleryTabId, // Added
+    setActiveGalleryTabId // Added
   } = useQrConfigStore()
 
   const {
@@ -82,65 +78,47 @@ export const TemplateGallery: React.FC = () => {
     advancedOptions: _advancedOptions // Same as above
   } = qrConfigStoreState
 
-  const [activeCategoryId, setActiveCategoryId] = React.useState<string>('borders')
-  const [loading, setLoading] = React.useState(true)
-  const [validationStatus, setValidationStatus] = React.useState<Record<string, boolean>>(
-    {}
-  )
-  const [itemLoadingStatus, setItemLoadingStatus] = React.useState<
-    Record<string, boolean>
-  >({})
   const templateRefs = React.useRef<Record<string, HTMLDivElement | null>>({})
-
-  const activeCategory = React.useMemo(
-    () =>
-      galleryCategories.find(cat => cat.id === activeCategoryId) || galleryCategories[0],
-    [activeCategoryId]
-  )
+  const activeCategory = galleryCategories.find(cat => cat.id === activeGalleryTabId)
 
   useEffect(() => {
-    if (requestedTab) {
-      const isValidTab = galleryCategories.some(cat => cat.id === requestedTab)
-      if (isValidTab) {
-        setActiveCategoryId(requestedTab)
-        if (tabsContentRef.current) {
+    if (activeGalleryTabId && tabsContentRef.current) {
+      const tabExists = galleryCategories.some(cat => cat.id === activeGalleryTabId)
+      if (tabExists) {
+        if (isInternalTabClickRef.current) {
+          // Change was internal, reset flag and do not scroll
+          isInternalTabClickRef.current = false
+        } else {
+          // Change was external or initial load, proceed with scroll
           tabsContentRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
         }
       }
-      setRequestedTab(null) // Reset atom after processing
     }
-  }, [requestedTab, setActiveCategoryId, setRequestedTab]) // galleryCategories is stable
+  }, [activeGalleryTabId])
 
   React.useEffect(() => {
-    let cancelled = false
+    // let cancelled = false
 
     const generateTemplates = async () => {
-      if (!activeCategory || cancelled) return
-
-      setLoading(true)
-      setValidationStatus({})
-      setItemLoadingStatus({})
-      templateRefs.current = {}
+      if (!activeCategory) return
 
       try {
         const initialized = await qrCodeService.initialize()
         if (!initialized) {
           console.error('Failed to initialize QR code service')
-          setLoading(false)
+          // setLoading(false) // Removed
           return
         }
 
         const itemsToRender = activeCategory.source || []
-        const newValidationStatus: Record<string, boolean> = {}
+        // const newValidationStatus: Record<string, boolean> = {} // Removed
 
         for (const item of itemsToRender) {
-          if (cancelled) break
-
-          setItemLoadingStatus(prev => ({ ...prev, [item.id]: true }))
+          // setItemLoadingStatus(prev => ({ ...prev, [item.id]: true })) // Removed
           const el = templateRefs.current[item.id]
 
           if (el) {
-            el.innerHTML = ''
+            // el.innerHTML = ''
             const baseImage =
               storeSelectedImageId === 'none'
                 ? null
@@ -157,7 +135,7 @@ export const TemplateGallery: React.FC = () => {
               options: { isResponsive: false }
             }
 
-            switch (activeCategoryId) {
+            switch (activeGalleryTabId) {
               case 'base':
                 options.templateId = item.id
                 break
@@ -176,53 +154,53 @@ export const TemplateGallery: React.FC = () => {
             }
 
             try {
-              const success = await qrCodeService.generateQRCode(options)
-              if (!cancelled) {
-                newValidationStatus[item.id] = success
+              if (item.id === 'neon-dark') {
+                console.log('Rendering gallery item:', item.id, options)
               }
+
+              await qrCodeService.generateQRCode(options) // Removed success assignment and validation update
+              // if (!cancelled) {
+              //   newValidationStatus[item.id] = success
+              // }
             } catch (error) {
               console.error(
-                `Error generating QR code for item ${item.id} in category ${activeCategoryId}:`,
-                `Error generating QR code for item ${item.id} in category ${activeCategoryId}:`,
+                // Corrected to remove duplicate message and validation update
+                `Error generating QR code for item ${item.id} in category ${activeGalleryTabId}:`,
                 error
               )
-              if (!cancelled) {
-                newValidationStatus[item.id] = false
-              }
-            } finally {
-              setItemLoadingStatus(prev => ({ ...prev, [item.id]: false }))
-            }
+              // if (!cancelled) {
+              //   newValidationStatus[item.id] = false
+              // }
+            } // finally { // Removed itemLoadingStatus update
+            // setItemLoadingStatus(prev => ({ ...prev, [item.id]: false }))
+            // }
 
-            if (cancelled) break
+            // if (cancelled) break
 
-            await new Promise(resolve => setTimeout(resolve, 50))
-          } else {
-            setItemLoadingStatus(prev => ({ ...prev, [item.id]: false }))
-          }
+            // await new Promise(resolve => setTimeout(resolve, 50)) // Removed delay
+          } // else { // Removed itemLoadingStatus update
+          // setItemLoadingStatus(prev => ({ ...prev, [item.id]: false }))
+          // }
         }
 
-        if (!cancelled) {
-          setValidationStatus(newValidationStatus)
-        }
+        // if (!cancelled) { // Removed validation update
+        //   setValidationStatus(newValidationStatus)
+        // }
       } catch (error) {
         console.error(
-          `Error generating templates for category ${activeCategoryId}:`,
+          `Error generating templates for category ${activeGalleryTabId}:`,
           error
         )
       } finally {
-        if (!cancelled) {
-          setLoading(false)
-        }
+        // if (!cancelled) { // Removed setLoading
+        //   setLoading(false)
+        // }
       }
     }
 
     void generateTemplates()
-
-    return () => {
-      cancelled = true
-    }
   }, [
-    activeCategoryId,
+    activeGalleryTabId,
     qrData,
     storeSelectedTemplateId,
     storeSelectedBorderId,
@@ -233,7 +211,7 @@ export const TemplateGallery: React.FC = () => {
   ])
 
   const handleTemplateSelect = (item: any) => {
-    switch (activeCategoryId) {
+    switch (activeGalleryTabId) {
       case 'base': // Added case for base templates
         setSelectedTemplateId(item.id) // Assuming base templates also use setSelectedTemplateId
         break
@@ -250,7 +228,7 @@ export const TemplateGallery: React.FC = () => {
         setSelectedImageId(item.id)
         break
       default:
-        console.warn(`No selection logic for category: ${activeCategoryId}`)
+        console.warn(`No selection logic for category: ${activeGalleryTabId}`)
     }
     const previewEl = document.getElementById('qr-preview-panel')
     previewEl?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -261,12 +239,15 @@ export const TemplateGallery: React.FC = () => {
   return (
     <div ref={tabsContentRef}>
       <div className="mb-4">
-        <ScrollShadow orientation="horizontal" className="w-full">
+        <ScrollShadow orientation="horizontal" className="w-full mb-4">
           <Tabs
             aria-label="Gallery Categories"
-            selectedKey={activeCategoryId}
+            selectedKey={activeGalleryTabId}
             size="lg"
-            onSelectionChange={key => setActiveCategoryId(key as string)}
+            onSelectionChange={key => {
+              isInternalTabClickRef.current = true
+              setActiveGalleryTabId(key as string)
+            }}
             // variant="underlined" // Using underlined variant for a cleaner look
             // color="primary"
             classNames={{ tab: 'text-md first:pl-3' }}
@@ -276,114 +257,61 @@ export const TemplateGallery: React.FC = () => {
               <Tab
                 key={category.id}
                 title={
-                  <div className="flex items-center gap-2">
+                  <Flex className="gap-2">
                     {category.icon}
                     <span className="text-md">{category.name}</span>
-                  </div>
+                  </Flex>
                 }
               />
             ))}
           </Tabs>
         </ScrollShadow>
-        <Flex className="flex justify-between items-center mb-6">
-          {/* <Box /> */}
-          {/* <Box className="text-default-500 text-sm flex items-center gap-2">
-            <span className="flex items-center gap-1">
-              <span className="w-3 h-3 rounded-full bg-success-500"></span> Valid
-            </span>
-            <span className="flex items-center gap-1">
-              <span className="w-3 h-3 rounded-full bg-danger-500"></span> Invalid
-            </span>
-          </Box> */}
-        </Flex>
-        {loading ? (
-          <div className="flex justify-center items-center py-16">
-            <Spinner
-              size="lg"
-              color="primary"
-              label={`Generating ${activeCategory?.name.toLowerCase()}...`}
-            />
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-            {itemsToDisplay.map((item, index) => (
-              <motion.div
-                key={`${activeCategoryId}-${item.id}`}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.05 }}
-              >
-                <Card
-                  isPressable
-                  disableRipple
-                  onPress={() => handleTemplateSelect(item)}
-                  className={`
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+          {itemsToDisplay.map((item, index) => (
+            <motion.div
+              key={`${activeGalleryTabId}-${item.id}-${index}`}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: index * 0.05 }}
+            >
+              <Card
+                isPressable
+                key={`${activeGalleryTabId}-${item.id}-${index}`}
+                disableRipple
+                onPress={() => handleTemplateSelect(item)}
+                className={`
                   h-full w-full border rounded-lg shadow-sm
                   transition-all duration-200 ease-in-out transform hover:scale-105 cursor-pointer
                   focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 
-                  ${
-                    validationStatus[item.id] !== undefined
-                      ? validationStatus[item.id]
-                        ? 'border-success-300 hover:border-success-400 bg-success-50' // Enhanced visual feedback
-                        : 'border-danger-300 hover:border-danger-400 bg-danger-50' // Enhanced visual feedback
-                      : 'border-default-200 hover:border-default-300 bg-white' // Default state
-                  }
-                `}
-                >
-                  <CardHeader className="pb-0 pt-3 px-4 flex-col items-start bg-transparent">
-                    <p className="text-xs text-default-500 uppercase tracking-wider">
-                      ID: {item.id}
-                    </p>
-                    <h4 className="font-semibold text-lg mt-0.5">
-                      {(item as { name?: string }).name || item.id}
-                    </h4>
-                  </CardHeader>
-                  <CardBody className="overflow-visible py-4 flex justify-center items-center">
-                    <div
-                      className="bg-content1 w-32 h-32 rounded-lg flex items-center justify-center shadow-inner" /* Consistent width/height, added shadow */
-                    >
-                      {itemLoadingStatus[item.id] ? (
-                        <Spinner size="md" color="primary" />
-                      ) : (
-                        <div
-                          ref={el => {
-                            if (el) {
-                              templateRefs.current[item.id] = el
-                            }
-                          }}
-                          className="w-full h-full" // Ensure the ref div takes full space for QR code
-                        >
-                          {/* QR code will be appended here */}
-                        </div>
-                      )}
-                    </div>
-                  </CardBody>
-                  <CardFooter className="pt-1 pb-3 px-4">
-                    <div className="flex items-center gap-1.5">
-                      {validationStatus[item.id] !== undefined ? (
-                        <>
-                          <span
-                            className={`
-                            w-2.5 h-2.5 rounded-full /* Adjusted size */
-                            ${validationStatus[item.id] ? 'bg-success-500' : 'bg-danger-500'}
-                          `}
-                          ></span>
-                          <span className="text-sm font-medium">
-                            {validationStatus[item.id] ? 'Valid' : 'Invalid'}
-                          </span>
-                        </>
-                      ) : (
-                        <span className="text-sm text-default-400 font-medium">
-                          Validating...
-                        </span>
-                      )}
-                    </div>
-                  </CardFooter>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        )}
+                  border-default-200 hover:border-default-300`}
+              >
+                <CardHeader className="pb-0 pt-3 px-4 flex-col items-start bg-transparent">
+                  <p className="text-xs text-default-500 uppercase tracking-wider">
+                    {(item as { name?: string }).name || item.id}
+                  </p>
+                </CardHeader>
+                <CardBody className="overflow-visible w-64 h-[200px] ml-2 py-3 flex justify-center items-center">
+                  <div
+                    ref={el => {
+                      if (el) {
+                        templateRefs.current[item.id] = el
+                      }
+                    }}
+                    className="w-full h-full" // Ensure the ref div takes full space for QR code
+                  >
+                    {/* QR code will be appended here */}
+                  </div>
+                </CardBody>
+                <CardFooter className="pt-1 pb-3 px-4">
+                  <div className="flex items-center gap-1.5">
+                    {/* Removed validation status display */}
+                  </div>
+                </CardFooter>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+        {/* Removed closing parenthesis from loading ternary */}
       </div>
     </div>
   )

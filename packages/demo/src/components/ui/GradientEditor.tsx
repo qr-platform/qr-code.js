@@ -3,8 +3,8 @@ import { Button, Popover, PopoverContent, PopoverTrigger } from '@heroui/react'
 import { GradientType } from '@qr-platform/qr-code.js' // Import directly from library
 import ColorPicker from 'react-best-gradient-color-picker' // Corrected import
 
-import { tailwindColors } from '../data/tailwind-colors'
-import { Gradient } from '../types/qr-options'
+import { tailwindColors } from '../../data/tailwind-colors'
+import { Gradient } from '../../types/qr-options'
 
 interface GradientEditorProps {
   value: string | Gradient // Can be a hex/rgba string or a Gradient object

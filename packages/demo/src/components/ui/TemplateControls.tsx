@@ -1,11 +1,10 @@
 import React from 'react'
 import { Button, Select, SelectItem } from '@heroui/react'
 import type { Key as AriaKey, Selection } from '@react-types/shared'
-import { useSetAtom } from 'jotai'
 import { ChevronLeft, ChevronRight, LayoutList, Shuffle, X } from 'lucide-react'
 
-import { requestedGalleryTabIdAtom } from '../store/qrConfigStore' // Corrected path
-import { Box, Flex } from './ui/boxes'
+import { useQrConfigStore } from '../../store/qrConfigStore' // Corrected path
+import { Box, Flex } from './boxes'
 
 interface TemplateOption {
   id: string
@@ -31,6 +30,7 @@ interface TemplateControlsProps {
   isDefaultSelected: boolean
   startContentIcon?: React.ReactNode
   noSelectionItem?: NoSelectionItem
+  galleryTabId: string
 }
 
 const TemplateControls: React.FC<TemplateControlsProps> = ({
@@ -45,16 +45,21 @@ const TemplateControls: React.FC<TemplateControlsProps> = ({
   onPrev,
   isDefaultSelected,
   startContentIcon,
-  noSelectionItem
+  noSelectionItem,
+  galleryTabId
 }) => {
-  const setRequestedGalleryTab = useSetAtom(requestedGalleryTabIdAtom)
+  const { setActiveGalleryTabId } = useQrConfigStore()
 
   return (
     <Box className="mb-4 space-y-2 group">
       <Flex className="justify-start gap-2">
-        <label className="block text-md font-medium text-gray-700 dark:text-gray-300">
+        <Box
+          className="block text-md font-medium text-gray-700 dark:text-gray-300 cursor-pointer hover:underline"
+          title={`Browse ${label} Templates`}
+          onClick={() => setActiveGalleryTabId(galleryTabId)}
+        >
           {label}
-        </label>
+        </Box>
         <Flex className="animate-in opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out">
           <Button
             isIconOnly
@@ -83,7 +88,7 @@ const TemplateControls: React.FC<TemplateControlsProps> = ({
       </Flex>
 
       <Flex className="space-x-2 justify-start">
-        <Box className="w-full lg:max-w-[280px]">
+        <Box className="w-full lg:max-w-[380px]">
           <div className="relative flex items-center">
             <Select
               aria-label={label}
@@ -127,19 +132,13 @@ const TemplateControls: React.FC<TemplateControlsProps> = ({
                 disableAnimation
                 aria-label="Reset to default template"
                 title="Reset to default template"
-                className="absolute group-hover:bg-transparent right-8 top-1/2 transform -translate-y-1/2 z-10 text-gray-500 bg-gray-100/80 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                className="absolute group-hover:bg-transparent right-8 top-1/2 transform -translate-y-1/2 z-10 text-gray-500 bg-gray-100/80 hover:text-gray-700 dark:text-gray-400 dark:bg-gray-800/10 dark:hover:text-gray-200"
               >
                 <X size={14} />
               </Button>
             )}
           </div>
         </Box>
-        {/* <Button isIconOnly onPress={onPrev} aria-label="Previous" title="Previous">
-        <ChevronLeft size={18} />
-      </Button>
-      <Button isIconOnly onPress={onNext} aria-label="Next" title="Next">
-        <ChevronRight size={18} />
-      </Button> */}
         <Button
           isIconOnly
           variant="flat"
@@ -149,18 +148,16 @@ const TemplateControls: React.FC<TemplateControlsProps> = ({
         >
           <Shuffle size={18} />
         </Button>
-        <Button
+        {/* <Button
           isIconOnly
           variant="light"
-          onPress={() => {
-            setRequestedGalleryTab('borders')
-          }}
+          onPress={() => setActiveGalleryTabId(galleryTabId)}
           className="border shadow-none"
           aria-label="Browse Templates"
           title="Browse Templates"
         >
           <LayoutList size={18} />
-        </Button>
+        </Button> */}
       </Flex>
     </Box>
   )

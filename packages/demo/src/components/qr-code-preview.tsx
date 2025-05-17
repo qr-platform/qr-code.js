@@ -6,6 +6,7 @@ import {
   Card,
   CardBody,
   CardFooter,
+  // removeToast was assumed, but not exported by @heroui/react
   Spinner,
   Tooltip
 } from '@heroui/react'
@@ -13,10 +14,9 @@ import { Options as QRCodeJsOptions } from '@qr-platform/qr-code.js' // QRCodeJs
 import { useAtomValue } from 'jotai'
 import { CheckCircle, Download, Image } from 'lucide-react'
 
-// import { imageOptions } from '../data/qr-data' // Original comment, now importing below
-// import { imageOptions } from '../data/qr-data' // No longer needed here, selectors use it from store
 import qrCodeService from '../services/qr-code-service'
 import { qrConfigAtom } from '../store'
+import { Box, Flex } from './ui/boxes'
 
 export const QRCodePreview: React.FC = () => {
   const qrConfig = useAtomValue(qrConfigAtom)
@@ -37,6 +37,18 @@ export const QRCodePreview: React.FC = () => {
   const [isValid, setIsValid] = React.useState<boolean | null>(null)
   const qrContainerRef = React.useRef<HTMLDivElement>(null)
   const [isQrVisible, setIsQrVisible] = React.useState(true) // For fade animation
+  const validationTimerRef = React.useRef<number | null>(null) // Changed NodeJS.Timeout to number
+
+  React.useEffect(
+    () =>
+      // Cleanup timer on component unmount
+      () => {
+        if (validationTimerRef.current) {
+          clearTimeout(validationTimerRef.current)
+        }
+      },
+    []
+  )
 
   React.useEffect(() => {
     const effectLogic = async () => {
@@ -178,12 +190,16 @@ export const QRCodePreview: React.FC = () => {
 
   const handleValidate = async () => {
     setIsValidating(true)
+    // Toasts will be managed by their own lifecycle or manual dismissal
+    // as removeToast or a clearAllToasts mechanism is not confirmed for @heroui/react.
+
     try {
       // Assuming qrCodeService.validateQRCode() uses the instance it generated
       const result = await qrCodeService.validateQRCode()
       setIsValid(result.isValid)
 
       addToast({
+        // Not capturing ID as we can't use it to remove
         title: result.isValid ? 'Validation Successful' : 'Validation Failed',
         description: result.isValid
           ? 'QR code is valid and scannable'
@@ -195,13 +211,26 @@ export const QRCodePreview: React.FC = () => {
       setIsValid(false)
 
       addToast({
+        // Not capturing ID
         title: 'Validation Error',
+        timeout: 4000,
         description:
           error instanceof Error ? error.message : 'Failed to validate QR code',
         color: 'danger'
       })
     } finally {
       setIsValidating(false)
+
+      // Clear any existing timer for validation auto-clear
+      if (validationTimerRef.current) {
+        clearTimeout(validationTimerRef.current)
+      }
+
+      // Set a new timer to clear validation state
+      validationTimerRef.current = setTimeout(() => {
+        setIsValid(null)
+        validationTimerRef.current = null // Optional: clear the ref after the timer executes
+      }, 4000)
     }
   }
 
@@ -242,8 +271,8 @@ export const QRCodePreview: React.FC = () => {
   return (
     <Card className="h-full border border-default-200 shadow-sm rounded-lg bg-white dark:bg-gray-950">
       <CardBody className="flex flex-col items-center justify-center">
-        <div
-          className={`bg-white dark:bg-black flex items-center justify-center rounded-lg p-4 overflow-hidden
+        <Flex
+          className={`rounded-lg p-4 overflow-hidden
             ${
               isValid === true
                 ? 'border-2 border-success-500'
@@ -255,23 +284,23 @@ export const QRCodePreview: React.FC = () => {
           {isLoading ? (
             <Spinner color="primary" />
           ) : (
-            <div
+            <Flex
               ref={qrContainerRef}
-              className={`w-80 flex items-center justify-center transition-opacity duration-200 ease-in-out ${
+              className={`w-80 transition-opacity duration-200 ease-in-out ${
                 isQrVisible ? 'opacity-100' : 'opacity-0'
               }`}
             >
               {/* QR code will be appended here by QRCodeJs instance */}
-            </div>
+            </Flex>
           )}
-        </div>
+        </Flex>
 
-        <div className="my-2 w-full text-sm text-default-500">
+        <Box className="my-2 w-full text-sm text-default-500">
           {/* Adjusted w-full for better layout control */}
           {isAdvancedMode ? (
             <p className="text-center text-default-600">Mode: Advanced Configuration</p>
           ) : (
-            <div className="mx-auto max-w-[340px] p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
+            <Box className="mx-auto max-w-[340px] p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
               <dl className="grid grid-cols-[max-content,1fr] gap-x-4 gap-y-2 text-left">
                 <dt className="font-semibold text-default-700">Template:</dt>
                 <dd className="text-default-600 truncate">
@@ -298,9 +327,9 @@ export const QRCodePreview: React.FC = () => {
                   {qrConfig.getSelectedBorderTemplateName()}
                 </dd>
               </dl>
-            </div>
+            </Box>
           )}
-        </div>
+        </Box>
       </CardBody>
 
       <CardFooter className="flex justify-center gap-2 pt-0">

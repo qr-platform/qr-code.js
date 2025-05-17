@@ -1,7 +1,7 @@
 import React from 'react'
 import { Input, Select, SelectItem } from '@heroui/react'
 
-import { FontStyle } from '../types/qr-options' // Removed unused Gradient import
+import { FontStyle } from '../../types/qr-options' // Removed unused Gradient import
 import GradientEditor from './GradientEditor' // Assuming GradientEditor is in the same directory
 
 interface FontStyleEditorProps {

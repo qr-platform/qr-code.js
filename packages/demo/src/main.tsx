@@ -9,7 +9,11 @@ import './index.css'
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <HeroUIProvider>
-      <ToastProvider placement={'bottom-center'} />
+      <ToastProvider
+        placement={'bottom-center'}
+        maxVisibleToasts={1}
+        toastProps={{ timeout: 3000 }}
+      />
       <App />
     </HeroUIProvider>
   </React.StrictMode>

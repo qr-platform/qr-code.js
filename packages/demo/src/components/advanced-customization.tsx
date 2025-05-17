@@ -26,7 +26,7 @@ import { useAtomValue } from 'jotai'
 import { LinkIcon } from 'lucide-react'
 
 import { qrConfigAtom } from '../store'
-import GradientEditor from './GradientEditor'
+import GradientEditor from './ui/GradientEditor'
 
 export const AdvancedCustomization: React.FC = () => {
   const qrConfig = useAtomValue(qrConfigAtom)

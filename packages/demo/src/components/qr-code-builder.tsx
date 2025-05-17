@@ -19,8 +19,8 @@ import { imageOptions } from '../data/qr-data'
 import { qrConfigAtom, templatesData } from '../store'
 import { AdvancedCustomization } from './advanced-customization'
 import { QRCodePreview } from './qr-code-preview'
-import TemplateControls from './TemplateControls' // Changed to default import
 import { Flex } from './ui/boxes'
+import TemplateControls from './ui/TemplateControls' // Changed to default import
 
 export const QRCodeBuilder: React.FC = () => {
   const qrConfig = useAtomValue(qrConfigAtom)
@@ -120,6 +120,7 @@ export const QRCodeBuilder: React.FC = () => {
                       startContentIcon={
                         <LayoutTemplate className="text-default-400 w-5 h-5" />
                       }
+                      galleryTabId="base"
                     />
                   </div>
                   <div className="w-full">
@@ -141,6 +142,7 @@ export const QRCodeBuilder: React.FC = () => {
                       onReset={qrConfig.resetBorderTemplate}
                       startContentIcon={<Square className="text-default-400 w-5 h-5" />}
                       noSelectionItem={{ key: '--', textValue: '-- No Border --' }}
+                      galleryTabId="borders"
                     />
                   </div>
                   <div className="w-full">
@@ -165,6 +167,7 @@ export const QRCodeBuilder: React.FC = () => {
                         key: '',
                         textValue: "-- Use Template's Style --"
                       }}
+                      galleryTabId="styles"
                     />
                   </div>
                   <div className="w-full">
@@ -185,6 +188,7 @@ export const QRCodeBuilder: React.FC = () => {
                       onPrev={qrConfig.setPrevImage}
                       onReset={qrConfig.resetImage}
                       startContentIcon={<Image className="text-default-400 w-5 h-5" />}
+                      galleryTabId="images"
                     />
                   </div>
                   <div className="w-full">
@@ -206,6 +210,7 @@ export const QRCodeBuilder: React.FC = () => {
                       onReset={qrConfig.resetTextTemplate}
                       startContentIcon={<Text className="text-default-400 w-5 h-5" />}
                       noSelectionItem={{ key: '', textValue: '-- No Text Override --' }}
+                      galleryTabId="text"
                     />
                   </div>
                 </div>

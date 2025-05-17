@@ -15,7 +15,6 @@ export const ThemeSwitcher: React.FC = () => {
     const newIsDark = !isDark
     setIsDark(newIsDark)
 
-    // Update the document class
     if (newIsDark) {
       document.documentElement.classList.add('dark')
     } else {
