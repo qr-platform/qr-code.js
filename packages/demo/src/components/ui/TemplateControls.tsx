@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, Select, SelectItem } from '@heroui/react'
 import type { Key as AriaKey, Selection } from '@react-types/shared'
-import { ChevronLeft, ChevronRight, LayoutList, Shuffle, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Shuffle, X } from 'lucide-react'
 
 import { useQrConfigStore } from '../../store/qrConfigStore' // Corrected path
 import { Box, Flex } from './boxes'

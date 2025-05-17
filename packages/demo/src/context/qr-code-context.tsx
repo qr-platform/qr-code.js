@@ -10,9 +10,15 @@ export const UrlSyncHandler: React.FC = () => {
   const {
     selectedTemplateId,
     selectedStyleId,
+    selectedBorderId,
     selectedImageId,
     selectedTextTemplateId,
-    isAdvancedMode // Ensure URL params are cleared if in advanced mode
+    isAdvancedMode, // Ensure URL params are cleared if in advanced mode
+    setSelectedTemplateId,
+    setSelectedStyleId,
+    setSelectedBorderId,
+    setSelectedImageId,
+    setSelectedTextTemplateId
   } = qrConfig
 
   // Update URL parameters without reloading
@@ -24,6 +30,7 @@ export const UrlSyncHandler: React.FC = () => {
       if (isAdvancedMode) {
         url.searchParams.delete('templateId')
         url.searchParams.delete('styleId')
+        url.searchParams.delete('borderId')
         url.searchParams.delete('image')
         url.searchParams.delete('textTemplateId')
       } else {
@@ -37,6 +44,12 @@ export const UrlSyncHandler: React.FC = () => {
           url.searchParams.set('styleId', selectedStyleId)
         } else {
           url.searchParams.delete('styleId')
+        }
+
+        if (selectedBorderId) {
+          url.searchParams.set('borderId', selectedBorderId)
+        } else {
+          url.searchParams.delete('borderId')
         }
 
         if (selectedImageId && selectedImageId !== 'none') {
@@ -67,10 +80,30 @@ export const UrlSyncHandler: React.FC = () => {
   }, [
     selectedTemplateId,
     selectedStyleId,
+    selectedBorderId,
     selectedImageId,
     selectedTextTemplateId,
     isAdvancedMode
   ])
+
+  // Initialize state from URL on first render
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      const templateId = params.get('templateId')
+      const styleId = params.get('styleId')
+      const borderId = params.get('borderId')
+      const imageId = params.get('image')
+      const textId = params.get('textTemplateId')
+
+      if (templateId) setSelectedTemplateId(templateId)
+      if (styleId) setSelectedStyleId(styleId)
+      if (borderId) setSelectedBorderId(borderId)
+      if (imageId) setSelectedImageId(imageId)
+      if (textId) setSelectedTextTemplateId(textId)
+    }
+    // We only want to run this on mount
+  }, [])
 
   // This component does not render anything itself.
   // It's used for its side effect of syncing URL params.
