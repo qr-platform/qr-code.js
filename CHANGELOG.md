@@ -1,5 +1,11 @@
 # @qr-platform/qr-code-js
 
+## 0.11.1
+
+### Patch Changes
+
+- Routine patch release.
+
 ## 0.11.0
 
 ### Minor Changes
