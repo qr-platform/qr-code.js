@@ -79,7 +79,6 @@ export declare class QRCodeJs {
      * Sets the static style to be used as a base for new instances.
      * Accepts either a predefined style name or a StyleOptions object.
      * @param styleNameOrOptions - The name of the style or the StyleOptions object.
-     * @param styleNameOrOptions - The name of the style or the StyleOptions object.
      * @returns The QRCodeJs class for chaining.
      */
     static setStyle(styleNameOrOptions: string | StyleOptions | null): typeof QRCodeJs;

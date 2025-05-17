@@ -109,8 +109,20 @@ qrCode.append(document.getElementById('qr-container'));
 | `useImage`          | `imageUrl: string \| DataURL, overrideOpts?: MethodOverrideOptions`            | Initiates a builder pattern pre-configured with an image URL. If `overrideOpts.override` is `true`, this image will take precedence over any image set in the final `.options()` call or by other non-overriding builder methods. Returns `QRCodeBuilder`. |
 | `useData`           | `data: string, overrideOpts?: MethodOverrideOptions`                           | Applies a data string to the current builder configuration. If `overrideOpts.override` is `true`, this data will take precedence over data provided in the final `.options()` call or by other non-overriding builder methods. Returns `QRCodeBuilder`. |
 | `useOptions`        | `options: RecursivePartial<Options>, overrideOpts?: MethodOverrideOptions`     | Applies a partial options object to the current builder configuration. If `overrideOpts.override` is `true`, these options take higher precedence over options provided in the final `.options()` call or by other non-overriding builder methods for the properties they cover. Returns `QRCodeBuilder`. |
-| `useSettings`       | `settings: SettingsOptions`                                                | Applies a comprehensive `SettingsOptions` object as a new baseline for the builder chain. This will **reset** any configurations previously applied to *that builder instance* via methods like `useTemplate()`, `useStyle()`, `useData()`, `useOptions()`, etc. Subsequent builder methods will modify this new baseline. Returns `QRCodeBuilder`. |
-| `validateScanning`  | `validatorId?: string, debug?: boolean`                                    | **(Premium method)** Validates that the QR code is scannable. Returns `Promise<ScanValidatorResponse>`. |
+| `useSettings`       | `settings: SettingsOptions` | Applies a comprehensive `SettingsOptions` object as a new baseline for the builder chain. This will **reset** any configurations previously applied to *that builder instance* via methods like `useTemplate()`, `useStyle()`, `useData()`, `useOptions()`, etc. Subsequent builder methods will modify this new baseline. Returns `QRCodeBuilder`. |
+| `useId`             | `id: string` | Assigns an identifier to the QR code instance within the builder chain. Returns `QRCodeBuilder`. |
+| `useName`           | `name: string` | Assigns a name to the QR code instance within the builder chain. Returns `QRCodeBuilder`. |
+| `useDescription`    | `description: string` | Assigns a description to the QR code instance within the builder chain. Returns `QRCodeBuilder`. |
+| `useMetadata`       | `metadata: Record<string, any>` | Attaches custom metadata to the QR code instance within the builder chain. Returns `QRCodeBuilder`. |
+| `validateScanning`  | `validatorId?: string, debug?: boolean` | **(Premium method)** Validates that the QR code is scannable. Returns `Promise<ScanValidatorResponse>`. |
+| `getTemplates`      |  | Returns helper functions for looking up predefined templates, styles, text, and borders. |
+| `initializeIfNeeded` |  | Initializes the license manager if needed (usually called automatically by `.license()`). Returns `Promise<boolean>`. |
+| `getLicenseDetails` |  | Returns decoded license information if a license is active. |
+| `license`           | `licenseKey: string` | Activates a license using a license key. Returns `Promise<ValidationResult>`. |
+| `token`             | `token: string | null` | Activates a license using a pre-fetched token. Returns `Promise<ValidationResult>`. |
+| `configureLicenseFetcher` | `fetcher: (licenseKey: string) => Promise<string>` | Sets a custom function for fetching license tokens. |
+| `setLicenseUrl`     | `url: string` | Sets the URL endpoint for license validation. Returns `typeof QRCodeJs`. |
+| `validateImageData` | `imageData: ImageDataLike` | **(Node.js)** Validate scannability from raw image data. Returns `Promise<ScanValidatorResponse>`. |
 
 ---
 

@@ -1078,8 +1078,8 @@ When using the basic border features in the free version, the library will autom
 ### Initialization
 
 - **Purpose**: Sets up the license manager
-- **Behavior**: Initializes automatically when you first attempt activation or check the status
-- **Manual Method**: `QRCodeJs.initializeIfNeeded()`
+- **Behavior**: Initializes automatically when you call `.license()` (or otherwise attempt activation) or check the status
+- **Manual Method**: `QRCodeJs.initializeIfNeeded()` (rarely needed because `.license()` runs it automatically)
 - **Example**:
   ```typescript
   async function initializeOnLoad() {
@@ -1700,6 +1700,23 @@ qrCode.validateScanning(
 ): Promise<ScanValidatorResponse>
 ```
 
+#### Metadata Methods
+
+These helper methods allow attaching or retrieving metadata on a QR code instance.
+
+```typescript
+qrCode.setId(id?: string): this
+qrCode.setName(name?: string): this
+qrCode.setDescription(description?: string): this
+qrCode.setMetadata(metadata?: Record<string, any>): this
+
+qrCode.getId(): string | undefined
+qrCode.getName(): string | undefined
+qrCode.getDescription(): string | undefined
+qrCode.getMetadata(): Record<string, any> | undefined
+qrCode.getSettings(): SettingsOptions & { options: Options }
+```
+
 ### Static Methods
 
 These methods are called directly on the `QRCodeJs` class (e.g., `QRCodeJs.setTemplate()`).
@@ -1708,7 +1725,7 @@ These methods are called directly on the `QRCodeJs` class (e.g., `QRCodeJs.setTe
 
 #### `initializeIfNeeded()`
 
-Initializes the license manager if needed.
+Initializes the license manager if needed. Typically this runs automatically when calling `.license()`, but you can call it manually in unusual scenarios.
 
 ```typescript
 QRCodeJs.initializeIfNeeded(): Promise<boolean>

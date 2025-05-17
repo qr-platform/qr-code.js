@@ -600,15 +600,18 @@ const qrCode = QRCodeJs.useTemplate('dots')       // Base: dots template (e.g., 
 qrCode.append(document.getElementById('builder-example-container'));
 
 
-### Builder Pattern Methods (`useStyle`, `useBorder`, `useImage`, `useData`, `useOptions`, `useSettings`)
+### Builder Pattern Methods (`useTemplate`, `useStyle`, `useBorder`, `useImage`, `useData`, `useOptions`, `useSettings`)
 
-These methods are called on `QRCodeJs` to initiate a builder chain (e.g., `QRCodeJs.useStyle(...)`) or on an existing `QRCodeBuilder` instance (e.g., `builder.useStyle(...)`).
+These methods are called on `QRCodeJs` to initiate a builder chain (e.g., `QRCodeJs.useTemplate(...)`) or on an existing `QRCodeBuilder` instance (e.g., `builder.useStyle(...)`).
 
+- **`useTemplate(templateNameOrOptions)` / `useTemplateId(templateId)`**: Start the builder with a predefined template or template ID.
 - **`useStyle(styleNameOrOptions)` / `useStyleId(styleId)`**: Applies a style.
 - **`useBorder(borderNameOrOptions)` / `useBorderId(borderId)`**: Applies a border configuration.
+- **`useText(textNameOrOptions, overrideOpts?)` / `useTextId(textId, overrideOpts?)`**: Sets border text with optional override precedence.
 - **`useImage(imageUrl, overrideOpts?)`**: Sets an image. `overrideOpts` ensures precedence over image in final `.options()`.
 - **`useData(data, overrideOpts?)`**: Sets the data. `overrideOpts` ensures precedence over data in final `.options()`.
 - **`useOptions(options, overrideOpts?)`**: Merges general options. `overrideOpts` ensures precedence for these specific options over final `.options()`.
+- **`useId(id)`**, **`useName(name)`**, **`useDescription(description)`**, **`useMetadata(metadata)`**: Attach metadata to the QR code instance when the builder finalizes.
 - **`useSettings(settings)`**: Applies a comprehensive `SettingsOptions` object as a new baseline for the builder chain, **resetting** any configurations previously applied to *that builder instance* via other `use...` methods.
 
 You can chain these methods (e.g., `QRCodeJs.useTemplate(...).useStyle(...).useBorder(...).useImage(...)`) before finalizing with `.options(...)` or `.build()`. Options are merged progressively, with later calls overriding earlier ones for the same properties, unless an `override: true` was used.
