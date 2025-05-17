@@ -7,3 +7,8 @@
 body {
   font-family: 'Inter', sans-serif;
 }
+
+/* Added for TemplateControls.tsx to hide default select arrow */
+.select-hides-default-arrow > div[data-slot='trigger'] > div[data-slot='selectorIcon'] {
+  display: none !important;
+}

@@ -4,9 +4,9 @@ import { QRCodeJs } from '@qr-platform/qr-code.js' // Added
 import { motion } from 'framer-motion'
 import { useAtomValue } from 'jotai'
 
-import { imageOptions, qrBorderTemplates } from '../data/qr-data'
+import { imageOptions } from '../data/qr-data'
 import qrCodeService from '../services/qr-code-service' // Kept for initialize and potentially validate
-import { qrConfigAtom } from '../store'
+import { qrConfigAtom, templatesData } from '../store'
 
 export const TemplateGallery: React.FC = () => {
   const qrConfigStore = useAtomValue(qrConfigAtom)
@@ -42,7 +42,7 @@ export const TemplateGallery: React.FC = () => {
         // Generate QR codes for each template with a small delay between each
         const newValidationStatus: Record<string, boolean> = {}
 
-        for (const template of qrBorderTemplates) {
+        for (const template of templatesData.baseTemplates) {
           const templateElement = templateRefs.current[template.id]
           if (templateElement) {
             templateElement.innerHTML = '' // Clear previous QR code
@@ -53,11 +53,11 @@ export const TemplateGallery: React.FC = () => {
                   : imageOptions.find(img => img.id === selectedImageId)?.value || null
 
               // Set global simple mode options via static setters
-              QRCodeJs.setTemplateId(selectedTemplateId)
-              QRCodeJs.setStyleId(selectedStyleId)
-              QRCodeJs.setImage(imageUrl) // Handles null internally
-              QRCodeJs.setTextId(selectedTextTemplateId)
-              QRCodeJs.setBorderId(template.id) // Set the specific border for this card
+              // QRCodeJs.setTemplateId(selectedTemplateId)
+              // QRCodeJs.setStyleId(selectedStyleId)
+              // QRCodeJs.setImage(imageUrl) // Handles null internally
+              // QRCodeJs.setTextId(selectedTextTemplateId)
+              // QRCodeJs.setBorderId(template.id) // Set the specific border for this card
 
               // Advanced mode options are not applied here for the gallery of border templates
               // The gallery should reflect simple mode selections + each border.
@@ -142,7 +142,7 @@ export const TemplateGallery: React.FC = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          {qrBorderTemplates.map((template, index) => (
+          {templatesData.baseTemplates.map((template, index) => (
             <motion.div
               key={template.id}
               initial={{ opacity: 0, y: 20 }}
@@ -164,7 +164,9 @@ export const TemplateGallery: React.FC = () => {
                 </CardHeader>
                 <CardBody className="overflow-visible py-2 flex justify-center items-center">
                   <div
-                    ref={el => (templateRefs.current[template.id] = el)}
+                    ref={el => {
+                      templateRefs.current[template.id] = el
+                    }}
                     className="bg-white w-32 h-32 rounded-md flex items-center justify-center"
                   >
                     {/* QR code will be appended here */}

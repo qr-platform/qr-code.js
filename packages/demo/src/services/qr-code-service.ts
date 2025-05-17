@@ -150,15 +150,7 @@ export class QRCodeService {
         qrCodeSettings.options = options
       }
 
-      console.log('qrCodeSettings', qrCodeSettings)
-
-      QRCodeJsLib.setSettings(qrCodeSettings)
-
-      this.qr = new QRCodeJsLib(options ?? {})
-
-      // this.qr = QRCodeJsLib.useSettings(qrCodeSettings).options(options ?? {})
-
-      // console.log('this.qr.getSettings()', this.qr.getSettings())
+      this.qr = QRCodeJsLib.useSettings(qrCodeSettings).build()
 
       if (!this.qr) {
         throw new Error('Failed to create QR code instance')

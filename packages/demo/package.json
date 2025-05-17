@@ -17,6 +17,7 @@
     "@heroui/react": "2.7.8",
     "@iconify/react": "latest",
     "@qr-platform/qr-code.js": "file:../..",
+    "clsx": "^2.1.1",
     "framer-motion": "^11.18.2",
     "install": "^0.13.0",
     "jotai": "^2.12.4",
@@ -26,6 +27,7 @@
     "react-best-gradient-color-picker": "^3.0.14",
     "react-dom": "^19.1.0",
     "source-map-js": "^1.2.1",
+    "tailwind-merge": "^3.3.0",
     "typescript-eslint": "^8.32.1",
     "usehooks-ts": "^3.1.1",
     "zustand": "^5.0.4"

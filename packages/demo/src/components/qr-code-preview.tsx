@@ -13,7 +13,8 @@ import { Options as QRCodeJsOptions } from '@qr-platform/qr-code.js' // QRCodeJs
 import { useAtomValue } from 'jotai'
 import { CheckCircle, Download, Image } from 'lucide-react'
 
-// import { imageOptions } from '../data/qr-data'
+// import { imageOptions } from '../data/qr-data' // Original comment, now importing below
+// import { imageOptions } from '../data/qr-data' // No longer needed here, selectors use it from store
 import qrCodeService from '../services/qr-code-service'
 import { qrConfigAtom } from '../store'
 
@@ -22,12 +23,13 @@ export const QRCodePreview: React.FC = () => {
   const {
     selectedTemplateId,
     selectedStyleId,
-    selectedImageId,
+    selectedImage,
     selectedTextTemplateId,
     selectedBorderId,
     qrData,
     isAdvancedMode,
-    advancedOptions
+    advancedOptions,
+    selectedImageId
   } = qrConfig
 
   const [isLoading, setIsLoading] = React.useState(false)
@@ -96,11 +98,11 @@ export const QRCodePreview: React.FC = () => {
                 templateId: selectedTemplateId,
                 template: null, // template (raw content)
                 styleId: selectedStyleId,
+                borderId: selectedBorderId,
                 style: null, // style (raw content)
-                image: null,
+                image: selectedImage,
                 text: null, // text (raw content)
                 textId: selectedTextTemplateId,
-                borderId: selectedBorderId,
                 options: { isResponsive: true }
               })
               generationAttempted = true
@@ -264,20 +266,39 @@ export const QRCodePreview: React.FC = () => {
           )}
         </div>
 
-        <div className="mt-4 text-center text-sm text-default-500">
+        <div className="my-2 w-full text-sm text-default-500">
+          {/* Adjusted w-full for better layout control */}
           {isAdvancedMode ? (
-            <p>Mode: Advanced Configuration</p>
+            <p className="text-center text-default-600">Mode: Advanced Configuration</p>
           ) : (
-            <>
-              <p>Template: {selectedTemplateId || 'Default'}</p>
-              <p>Style: {selectedStyleId || 'Default'}</p>
-              <p>
-                Image:
-                {selectedImageId === 'none' ? 'None' : selectedImageId || 'Default'}
-              </p>
-              <p>Text: {selectedTextTemplateId || 'Default'}</p>
-              <p>Border: {selectedBorderId || 'Default'}</p>
-            </>
+            <div className="mx-auto max-w-[340px] p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
+              <dl className="grid grid-cols-[max-content,1fr] gap-x-4 gap-y-2 text-left">
+                <dt className="font-semibold text-default-700">Template:</dt>
+                <dd className="text-default-600 truncate">
+                  {qrConfig.getSelectedBaseTemplateName()}
+                </dd>
+
+                <dt className="font-semibold text-default-700">Style:</dt>
+                <dd className="text-default-600 truncate">
+                  {qrConfig.getSelectedStyleTemplateName()}
+                </dd>
+
+                <dt className="font-semibold text-default-700">Image:</dt>
+                <dd className="text-default-600 truncate">
+                  {qrConfig.getSelectedImageName()}
+                </dd>
+
+                <dt className="font-semibold text-default-700">Text:</dt>
+                <dd className="text-default-600 truncate">
+                  {qrConfig.getSelectedTextTemplateName()}
+                </dd>
+
+                <dt className="font-semibold text-default-700">Border:</dt>
+                <dd className="text-default-600 truncate">
+                  {qrConfig.getSelectedBorderTemplateName()}
+                </dd>
+              </dl>
+            </div>
           )}
         </div>
       </CardBody>

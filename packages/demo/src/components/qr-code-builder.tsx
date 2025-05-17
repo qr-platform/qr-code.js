@@ -1,15 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {
-  AutocompleteItem,
-  Card,
-  CardBody,
-  Input,
-  Select,
-  SelectItem,
-  Tab,
-  Tabs
-} from '@heroui/react'
-import { QRCodeJs } from '@qr-platform/qr-code.js' // Corrected import name
+import { Button, Card, CardBody, Input, Tab, Tabs } from '@heroui/react'
 import { useAtomValue } from 'jotai'
 import {
   Code,
@@ -17,37 +7,24 @@ import {
   LayoutTemplate,
   Link as LinkIcon,
   Palette,
+  RotateCcw,
   Settings,
+  Shuffle,
   Square,
   Text
 } from 'lucide-react'
 import { useDebounceCallback } from 'usehooks-ts'
 
-import {
-  imageOptions
-  // qrBorderTemplates, // Removed
-  // qrStyleDefinitions, // Removed
-  // qrTemplates, // Removed
-  // qrTextTemplates // Removed
-} from '../data/qr-data'
-import { qrConfigAtom } from '../store'
+import { imageOptions } from '../data/qr-data'
+import { qrConfigAtom, templatesData } from '../store'
 import { AdvancedCustomization } from './advanced-customization'
 import { QRCodePreview } from './qr-code-preview'
-import { Autocomplete } from './ui/autocomplete'
+import TemplateControls from './TemplateControls' // Changed to default import
+import { Flex } from './ui/boxes'
 
 export const QRCodeBuilder: React.FC = () => {
-  const templatesData = QRCodeJs.getTemplates() // Use corrected import name
-  const qrConfig = useAtomValue(qrConfigAtom) // Removed unused setQrConfig
-  const {
-    selectedStyleId,
-    selectedImageId,
-    selectedTextTemplateId,
-    selectedBorderId,
-    qrData,
-    editMode,
-    setEditMode,
-    setQrData
-  } = qrConfig
+  const qrConfig = useAtomValue(qrConfigAtom)
+  const { qrData, editMode, setEditMode, setQrData } = qrConfig
 
   const [qrCodeData, setQrCodeData] = useState(qrData)
   // const [editMode, setEditMode] = useState('Templates')
@@ -68,6 +45,7 @@ export const QRCodeBuilder: React.FC = () => {
                 <Tabs
                   key="solid"
                   aria-label="Tabs variants"
+                  size="lg"
                   variant="solid"
                   onSelectionChange={selectedMode => {
                     setEditMode(selectedMode as string)
@@ -121,156 +99,136 @@ export const QRCodeBuilder: React.FC = () => {
                   variant="faded"
                   startContent={<LinkIcon className="text-default-400 w-5 h-5" />}
                 />
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Autocomplete
-                    label="Base Template"
-                    placeholder="Select a base template"
-                    classNames={{
-                      label: 'mb-1'
-                    }}
-                    itemHeight={40}
-                    selectedKey={qrConfig.selectedTemplateId || ''}
-                    onSelectionChange={key => {
-                      const selected = key?.toString() || ''
-                      if (qrConfig.setSelectedTemplateId) {
-                        qrConfig.setSelectedTemplateId(selected)
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="w-full">
+                    <TemplateControls
+                      label="Base Template"
+                      placeholder="Select a base template"
+                      options={templatesData.baseTemplates}
+                      selectedKey={qrConfig.selectedTemplateId || ''}
+                      isDefaultSelected={
+                        qrConfig.selectedTemplateId ===
+                        qrConfig.initialDefaultSelectedTemplateId
                       }
-                    }}
-                    variant="bordered"
-                    startContent={<LayoutTemplate className="text-default-400 w-5 h-5" />}
-                  >
-                    {[
-                      ...templatesData.baseTemplates.map(
-                        ({ id, name }: { id: string; name: string }) => (
-                          <AutocompleteItem key={id} textValue={name}>
-                            {name}
-                          </AutocompleteItem>
-                        )
-                      )
-                    ]}
-                  </Autocomplete>
-
-                  <Autocomplete
-                    label="Border Template"
-                    placeholder="Select a border template"
-                    classNames={{
-                      label: 'mb-1'
-                    }}
-                    selectedKey={selectedBorderId || ''}
-                    onSelectionChange={key => {
-                      const selected = key?.toString() || ''
-                      if (qrConfig.setSelectedBorderId) {
-                        qrConfig.setSelectedBorderId(selected)
+                      onSelectionChange={(key: React.Key | null) =>
+                        qrConfig.setSelectedTemplateId(key?.toString() || '')
                       }
-                    }}
-                    itemHeight={40}
-                    variant="bordered"
-                    startContent={<Square className="text-default-400 w-5 h-5" />}
-                  >
-                    {[
-                      <AutocompleteItem key="--" textValue="-- No Border --">
-                        -- No Border --
-                      </AutocompleteItem>,
-                      ...templatesData.borderTemplates.map(
-                        (border: { id: string; name: string }) => (
-                          <AutocompleteItem key={border.id} textValue={border.name}>
-                            {border.name}
-                          </AutocompleteItem>
-                        )
-                      )
-                    ]}
-                  </Autocomplete>
-
-                  <Autocomplete
-                    label="Base Style"
-                    placeholder="Select a base style"
-                    itemHeight={40}
-                    selectedKey={selectedStyleId || ''}
-                    classNames={{
-                      label: 'mb-1'
-                    }}
-                    onSelectionChange={key => {
-                      const selected = key?.toString() || ''
-                      if (qrConfig.setSelectedStyleId)
-                        qrConfig.setSelectedStyleId(selected)
-                    }}
-                    variant="bordered"
-                    startContent={<Palette className="text-default-400 w-5 h-5" />}
-                  >
-                    {[
-                      <AutocompleteItem key="" textValue="-- Use Template's Style --">
-                        -- Use Template's Style --
-                      </AutocompleteItem>,
-                      ...templatesData.styleTemplates.map(
-                        (style: { id: string; name: string }) => (
-                          <AutocompleteItem
-                            key={String(style.id)}
-                            textValue={String(style.name)}
-                          >
-                            {String(style.name)}
-                          </AutocompleteItem>
-                        )
-                      )
-                    ]}
-                  </Autocomplete>
-
-                  <Select
-                    label="Logo Image"
-                    placeholder="Select a logo image"
-                    itemHeight={40}
-                    selectedKeys={selectedImageId ? [selectedImageId] : []}
-                    classNames={{
-                      label: 'mb-1'
-                    }}
-                    onSelectionChange={keys => {
-                      const selected = Array.from(keys)[0]?.toString() || 'none'
-                      if (qrConfig.setSelectedImageId)
-                        qrConfig.setSelectedImageId(selected)
-                    }}
-                    variant="bordered"
-                    startContent={<Image className="text-default-400 w-5 h-5" />}
-                  >
-                    {imageOptions.map(img => (
-                      <SelectItem key={img.id} textValue={img.name} title={img.name}>
-                        {img.name}
-                      </SelectItem>
-                    ))}
-                  </Select>
-
-                  <Autocomplete
-                    label="Text Template"
-                    placeholder="Select a text template"
-                    classNames={{
-                      label: 'mb-1'
-                    }}
-                    itemHeight={40}
-                    selectedKey={selectedTextTemplateId || ''}
-                    onSelectionChange={key => {
-                      const selected = key?.toString() || ''
-                      if (qrConfig.setSelectedTextTemplateId) {
-                        qrConfig.setSelectedTextTemplateId(selected)
+                      onRandom={qrConfig.setRandomBaseTemplate}
+                      onNext={qrConfig.setNextBaseTemplate}
+                      onPrev={qrConfig.setPrevBaseTemplate}
+                      onReset={qrConfig.resetBaseTemplate}
+                      startContentIcon={
+                        <LayoutTemplate className="text-default-400 w-5 h-5" />
                       }
-                    }}
-                    variant="bordered"
-                    startContent={<Text className="text-default-400 w-5 h-5" />}
-                  >
-                    {[
-                      <AutocompleteItem key="" textValue="-- No Text Override --">
-                        -- No Text Override --
-                      </AutocompleteItem>,
-                      ...templatesData.textTemplates.map(
-                        (textTemplate: { id: string; name: string }) => (
-                          <AutocompleteItem
-                            key={textTemplate.id}
-                            textValue={textTemplate.name}
-                          >
-                            {textTemplate.name} ({textTemplate.id})
-                          </AutocompleteItem>
-                        )
-                      )
-                    ]}
-                  </Autocomplete>
+                    />
+                  </div>
+                  <div className="w-full">
+                    <TemplateControls
+                      label="Border Template"
+                      placeholder="Select a border template"
+                      options={templatesData.borderTemplates}
+                      selectedKey={qrConfig.selectedBorderId || ''}
+                      isDefaultSelected={
+                        qrConfig.selectedBorderId ===
+                        qrConfig.initialDefaultSelectedBorderId
+                      }
+                      onSelectionChange={(key: React.Key | null) =>
+                        qrConfig.setSelectedBorderId(key?.toString() || '')
+                      }
+                      onRandom={qrConfig.setRandomBorderTemplate}
+                      onNext={qrConfig.setNextBorderTemplate}
+                      onPrev={qrConfig.setPrevBorderTemplate}
+                      onReset={qrConfig.resetBorderTemplate}
+                      startContentIcon={<Square className="text-default-400 w-5 h-5" />}
+                      noSelectionItem={{ key: '--', textValue: '-- No Border --' }}
+                    />
+                  </div>
+                  <div className="w-full">
+                    <TemplateControls
+                      label="Base Style"
+                      placeholder="Select a base style"
+                      isDefaultSelected={
+                        qrConfig.selectedStyleId ===
+                        qrConfig.initialDefaultSelectedStyleId
+                      }
+                      options={templatesData.styleTemplates}
+                      selectedKey={qrConfig.selectedStyleId || ''}
+                      onSelectionChange={(key: React.Key | null) =>
+                        qrConfig.setSelectedStyleId(key?.toString() || '')
+                      }
+                      onRandom={qrConfig.setRandomStyleTemplate}
+                      onNext={qrConfig.setNextStyleTemplate}
+                      onPrev={qrConfig.setPrevStyleTemplate}
+                      onReset={qrConfig.resetStyleTemplate}
+                      startContentIcon={<Palette className="text-default-400 w-5 h-5" />}
+                      noSelectionItem={{
+                        key: '',
+                        textValue: "-- Use Template's Style --"
+                      }}
+                    />
+                  </div>
+                  <div className="w-full">
+                    <TemplateControls
+                      label="Logo Image"
+                      placeholder="Select a logo image"
+                      options={imageOptions}
+                      isDefaultSelected={
+                        qrConfig.selectedImageId ===
+                        qrConfig.initialDefaultSelectedImageId
+                      }
+                      selectedKey={qrConfig.selectedImageId || ''}
+                      onSelectionChange={(key: React.Key | null) =>
+                        qrConfig.setSelectedImageId(key?.toString() || '')
+                      }
+                      onRandom={qrConfig.setRandomImage}
+                      onNext={qrConfig.setNextImage}
+                      onPrev={qrConfig.setPrevImage}
+                      onReset={qrConfig.resetImage}
+                      startContentIcon={<Image className="text-default-400 w-5 h-5" />}
+                    />
+                  </div>
+                  <div className="w-full">
+                    <TemplateControls
+                      label="Text Template"
+                      placeholder="Select a text template"
+                      options={templatesData.textTemplates}
+                      isDefaultSelected={
+                        qrConfig.selectedTextTemplateId ===
+                        qrConfig.initialDefaultSelectedTextTemplateId
+                      }
+                      selectedKey={qrConfig.selectedTextTemplateId || ''}
+                      onSelectionChange={(key: React.Key | null) =>
+                        qrConfig.setSelectedTextTemplateId(key?.toString() || '')
+                      }
+                      onRandom={qrConfig.setRandomTextTemplate}
+                      onNext={qrConfig.setNextTextTemplate}
+                      onPrev={qrConfig.setPrevTextTemplate}
+                      onReset={qrConfig.resetTextTemplate}
+                      startContentIcon={<Text className="text-default-400 w-5 h-5" />}
+                      noSelectionItem={{ key: '', textValue: '-- No Text Override --' }}
+                    />
+                  </div>
                 </div>
+                <Flex className="gap-4 mt-6">
+                  {/* Increased top margin slightly */}
+                  <Button
+                    onPress={qrConfig.setRandomAllTemplates}
+                    startContent={<Shuffle className="w-4 h-4" />}
+                    variant="ghost"
+                    color="primary"
+                  >
+                    Random All
+                  </Button>
+                  <Button
+                    onPress={qrConfig.resetAllTemplates}
+                    startContent={<RotateCcw className="w-4 h-4" />}
+                    className="text-default-600"
+                    variant="light"
+                    color="warning"
+                  >
+                    Reset All
+                  </Button>
+                </Flex>
               </div>
             ) : editMode === 'Advanced' ? (
               <AdvancedCustomization />
