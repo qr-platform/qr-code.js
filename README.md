@@ -212,6 +212,10 @@ const qrPremium = new QRCodeJs({
 *   **[Advanced Examples](./docs/advanced-examples.md#start)**: Demonstrations of complex configurations and feature combinations, including `setSettings` and `useSettings`.
 *   **[License Management](./docs/license-management.md#start)**: Information on activating and managing premium features.
 
+## 🌐 Demo
+
+An interactive demo located in [`packages/demo`](./packages/demo) is automatically built with `npm run build` and deployed to GitHub Pages from the `packages/demo/dist` directory.
+
 ## 📜 License
 
 This Software is licensed, not sold, by QR-Platform ("Licensor") for use only under the terms of this license. The source code for the Software is proprietary, confidential, and is **not** provided or licensed under this agreement. Licensor reserves all rights not expressly granted to User - see the [LICENSE](https://qr-platform.github.io/qr-code.js/LICENSE.md) file for details. Premium features require a separate commercial license from [QR-Platform](https://www.qr-platform.com).
