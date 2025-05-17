@@ -254,7 +254,7 @@ export const QRCodeBuilder: React.FC = () => {
         </Card>
       </div>
 
-      <div>
+      <div id="qr-preview-panel">
         <QRCodePreview />
       </div>
     </div>
