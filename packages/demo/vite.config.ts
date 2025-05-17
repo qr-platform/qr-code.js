@@ -16,7 +16,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
         // React Fast Refresh is enabled by default in Vite
       }),
       // Only use the custom plugin in production to avoid HMR issues
-      isDevelopment ? null : vitePluginInjectDataLocator()
+      isDevelopment ? vitePluginInjectDataLocator() : []
     ].filter(Boolean),
     server: {
       port: 3000,

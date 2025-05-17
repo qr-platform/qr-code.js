@@ -25,10 +25,8 @@ export default function App() {
           </CardHeader>
           <Divider />
           <CardBody className="flex flex-col gap-8 bg-gray-50 dark:bg-gray-900 h-full overflow-y-hidden">
-            {/* QRCodeProvider removed */}
             <div className="flex flex-col gap-8">
               <QRCodeBuilder />
-              <Divider />
               <TemplateGallery />
             </div>
           </CardBody>

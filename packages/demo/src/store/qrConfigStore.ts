@@ -7,6 +7,7 @@ import {
   QRCodeJs,
   ShapeType
 } from '@qr-platform/qr-code.js'
+import { atom } from 'jotai'
 import { atomWithStore } from 'jotai-zustand'
 import { create } from 'zustand'
 
@@ -21,6 +22,8 @@ import {
   CornerSquareOptions,
   DotsOptions
 } from '../types/qr-options'
+
+export const requestedGalleryTabIdAtom = atom<string | null>(null)
 
 // Default Advanced Options
 const defaultAdvancedOptions: AdvancedQROptions = {
@@ -199,7 +202,7 @@ const initialTextTemplateId = templatesData.textTemplates[0]?.id || 'scan-me'
 const initialImageId = imageOptions[0]?.id || 'none'
 const initialImage = undefined
 
-const useQrConfigStore = create<QRConfigState>((set, get) => {
+export const useQrConfigStore = create<QRConfigState>((set, get) => {
   // Helper function for circular navigation
   const getNextPrevId = (
     currentId: string,

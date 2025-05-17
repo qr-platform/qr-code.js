@@ -37,7 +37,7 @@ export const QRCodeBuilder: React.FC = () => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div className="lg:col-span-2">
-        <Card className="border border-default-200 shadow-sm rounded-lg">
+        <Card className="border border-default-200 shadow-sm rounded-lg h-full">
           <CardBody className="gap-6">
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-semibold">QR Code Configuration</h2>
