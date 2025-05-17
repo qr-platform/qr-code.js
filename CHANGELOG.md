@@ -1,5 +1,17 @@
 # @qr-platform/qr-code-js
 
+## 0.11.0
+
+### Minor Changes
+
+- Release a minor version with new features.
+
+## 0.10.7
+
+### Patch Changes
+
+- 4f213aa: Updated default template image padding and margin base settings
+
 ## 0.10.6
 
 ### Patch Changes
@@ -187,7 +199,7 @@
 
 ### Patch Changes
 
-- 20a46bc: Outter border qr offset added
+- 20a46bc: Outer border qr offset added
 
 ## 0.7.2
 
@@ -259,7 +271,7 @@
 
 ### Patch Changes
 
-- 69696df: Outter and Inner decorative borders improvements
+- 69696df: Outer and Inner decorative borders improvements
 
 ## 0.0.10
 

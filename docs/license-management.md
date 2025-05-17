@@ -44,8 +44,8 @@ When using the basic border features in the free version, the library will autom
 ### Initialization
 
 - **Purpose**: Sets up the license manager
-- **Behavior**: Initializes automatically when you first attempt activation or check the status
-- **Manual Method**: `QRCodeJs.initializeIfNeeded()`
+- **Behavior**: Initializes automatically when you call `.license()` (or otherwise attempt activation) or check the status
+- **Manual Method**: `QRCodeJs.initializeIfNeeded()` (rarely needed because `.license()` runs it automatically)
 - **Example**:
   ```typescript
   async function initializeOnLoad() {
@@ -413,7 +413,7 @@ async function activateWithTokenNode(token) {
 
 #### `initializeIfNeeded()`
 
-- **Purpose**: Initialize license manager if needed
+- **Purpose**: Initialize the license manager if needed (normally handled automatically by `.license()`)
 - **Type**: `function(): Promise<boolean>`
 - **Returns**: Promise resolving to license status
 
