@@ -1,5 +1,11 @@
 # @qr-platform/qr-code-js
 
+## 0.10.7
+
+### Patch Changes
+
+- 4f213aa: Updated default template image padding and margin base settings
+
 ## 0.10.6
 
 ### Patch Changes

@@ -96,11 +96,6 @@ export declare const codes: {
     verticalOffset: number;
     shape: string;
     qrOptions: {};
-    imageOptions: {
-        imageSize: number;
-        margin: number;
-        roundedValue: number;
-    };
     dotsOptions: {
         type: string;
         color: string;
