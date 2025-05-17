@@ -10,7 +10,6 @@ import {
   Tabs
 } from '@heroui/react'
 // Corrected import order, Added Tabs, Tab
-import { QRCodeJs } from '@qr-platform/qr-code.js'
 import { motion } from 'framer-motion'
 import { useAtom, useAtomValue } from 'jotai' // Added useAtom
 
@@ -66,12 +65,15 @@ export const TemplateGallery: React.FC = () => {
   const tabsContentRef = useRef<HTMLDivElement | null>(null)
   const {
     setSelectedTemplateId,
+    setSelectedBorderId,
     setSelectedStyleId,
     setSelectedImageId,
     setSelectedTextTemplateId
   } = useQrConfigStore()
 
   const {
+    selectedTemplateId: storeSelectedTemplateId,
+    selectedBorderId: storeSelectedBorderId,
     selectedStyleId: storeSelectedStyleId, // Renamed to avoid conflict in useEffect
     selectedImageId: storeSelectedImageId, // Renamed
     selectedTextTemplateId: storeSelectedTextTemplateId, // Renamed
@@ -110,14 +112,15 @@ export const TemplateGallery: React.FC = () => {
   }, [requestedTab, setActiveCategoryId, setRequestedTab]) // galleryCategories is stable
 
   React.useEffect(() => {
+    let cancelled = false
+
     const generateTemplates = async () => {
-      if (!activeCategory) {
-        return
-      }
+      if (!activeCategory || cancelled) return
 
       setLoading(true)
-      setItemLoadingStatus({}) // Reset item loading status when category changes
-      templateRefs.current = {} // Reset refs when category changes
+      setValidationStatus({})
+      setItemLoadingStatus({})
+      templateRefs.current = {}
 
       try {
         const initialized = await qrCodeService.initialize()
@@ -127,116 +130,105 @@ export const TemplateGallery: React.FC = () => {
           return
         }
 
-        const newValidationStatus: Record<string, boolean> = {}
         const itemsToRender = activeCategory.source || []
-
-        // Set data once, as it's common for all QRs in this gallery generation pass
-        QRCodeJs.setData(qrData)
+        const newValidationStatus: Record<string, boolean> = {}
 
         for (const item of itemsToRender) {
+          if (cancelled) break
+
           setItemLoadingStatus(prev => ({ ...prev, [item.id]: true }))
-          const templateElement = templateRefs.current[item.id]
-          if (templateElement) {
-            templateElement.innerHTML = '' // Clear previous QR code
+          const el = templateRefs.current[item.id]
+
+          if (el) {
+            el.innerHTML = ''
+            const baseImage =
+              storeSelectedImageId === 'none'
+                ? null
+                : imageOptions.find(img => img.id === storeSelectedImageId)?.value || null
+
+            const options = {
+              element: el,
+              data: qrData,
+              templateId: storeSelectedTemplateId,
+              styleId: storeSelectedStyleId,
+              borderId: storeSelectedBorderId,
+              image: baseImage,
+              textId: storeSelectedTextTemplateId,
+              options: { isResponsive: false }
+            }
+
+            switch (activeCategoryId) {
+              case 'base':
+                options.templateId = item.id
+                break
+              case 'borders':
+                options.borderId = item.id
+                break
+              case 'styles':
+                options.styleId = item.id
+                break
+              case 'text':
+                options.textId = item.id
+                break
+              case 'images':
+                options.image = (item as (typeof imageOptions)[0]).value || null
+                break
+            }
+
             try {
-              // Determine base image from store (used if not in 'images' category)
-              const baseImageFromStore =
-                storeSelectedImageId === 'none'
-                  ? null
-                  : imageOptions.find(img => img.id === storeSelectedImageId)?.value ||
-                    null
-
-              // Apply settings: Start with store defaults, then category-specific overrides
-              // Default to store settings
-              QRCodeJs.setStyleId(
-                storeSelectedStyleId && storeSelectedStyleId !== 'default'
-                  ? storeSelectedStyleId
-                  : null
-              )
-              QRCodeJs.setTextId(
-                storeSelectedTextTemplateId && storeSelectedTextTemplateId !== 'none'
-                  ? storeSelectedTextTemplateId
-                  : null
-              )
-              QRCodeJs.setBorderId(
-                // Default border from main builder selection
-                qrConfigStoreState.selectedTemplateId &&
-                  qrConfigStoreState.selectedTemplateId !== 'base'
-                  ? qrConfigStoreState.selectedTemplateId
-                  : null
-              )
-              QRCodeJs.setImage(baseImageFromStore)
-
-              // Category-specific overrides
-              switch (activeCategoryId) {
-                case 'borders':
-                  QRCodeJs.setBorderId(item.id) // Override border
-                  // Style, Text, Image remain from store defaults set above
-                  break
-                case 'styles':
-                  QRCodeJs.setStyleId(item.id) // Override style
-                  // Border, Text, Image remain from store defaults
-                  break
-                case 'text':
-                  QRCodeJs.setTextId(item.id) // Override text
-                  // Border, Style, Image remain from store defaults
-                  break
-                case 'images':
-                  QRCodeJs.setImage((item as (typeof imageOptions)[0]).value) // Override image
-                  // Border, Style, Text remain from store defaults
-                  break
-                // No default case needed as all base settings are applied before switch
+              const success = await qrCodeService.generateQRCode(options)
+              if (!cancelled) {
+                newValidationStatus[item.id] = success
               }
-
-              // Advanced mode options are not applied to gallery previews for now.
-              // Gallery shows variations based on simple mode selections.
-
-              const qr = new QRCodeJs({ data: qrData }) // data is a required option for constructor
-              qr.append(templateElement)
-
-              // if (qr.validateScanning) {
-              //   const validationResult = await qr.validateScanning('zbar', false)
-              //   newValidationStatus[item.id] = validationResult.isValid
-              // } else {
-              //   console.warn(`qr.validateScanning() not available for item ${item.id}.`)
-              //   newValidationStatus[item.id] = false
-              // }
             } catch (error) {
               console.error(
-                `Error generating or validating QR code for item ${item.id} in category ${activeCategoryId}:`,
+                `Error generating QR code for item ${item.id} in category ${activeCategoryId}:`,
                 error
               )
-              newValidationStatus[item.id] = false
+              if (!cancelled) {
+                newValidationStatus[item.id] = false
+              }
             } finally {
               setItemLoadingStatus(prev => ({ ...prev, [item.id]: false }))
             }
+
+            if (cancelled) break
+
             await new Promise(resolve => setTimeout(resolve, 50))
           } else {
-            // If templateElement is not available (e.g., during fast tab switching),
-            // ensure loading status is also set to false to prevent spinners from getting stuck.
             setItemLoadingStatus(prev => ({ ...prev, [item.id]: false }))
           }
         }
-        setValidationStatus(newValidationStatus)
+
+        if (!cancelled) {
+          setValidationStatus(newValidationStatus)
+        }
       } catch (error) {
         console.error(
           `Error generating templates for category ${activeCategoryId}:`,
           error
         )
       } finally {
-        setLoading(false)
+        if (!cancelled) {
+          setLoading(false)
+        }
       }
     }
+
     void generateTemplates()
+
+    return () => {
+      cancelled = true
+    }
   }, [
     activeCategoryId,
     qrData,
+    storeSelectedTemplateId,
+    storeSelectedBorderId,
     storeSelectedStyleId,
     storeSelectedImageId,
     storeSelectedTextTemplateId,
-    qrConfigStoreState.selectedTemplateId, // Main builder's selected border/template
-    activeCategory // Object itself, if its 'source' changes
-    // isAdvancedMode and advancedOptions are not direct dependencies for QR generation here
+    activeCategory
   ])
 
   const handleTemplateSelect = (item: any) => {
@@ -245,7 +237,7 @@ export const TemplateGallery: React.FC = () => {
         setSelectedTemplateId(item.id) // Assuming base templates also use setSelectedTemplateId
         break
       case 'borders':
-        setSelectedTemplateId(item.id) // Updates main builder's selected border/template
+        setSelectedBorderId(item.id)
         break
       case 'styles':
         setSelectedStyleId(item.id)
@@ -259,6 +251,8 @@ export const TemplateGallery: React.FC = () => {
       default:
         console.warn(`No selection logic for category: ${activeCategoryId}`)
     }
+    const previewEl = document.getElementById('qr-preview-panel')
+    previewEl?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
   const itemsToDisplay = activeCategory?.source || []
