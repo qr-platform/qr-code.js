@@ -181,21 +181,13 @@ export class QRCodeService {
         qrCodeSettings.options = options
       }
 
-      if (element) {
-        element.innerHTML = ''
+      const qrInstance = await QRCodeJsLib.useSettings(qrCodeSettings).build()
+
+      if (!(isPreview ? (this.qrPreview = qrInstance) : (this.qrGallery = qrInstance))) {
+        throw new Error('Failed to create QR code instance')
       }
 
-      requestAnimationFrame(async () => {
-        const qrInstance = await QRCodeJsLib.useSettings(qrCodeSettings).build()
-
-        if (
-          !(isPreview ? (this.qrPreview = qrInstance) : (this.qrGallery = qrInstance))
-        ) {
-          throw new Error('Failed to create QR code instance')
-        }
-
-        await qrInstance.append(element, { clearContainer: true })
-      })
+      await qrInstance.append(element, { clearContainer: true })
 
       return true
     } catch (error) {

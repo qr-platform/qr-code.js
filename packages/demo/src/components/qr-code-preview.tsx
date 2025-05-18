@@ -7,7 +7,7 @@ import {
   CardBody,
   CardFooter,
   // removeToast was assumed, but not exported by @heroui/react
-  Spinner,
+  // Spinner,
   Tooltip
 } from '@heroui/react'
 import { Options as QRCodeJsOptions } from '@qr-platform/qr-code.js' // QRCodeJs direct import removed
@@ -26,7 +26,6 @@ export const QRCodePreview: React.FC = () => {
   const throttledQrConfig = useThrottle(defferedQrConfig, 300)
   const { isAdvancedMode } = qrConfig // For instant UI updates if needed
 
-  const [isLoading, setIsLoading] = React.useState(false)
   const [isValidating, setIsValidating] = React.useState(false)
   const [isValid, setIsValid] = React.useState<boolean | null>(null)
   const qrContainerRef = React.useRef<HTMLDivElement>(null)
@@ -50,14 +49,12 @@ export const QRCodePreview: React.FC = () => {
     container: HTMLDivElement | null
   ) => {
     if (!container) {
-      setIsLoading(false)
       return
     }
 
     setIsQrVisible(false)
     await new Promise(resolve => setTimeout(resolve, 300)) // For fade effect
 
-    setIsLoading(true)
     setIsValid(null)
 
     try {
@@ -68,7 +65,6 @@ export const QRCodePreview: React.FC = () => {
           description: 'Failed to initialize QR code service. Check console for details.',
           color: 'danger'
         })
-        setIsLoading(false)
         if (container) {
           container.textContent = 'QR Service initialization failed.'
         }
@@ -164,7 +160,6 @@ export const QRCodePreview: React.FC = () => {
         container.textContent = 'Failed to generate QR code due to an error.'
       }
     } finally {
-      setIsLoading(false)
       requestAnimationFrame(() => {
         setIsQrVisible(true)
       })
@@ -268,18 +263,14 @@ export const QRCodePreview: React.FC = () => {
                   : 'border-2 border-transparent'
             }`}
         >
-          {isLoading ? (
-            <Spinner color="primary" />
-          ) : (
-            <Flex
-              ref={qrContainerRef}
-              className={`w-80 min-h-80 transition-opacity duration-200 ease-in-out ${
-                isQrVisible ? 'opacity-100' : 'opacity-0'
-              }`}
-            >
-              {/* QR code will be appended here by QRCodeJs instance */}
-            </Flex>
-          )}
+          <Flex
+            ref={qrContainerRef}
+            className={`w-80 min-h-80 transition-opacity duration-200 ease-in-out ${
+              isQrVisible ? 'opacity-100' : 'opacity-0'
+            }`}
+          >
+            {/* QR code will be appended here by QRCodeJs library */}
+          </Flex>
         </Flex>
 
         <Box className="my-2 w-full text-sm text-default-500">
