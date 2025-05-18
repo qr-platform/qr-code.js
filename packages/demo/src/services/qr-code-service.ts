@@ -19,6 +19,7 @@ interface GenerateQRCodeOptions {
   borderId?: string | null
   border?: string | null
   options?: QRCodeJsOptions
+  isPreview?: boolean
 }
 
 // Token for authentication
@@ -29,7 +30,8 @@ const AUTH_TOKEN =
 export class QRCodeService {
   private static instance: QRCodeService
   private isInitialized = false
-  private qr: QRCodeJsLib | null = null
+  private qrPreview: QRCodeJsLib | null = null
+  private qrGallery: QRCodeJsLib | null = null
 
   private constructor() {}
 
@@ -68,8 +70,36 @@ export class QRCodeService {
     }
   }
 
-  // loadQRCodeJsScript is no longer needed.
-  // setupMockQRCode is no longer needed as the library is imported.
+  public async generateQRCodeGallery({
+    element,
+    data,
+    templateId,
+    template,
+    borderId,
+    border,
+    styleId,
+    style,
+    image,
+    text,
+    textId,
+    options
+  }: GenerateQRCodeOptions): Promise<boolean> {
+    return this.generateQRCode({
+      element,
+      data,
+      templateId,
+      template,
+      borderId,
+      border,
+      styleId,
+      style,
+      image,
+      text,
+      textId,
+      options,
+      isPreview: false
+    })
+  }
 
   public async generateQRCode({
     element,
@@ -83,7 +113,8 @@ export class QRCodeService {
     image,
     text,
     textId,
-    options
+    options,
+    isPreview = true
   }: GenerateQRCodeOptions): Promise<boolean> {
     if (!element) {
       return false
@@ -150,18 +181,21 @@ export class QRCodeService {
         qrCodeSettings.options = options
       }
 
-      this.qr = QRCodeJsLib.useSettings(qrCodeSettings).build()
-
-      if (!this.qr) {
-        throw new Error('Failed to create QR code instance')
-      }
-
-      // Clear the element before appending the QR code
       if (element) {
         element.innerHTML = ''
       }
 
-      await this.qr.append(element)
+      requestAnimationFrame(async () => {
+        const qrInstance = QRCodeJsLib.useSettings(qrCodeSettings).build()
+
+        if (
+          !(isPreview ? (this.qrPreview = qrInstance) : (this.qrGallery = qrInstance))
+        ) {
+          throw new Error('Failed to create QR code instance')
+        }
+
+        await qrInstance.append(element)
+      })
 
       return true
     } catch (error) {
@@ -182,13 +216,21 @@ export class QRCodeService {
     }
   }
 
+  public async getQRCodeJsPreview() {
+    return this.qrPreview
+  }
+
+  public async getQRCodeJsGallery() {
+    return this.qrGallery
+  }
+
   public async validateQRCode(): Promise<{ isValid: boolean; reason?: string }> {
-    if (!this.qr) {
+    if (!this.qrPreview) {
       return { isValid: false, reason: 'No QR code has been generated' }
     }
 
     try {
-      return await this.qr.validateScanning()
+      return await this.qrPreview.validateScanning()
     } catch (error) {
       console.error('Failed to validate QR code:', error)
       return {
@@ -199,20 +241,20 @@ export class QRCodeService {
   }
 
   public async downloadQRCode(format: 'svg' | 'png'): Promise<boolean> {
-    if (!this.qr) {
+    if (!this.qrPreview) {
       return false
     }
 
     try {
       if (format === 'png') {
-        await this.qr.download(
+        await this.qrPreview.download(
           { extension: 'png' },
           {
             width: 600
           }
         )
       } else {
-        await this.qr.download({ extension: 'svg' })
+        await this.qrPreview.download({ extension: 'svg' })
       }
       return true
     } catch (error) {

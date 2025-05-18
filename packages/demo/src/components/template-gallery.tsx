@@ -178,7 +178,7 @@ export const TemplateGallery: React.FC = () => {
           }
 
           try {
-            await qrCodeService.generateQRCode(options)
+            await qrCodeService.generateQRCodeGallery(options)
           } catch (error) {
             console.error(
               `Error generating QR code for item ${item.id} in category ${activeGalleryTabId}:`,
