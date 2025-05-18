@@ -486,8 +486,9 @@ if (validationResult.isValid) {
 
 #### Methods
 
-- **`append(container: HTMLElement): void`**
+- **`append(container: HTMLElement, options?: { clearContainer?: boolean }): void`**
   Appends the QR code to a specified container element.
+  If `clearContainer` is `true`, the container's existing contents are removed before appending.
 
 - **`serialize(): Promise<string | undefined>`**
   Converts the QR code to an SVG string.

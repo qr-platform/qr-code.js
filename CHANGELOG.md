@@ -1,5 +1,11 @@
 # @qr-platform/qr-code-js
 
+## 0.11.2
+
+### Patch Changes
+
+- 1cdc614: Extended the append method to accept options and clear the container when clearContainer is true
+
 ## 0.11.1
 
 ### Patch Changes

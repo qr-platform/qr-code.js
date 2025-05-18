@@ -1,5 +1,5 @@
 import { CanvasOptions } from '~/utils/canvas-options';
-import { MethodOverrideOptions, RecursivePartial } from '../types/helper';
+import { AppendOptions, MethodOverrideOptions, RecursivePartial } from '../types/helper';
 import { SettingsOptions } from '../types/settings-options';
 import { StyleOptions } from '../types/style-options';
 import { QRTextTemplateDefinition, TextOptions } from '../types/text-options';
@@ -140,7 +140,7 @@ export declare class QRCodeJs {
     setDescription(description?: string): this;
     setMetadata(metadata?: Record<string, any>): this;
     update(options?: RecursivePartial<Options>): Promise<void>;
-    append(container?: HTMLElement): this;
+    append(container?: HTMLElement, options?: AppendOptions): this;
     applyExtension(extension: ExtensionFunction): Promise<void>;
     deleteExtension(): Promise<void>;
     serialize(inverted?: boolean): Promise<string | undefined>;
