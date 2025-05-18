@@ -30,6 +30,7 @@ export const QRCodePreview: React.FC = () => {
   const [isValidating, setIsValidating] = React.useState(false)
   const [isValid, setIsValid] = React.useState<boolean | null>(null)
   const qrContainerRef = React.useRef<HTMLDivElement>(null)
+  const generationIdRef = React.useRef(0)
   const [isQrVisible, setIsQrVisible] = React.useState(true) // For fade animation
   const validationTimerRef = React.useRef<number | null>(null) // Changed NodeJS.Timeout to number
 
@@ -59,6 +60,8 @@ export const QRCodePreview: React.FC = () => {
 
     setIsLoading(true)
     setIsValid(null)
+
+    const localGenerationId = ++generationIdRef.current
 
     console.log('generateQRCodeAsync')
 
@@ -106,7 +109,8 @@ export const QRCodePreview: React.FC = () => {
             image: null,
             text: null,
             textId: null,
-            options: optionsForLib
+            options: optionsForLib,
+            generationId: localGenerationId
           })
           generationAttempted = true
         } else {
@@ -126,7 +130,8 @@ export const QRCodePreview: React.FC = () => {
             image: currentSelectedImage,
             text: null,
             textId: currentSelectedTextTemplateId,
-            options: { isResponsive: true }
+            options: { isResponsive: true },
+            generationId: localGenerationId
           })
           generationAttempted = true
         } else {

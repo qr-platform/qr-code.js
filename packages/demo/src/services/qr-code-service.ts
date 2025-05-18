@@ -20,6 +20,7 @@ interface GenerateQRCodeOptions {
   border?: string | null
   options?: QRCodeJsOptions
   isPreview?: boolean
+  generationId?: number
 }
 
 // Token for authentication
@@ -32,6 +33,8 @@ export class QRCodeService {
   private isInitialized = false
   private qrPreview: QRCodeJsLib | null = null
   private qrGallery: QRCodeJsLib | null = null
+  private previewGenerationId = 0
+  private galleryGenerationId = 0
 
   private constructor() {}
 
@@ -114,7 +117,8 @@ export class QRCodeService {
     text,
     textId,
     options,
-    isPreview = true
+    isPreview = true,
+    generationId
   }: GenerateQRCodeOptions): Promise<boolean> {
     if (!element) {
       return false
@@ -185,7 +189,21 @@ export class QRCodeService {
         element.innerHTML = ''
       }
 
+      const currentId =
+        generationId ??
+        (isPreview ? ++this.previewGenerationId : ++this.galleryGenerationId)
+
+      if (isPreview) {
+        this.previewGenerationId = currentId
+      } else {
+        this.galleryGenerationId = currentId
+      }
+
       requestAnimationFrame(async () => {
+        const latestId = isPreview ? this.previewGenerationId : this.galleryGenerationId
+        if (currentId !== latestId) {
+          return
+        }
         const qrInstance = QRCodeJsLib.useSettings(qrCodeSettings).build()
 
         if (
