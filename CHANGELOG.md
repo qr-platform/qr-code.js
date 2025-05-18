@@ -1,5 +1,11 @@
 # @qr-platform/qr-code-js
 
+## 0.11.3
+
+### Patch Changes
+
+- bc47c1d: Improvement to appear and update methods
+
 ## 0.11.2
 
 ### Patch Changes
