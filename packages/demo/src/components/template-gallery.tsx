@@ -97,108 +97,98 @@ export const TemplateGallery: React.FC = () => {
   }, [activeGalleryTabId])
 
   React.useEffect(() => {
-    // let cancelled = false
+    if (!activeCategory) return
 
-    const generateTemplates = async () => {
-      if (!activeCategory) return
+    let cancelled = false
+    const queuedIds: number[] = []
 
-      try {
-        const initialized = await qrCodeService.initialize()
-        if (!initialized) {
-          console.error('Failed to initialize QR code service')
-          // setLoading(false) // Removed
-          return
-        }
-
-        const itemsToRender = activeCategory.source || []
-        // const newValidationStatus: Record<string, boolean> = {} // Removed
-
-        for (const item of itemsToRender) {
-          // setItemLoadingStatus(prev => ({ ...prev, [item.id]: true })) // Removed
-          const el = templateRefs.current[item.id]
-
-          if (el) {
-            // el.innerHTML = ''
-            const baseImage =
-              storeSelectedImageId === 'none'
-                ? null
-                : imageOptions.find(img => img.id === storeSelectedImageId)?.value || null
-
-            const options = {
-              element: el,
-              data: qrData,
-              templateId: storeSelectedTemplateId,
-              styleId: storeSelectedStyleId,
-              borderId: storeSelectedBorderId,
-              image: baseImage,
-              textId: storeSelectedTextTemplateId,
-              options: { isResponsive: false }
-            }
-
-            switch (activeGalleryTabId) {
-              case 'base':
-                options.templateId = item.id
-                break
-              case 'borders':
-                options.borderId = item.id
-                break
-              case 'styles':
-                options.styleId = item.id
-                break
-              case 'text':
-                options.textId = item.id
-                break
-              case 'images':
-                options.image = (item as (typeof imageOptions)[0]).value || null
-                break
-            }
-
-            try {
-              if (item.id === 'neon-dark') {
-                console.log('Rendering gallery item:', item.id, options)
-              }
-
-              await qrCodeService.generateQRCode(options) // Removed success assignment and validation update
-              // if (!cancelled) {
-              //   newValidationStatus[item.id] = success
-              // }
-            } catch (error) {
-              console.error(
-                // Corrected to remove duplicate message and validation update
-                `Error generating QR code for item ${item.id} in category ${activeGalleryTabId}:`,
-                error
-              )
-              // if (!cancelled) {
-              //   newValidationStatus[item.id] = false
-              // }
-            } // finally { // Removed itemLoadingStatus update
-            // setItemLoadingStatus(prev => ({ ...prev, [item.id]: false }))
-            // }
-
-            // if (cancelled) break
-
-            // await new Promise(resolve => setTimeout(resolve, 50)) // Removed delay
-          } // else { // Removed itemLoadingStatus update
-          // setItemLoadingStatus(prev => ({ ...prev, [item.id]: false }))
-          // }
-        }
-
-        // if (!cancelled) { // Removed validation update
-        //   setValidationStatus(newValidationStatus)
-        // }
-      } catch (error) {
-        console.error(
-          `Error generating templates for category ${activeGalleryTabId}:`,
-          error
-        )
-      } finally {
-        // if (!cancelled) { // Removed setLoading
-        //   setLoading(false)
-        // }
+    const scheduleIdle = (cb: () => void) => {
+      if (typeof (window as any).requestIdleCallback === 'function') {
+        const id = (window as any).requestIdleCallback(cb)
+        queuedIds.push(id)
+      } else {
+        const id = window.setTimeout(cb, 0)
+        queuedIds.push(id)
       }
     }
 
-    void generateTemplates()
+    const cancelIdleTasks = () => {
+      queuedIds.forEach(id => {
+        if (typeof (window as any).cancelIdleCallback === 'function') {
+          ;(window as any).cancelIdleCallback(id)
+        } else {
+          clearTimeout(id)
+        }
+      })
+      queuedIds.length = 0
+    }
+
+    const itemsToRender = activeCategory.source || []
+
+    const renderItem = (index: number) => {
+      if (cancelled || index >= itemsToRender.length) return
+
+      scheduleIdle(async () => {
+        if (cancelled) return
+
+        const item = itemsToRender[index]
+        const el = templateRefs.current[item.id]
+
+        if (el) {
+          const baseImage =
+            storeSelectedImageId === 'none'
+              ? null
+              : imageOptions.find(img => img.id === storeSelectedImageId)?.value || null
+
+          const options = {
+            element: el,
+            data: qrData,
+            templateId: storeSelectedTemplateId,
+            styleId: storeSelectedStyleId,
+            borderId: storeSelectedBorderId,
+            image: baseImage,
+            textId: storeSelectedTextTemplateId,
+            options: { isResponsive: false }
+          }
+
+          switch (activeGalleryTabId) {
+            case 'base':
+              options.templateId = item.id
+              break
+            case 'borders':
+              options.borderId = item.id
+              break
+            case 'styles':
+              options.styleId = item.id
+              break
+            case 'text':
+              options.textId = item.id
+              break
+            case 'images':
+              options.image = (item as (typeof imageOptions)[0]).value || null
+              break
+          }
+
+          try {
+            await qrCodeService.generateQRCode(options)
+          } catch (error) {
+            console.error(
+              `Error generating QR code for item ${item.id} in category ${activeGalleryTabId}:`,
+              error
+            )
+          }
+        }
+
+        renderItem(index + 1)
+      })
+    }
+
+    renderItem(0)
+
+    return () => {
+      cancelled = true
+      cancelIdleTasks()
+    }
   }, [
     activeGalleryTabId,
     qrData,
