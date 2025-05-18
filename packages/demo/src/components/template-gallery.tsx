@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react' // Added useEffect and useRef
+import React, { useDeferredValue, useEffect, useRef } from 'react' // Added useDeferredValue
 import {
   Card,
   CardBody,
@@ -78,6 +78,14 @@ export const TemplateGallery: React.FC = () => {
     advancedOptions: _advancedOptions // Same as above
   } = qrConfigStoreState
 
+  // Defer values used for gallery generation so preview rendering has higher priority
+  const deferredTemplateId = useDeferredValue(storeSelectedTemplateId)
+  const deferredBorderId = useDeferredValue(storeSelectedBorderId)
+  const deferredStyleId = useDeferredValue(storeSelectedStyleId)
+  const deferredImageId = useDeferredValue(storeSelectedImageId)
+  const deferredTextTemplateId = useDeferredValue(storeSelectedTextTemplateId)
+  const deferredQrData = useDeferredValue(qrData)
+
   const templateRefs = React.useRef<Record<string, HTMLDivElement | null>>({})
   const activeCategory = galleryCategories.find(cat => cat.id === activeGalleryTabId)
 
@@ -136,18 +144,18 @@ export const TemplateGallery: React.FC = () => {
 
         if (el) {
           const baseImage =
-            storeSelectedImageId === 'none'
+            deferredImageId === 'none'
               ? null
-              : imageOptions.find(img => img.id === storeSelectedImageId)?.value || null
+              : imageOptions.find(img => img.id === deferredImageId)?.value || null
 
           const options = {
             element: el,
-            data: qrData,
-            templateId: storeSelectedTemplateId,
-            styleId: storeSelectedStyleId,
-            borderId: storeSelectedBorderId,
+            data: deferredQrData,
+            templateId: deferredTemplateId,
+            styleId: deferredStyleId,
+            borderId: deferredBorderId,
             image: baseImage,
-            textId: storeSelectedTextTemplateId,
+            textId: deferredTextTemplateId,
             options: { isResponsive: false }
           }
 
@@ -191,12 +199,12 @@ export const TemplateGallery: React.FC = () => {
     }
   }, [
     activeGalleryTabId,
-    qrData,
-    storeSelectedTemplateId,
-    storeSelectedBorderId,
-    storeSelectedStyleId,
-    storeSelectedImageId,
-    storeSelectedTextTemplateId,
+    deferredQrData,
+    deferredTemplateId,
+    deferredBorderId,
+    deferredStyleId,
+    deferredImageId,
+    deferredTextTemplateId,
     activeCategory
   ])
 
