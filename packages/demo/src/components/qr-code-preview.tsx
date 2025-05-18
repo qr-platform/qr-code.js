@@ -60,8 +60,6 @@ export const QRCodePreview: React.FC = () => {
     setIsLoading(true)
     setIsValid(null)
 
-    console.log('generateQRCodeAsync')
-
     try {
       const initialized = await qrCodeService.initialize()
       if (!initialized) {
