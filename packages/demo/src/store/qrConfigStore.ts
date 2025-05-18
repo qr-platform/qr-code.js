@@ -9,6 +9,7 @@ import {
 } from '@qr-platform/qr-code.js'
 import { atomWithStore } from 'jotai-zustand'
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 
 import { imageOptions } from '../data/qr-data'
 import {
@@ -202,7 +203,7 @@ const initialTextTemplateId = templatesData.textTemplates[0]?.id || 'scan-me'
 const initialImageId = imageOptions[0]?.id || 'none'
 const initialImage = undefined
 
-export const useQrConfigStore = create<QRConfigState>((set, get) => {
+const createQrConfigStore = (set: any, get: any): QRConfigState => {
   // Helper function for circular navigation
   const getNextPrevId = (
     currentId: string,
@@ -725,6 +726,10 @@ export const useQrConfigStore = create<QRConfigState>((set, get) => {
     },
     setActiveGalleryTabId: tabId => set({ activeGalleryTabId: tabId })
   }
-})
+}
+
+export const useQrConfigStore = create<QRConfigState>()(
+  persist(createQrConfigStore, { name: 'qr-config-storage' })
+)
 
 export const qrConfigAtom = atomWithStore(useQrConfigStore)

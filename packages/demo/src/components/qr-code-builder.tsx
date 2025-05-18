@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Button, Card, CardBody, Input, Tab, Tabs } from '@heroui/react'
 import { useAtomValue } from 'jotai'
 import {
@@ -29,6 +29,21 @@ export const QRCodeBuilder: React.FC = () => {
   const [qrCodeData, setQrCodeData] = useState(qrData)
   // const [editMode, setEditMode] = useState('Templates')
   const debouncedSetQrData = useDebounceCallback(setQrData, 500)
+
+  const handleCopyLink = useCallback(() => {
+    if (typeof window === 'undefined') return
+    const url = new URL(window.location.href)
+    url.searchParams.set('templateId', qrConfig.selectedTemplateId)
+    url.searchParams.set('styleId', qrConfig.selectedStyleId)
+    url.searchParams.set('borderId', qrConfig.selectedBorderId)
+    if (qrConfig.selectedImageId && qrConfig.selectedImageId !== 'none') {
+      url.searchParams.set('image', qrConfig.selectedImageId)
+    } else {
+      url.searchParams.delete('image')
+    }
+    url.searchParams.set('textTemplateId', qrConfig.selectedTextTemplateId)
+    void navigator.clipboard.writeText(url.toString())
+  }, [qrConfig])
 
   useEffect(() => {
     debouncedSetQrData(qrCodeData)
@@ -223,6 +238,14 @@ export const QRCodeBuilder: React.FC = () => {
                     color="primary"
                   >
                     Random All
+                  </Button>
+                  <Button
+                    onPress={handleCopyLink}
+                    startContent={<LinkIcon className="w-4 h-4" />}
+                    variant="ghost"
+                    color="primary"
+                  >
+                    Copy Link
                   </Button>
                   <Button
                     onPress={qrConfig.resetAllTemplates}
