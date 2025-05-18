@@ -24,3 +24,6 @@ export interface RotateFigureArgs {
 export interface MethodOverrideOptions {
     override?: boolean;
 }
+export interface AppendOptions {
+    clearContainer?: boolean;
+}

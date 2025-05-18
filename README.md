@@ -78,7 +78,8 @@ const qrCode = new QRCodeJs(options);
 // 3. Append to a container element (in browser)
 const container = document.getElementById('qr-container');
 if (container) {
-  qrCode.append(container);
+  // Remove any existing content before appending the QR code
+  qrCode.append(container, { clearContainer: true });
 }
 
 // Or get SVG string (Browser or Node.js)

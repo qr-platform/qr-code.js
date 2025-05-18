@@ -82,7 +82,7 @@ qrCode.append(document.getElementById('qr-container'));
 
 | Method              | Parameters                                                                 | Description                                                                 |
 | :------------------ | :------------------------------------------------------------------------- | :-------------------------------------------------------------------------- |
-| `append`            | `container: HTMLElement`                                                   | Appends the QR code to a container element. Returns `QRCodeJs \| undefined`. |
+| `append`            | `container: HTMLElement, options?: { clearContainer?: boolean }`                                                   | Appends the QR code to a container element. Returns `QRCodeJs \| undefined`. |
 | `serialize`         | `inverted?: boolean`                                                       | Converts the QR code to an SVG string. Returns `Promise<string \| undefined>`. |
 | `download`          | `downloadOptions?: { name?: string; extension: 'svg' \| 'png' \| 'jpeg' \| 'webp' }, canvasOptions?: CanvasOptions` | Downloads the QR code as a file. Returns `Promise<void>`.                   |
 | `update`            | `options?: RecursivePartial<Options>`                                      | Updates the QR code with new options. Returns `void`.                       |

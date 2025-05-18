@@ -1656,7 +1656,10 @@ new QRCodeJs(options: QRCodeJsOptions)
 Appends the QR code to a container element.
 
 ```typescript
-qrCode.append(container: HTMLElement): QRCodeJs | undefined
+qrCode.append(
+  container: HTMLElement,
+  options?: { clearContainer?: boolean }
+): QRCodeJs | undefined
 ```
 
 #### `serialize()`
