@@ -56,7 +56,7 @@ export const QRCodePreview: React.FC = () => {
     }
 
     setIsQrVisible(false)
-    await new Promise(resolve => setTimeout(resolve, 1300)) // For fade effect
+    await new Promise(resolve => setTimeout(resolve, 300)) // For fade effect
 
     setIsLoading(true)
     setIsValid(null)
