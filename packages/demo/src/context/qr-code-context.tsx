@@ -7,13 +7,7 @@ import { qrConfigAtom } from '../store'
 export const UrlSyncHandler: React.FC = () => {
   const qrConfig = useAtomValue(qrConfigAtom)
 
-  const {
-    setSelectedTemplateId,
-    setSelectedStyleId,
-    setSelectedBorderId,
-    setSelectedImageId,
-    setSelectedTextTemplateId
-  } = qrConfig
+  const { setTemplatesFromUrl } = qrConfig
 
   // Initialize state from URL on first render
   useEffect(() => {
@@ -25,14 +19,18 @@ export const UrlSyncHandler: React.FC = () => {
       const imageId = params.get('image')
       const textId = params.get('textTemplateId')
 
-      if (templateId) setSelectedTemplateId(templateId)
-      if (styleId) setSelectedStyleId(styleId)
-      if (borderId) setSelectedBorderId(borderId)
-      if (imageId) setSelectedImageId(imageId)
-      if (textId) setSelectedTextTemplateId(textId)
+      const urlParams = {
+        templateId: templateId || undefined,
+        styleId: styleId || undefined,
+        borderId: borderId || undefined,
+        imageId: imageId || undefined,
+        textTemplateId: textId || undefined
+      }
+      setTemplatesFromUrl(urlParams)
+      window.history.replaceState({}, '', window.location.pathname)
     }
     // We only want to run this on mount
-  }, [])
+  }, [setTemplatesFromUrl])
 
   // This component does not render anything itself.
   // It's used for its side effect of syncing URL params.

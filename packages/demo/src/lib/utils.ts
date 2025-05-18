@@ -19,10 +19,6 @@ export function formatDate(input: string | number): string {
   })
 }
 
-export function absoluteUrl(path: string) {
-  return `${process.env.NEXT_PUBLIC_APP_URL}${path}`
-}
-
 export interface SelectionProps {
   selection: Selection | null
   selectedElement: HTMLElement | null
@@ -260,4 +256,18 @@ export function compareIdArrays(arr1: string[] | null, arr2: string[] | null) {
   }
 
   return arr1.every((element, index) => element === arr2[index])
+}
+
+export function debounce<F extends (...args: any[]) => any>(
+  func: F,
+  waitFor: number
+): (...args: Parameters<F>) => void {
+  let timeout: ReturnType<typeof setTimeout> | null = null
+
+  return (...args: Parameters<F>): void => {
+    if (timeout !== null) {
+      clearTimeout(timeout)
+    }
+    timeout = setTimeout(() => func(...args), waitFor)
+  }
 }

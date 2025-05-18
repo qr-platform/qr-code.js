@@ -56,18 +56,20 @@ const galleryCategories = [
 export const TemplateGallery: React.FC = () => {
   const qrConfigStoreState = useAtomValue(qrConfigAtom)
   const tabsContentRef = useRef<HTMLDivElement | null>(null)
-  const isInternalTabClickRef = useRef(false) // Added to track internal tab clicks
+  // const isInternalTabClickRef = useRef(false);
   const {
     setSelectedTemplateId,
     setSelectedBorderId,
     setSelectedStyleId,
     setSelectedImageId,
     setSelectedTextTemplateId,
-    activeGalleryTabId, // Added
-    setActiveGalleryTabId // Added
-  } = useQrConfigStore()
+    activeGalleryTabId, // This comes from qrConfigAtom
+    setActiveGalleryTabId,
+    clearScrollToGalleryTrigger
+  } = useQrConfigStore() // For actions
 
   const {
+    // ... other properties from qrConfigStoreState
     selectedTemplateId: storeSelectedTemplateId,
     selectedBorderId: storeSelectedBorderId,
     selectedStyleId: storeSelectedStyleId, // Renamed to avoid conflict in useEffect
@@ -75,8 +77,11 @@ export const TemplateGallery: React.FC = () => {
     selectedTextTemplateId: storeSelectedTextTemplateId, // Renamed
     qrData,
     isAdvancedMode: _isAdvancedMode, // Currently not used for gallery generation logic but kept for context
-    advancedOptions: _advancedOptions // Same as above
+    advancedOptions: _advancedOptions, // Same as above
+    scrollToGalleryTabId
   } = qrConfigStoreState
+
+  // const { set: setStore } = useQrConfigStore();
 
   // Defer values used for gallery generation so preview rendering has higher priority
   const deferredTemplateId = useDeferredValue(storeSelectedTemplateId)
@@ -89,20 +94,40 @@ export const TemplateGallery: React.FC = () => {
   const templateRefs = React.useRef<Record<string, HTMLDivElement | null>>({})
   const activeCategory = galleryCategories.find(cat => cat.id === activeGalleryTabId)
 
+  // useEffect(() => {                                  // <<< DELETE OLD EFFECT START
+  //   if (activeGalleryTabId && tabsContentRef.current) {
+  //     const tabExists = galleryCategories.some(cat => cat.id === activeGalleryTabId)
+  //     if (tabExists) {
+  //       if (isInternalTabClickRef.current) {
+  //         // Change was internal, reset flag and do not scroll
+  //         isInternalTabClickRef.current = false
+  //       } else {
+  //         // Change was external or initial load, proceed with scroll
+  //         tabsContentRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  //       }
+  //     }
+  //   }
+  // }, [activeGalleryTabId])                           // <<< DELETE OLD EFFECT END
+
   useEffect(() => {
-    if (activeGalleryTabId && tabsContentRef.current) {
-      const tabExists = galleryCategories.some(cat => cat.id === activeGalleryTabId)
+    if (
+      scrollToGalleryTabId &&
+      scrollToGalleryTabId === activeGalleryTabId &&
+      tabsContentRef.current
+    ) {
+      const tabExists = galleryCategories.some(cat => cat.id === scrollToGalleryTabId)
       if (tabExists) {
-        if (isInternalTabClickRef.current) {
-          // Change was internal, reset flag and do not scroll
-          isInternalTabClickRef.current = false
-        } else {
-          // Change was external or initial load, proceed with scroll
-          tabsContentRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        }
+        tabsContentRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        // Reset the trigger immediately after scrolling
+        clearScrollToGalleryTrigger()
       }
     }
-  }, [activeGalleryTabId])
+  }, [
+    scrollToGalleryTabId,
+    activeGalleryTabId,
+    clearScrollToGalleryTrigger,
+    galleryCategories
+  ])
 
   React.useEffect(() => {
     if (!activeCategory) return
@@ -243,7 +268,7 @@ export const TemplateGallery: React.FC = () => {
             selectedKey={activeGalleryTabId}
             size="lg"
             onSelectionChange={key => {
-              isInternalTabClickRef.current = true
+              // isInternalTabClickRef.current = true
               setActiveGalleryTabId(key as string)
             }}
             // variant="underlined" // Using underlined variant for a cleaner look

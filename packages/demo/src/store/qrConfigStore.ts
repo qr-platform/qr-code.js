@@ -75,6 +75,14 @@ export interface QRCodePreset {
   advancedOptions?: AdvancedQROptions
 }
 
+export interface UrlTemplateParams {
+  templateId?: string
+  styleId?: string
+  borderId?: string
+  imageId?: string
+  textTemplateId?: string
+}
+
 export interface QRConfigState {
   qrData: string
   selectedTemplateId: string
@@ -89,6 +97,7 @@ export interface QRConfigState {
   isPreviewMode: boolean
   advancedOptions: AdvancedQROptions
   activeGalleryTabId?: string
+  scrollToGalleryTabId: string | null
 
   initialDefaultQrData: string
   initialDefaultSelectedTemplateId: string
@@ -190,6 +199,9 @@ export interface QRConfigState {
   getSelectedImageName: () => string
 
   setActiveGalleryTabId: (tabId: string) => void
+  browseAndScrollToGalleryTab: (tabId: string) => void // <<< ADD THIS LINE
+  clearScrollToGalleryTrigger: () => void // <<< ADD THIS LINE
+  setTemplatesFromUrl: (params: UrlTemplateParams) => void
 }
 
 // Get templates from QRCodeJs library
@@ -242,6 +254,7 @@ const createQrConfigStore = (set: any, get: any): QRConfigState => {
     initialDefaultEditMode: 'Templates',
     advancedOptions: JSON.parse(JSON.stringify(defaultAdvancedOptions)), // Deep copy
     activeGalleryTabId: 'base',
+    scrollToGalleryTabId: null,
 
     initialDefaultQrData: initialQrData,
     initialDefaultSelectedTemplateId: initialTemplateId,
@@ -273,23 +286,23 @@ const createQrConfigStore = (set: any, get: any): QRConfigState => {
         isPreviewMode: mode === 'Preview'
       }),
     setAdvancedOptions: options =>
-      set(state => ({
+      set((state: QRConfigState) => ({
         advancedOptions: { ...state.advancedOptions, ...options }
       })),
     setAdvancedOption: (key, value) =>
-      set(state => ({
+      set((state: QRConfigState) => ({
         advancedOptions: { ...state.advancedOptions, [key]: value }
       })),
 
     setAdvancedDotsOption: (key, value) =>
-      set(state => ({
+      set((state: QRConfigState) => ({
         advancedOptions: {
           ...state.advancedOptions,
           dotsOptions: { ...state.advancedOptions.dotsOptions, [key]: value }
         }
       })),
     setAdvancedCornersSquareOption: (key, value) =>
-      set(state => ({
+      set((state: QRConfigState) => ({
         advancedOptions: {
           ...state.advancedOptions,
           cornersSquareOptions: {
@@ -299,7 +312,7 @@ const createQrConfigStore = (set: any, get: any): QRConfigState => {
         }
       })),
     setAdvancedCornersDotOption: (key, value) =>
-      set(state => ({
+      set((state: QRConfigState) => ({
         advancedOptions: {
           ...state.advancedOptions,
           cornersDotOptions: {
@@ -309,7 +322,7 @@ const createQrConfigStore = (set: any, get: any): QRConfigState => {
         }
       })),
     setAdvancedBackgroundOption: (key, value) =>
-      set(state => ({
+      set((state: QRConfigState) => ({
         advancedOptions: {
           ...state.advancedOptions,
           backgroundOptions: {
@@ -319,21 +332,21 @@ const createQrConfigStore = (set: any, get: any): QRConfigState => {
         }
       })),
     setAdvancedImageOption: (key, value) =>
-      set(state => ({
+      set((state: QRConfigState) => ({
         advancedOptions: {
           ...state.advancedOptions,
           imageOptions: { ...state.advancedOptions.imageOptions, [key]: value }
         }
       })),
     setAdvancedQrOption: (key, value) =>
-      set(state => ({
+      set((state: QRConfigState) => ({
         advancedOptions: {
           ...state.advancedOptions,
           qrOptions: { ...state.advancedOptions.qrOptions, [key]: value }
         }
       })),
     setAdvancedBorderOption: (key, value) =>
-      set(state => ({
+      set((state: QRConfigState) => ({
         advancedOptions: {
           ...state.advancedOptions,
           borderOptions: { ...state.advancedOptions.borderOptions, [key]: value }
@@ -349,7 +362,7 @@ const createQrConfigStore = (set: any, get: any): QRConfigState => {
       }
     },
     setNextBaseTemplate: () => {
-      set(state => ({
+      set((state: QRConfigState) => ({
         selectedTemplateId: getNextPrevId(
           state.selectedTemplateId,
           templatesData.baseTemplates,
@@ -358,7 +371,7 @@ const createQrConfigStore = (set: any, get: any): QRConfigState => {
       }))
     },
     setPrevBaseTemplate: () => {
-      set(state => ({
+      set((state: QRConfigState) => ({
         selectedTemplateId: getNextPrevId(
           state.selectedTemplateId,
           templatesData.baseTemplates,
@@ -367,7 +380,9 @@ const createQrConfigStore = (set: any, get: any): QRConfigState => {
       }))
     },
     resetBaseTemplate: () => {
-      set(state => ({ selectedTemplateId: state.initialDefaultSelectedTemplateId }))
+      set((state: QRConfigState) => ({
+        selectedTemplateId: state.initialDefaultSelectedTemplateId
+      }))
     },
 
     // --- Style Template Actions ---
@@ -379,7 +394,7 @@ const createQrConfigStore = (set: any, get: any): QRConfigState => {
       }
     },
     setNextStyleTemplate: () => {
-      set(state => ({
+      set((state: QRConfigState) => ({
         selectedStyleId: getNextPrevId(
           state.selectedStyleId,
           templatesData.styleTemplates,
@@ -388,7 +403,7 @@ const createQrConfigStore = (set: any, get: any): QRConfigState => {
       }))
     },
     setPrevStyleTemplate: () => {
-      set(state => ({
+      set((state: QRConfigState) => ({
         selectedStyleId: getNextPrevId(
           state.selectedStyleId,
           templatesData.styleTemplates,
@@ -397,7 +412,9 @@ const createQrConfigStore = (set: any, get: any): QRConfigState => {
       }))
     },
     resetStyleTemplate: () => {
-      set(state => ({ selectedStyleId: state.initialDefaultSelectedStyleId }))
+      set((state: QRConfigState) => ({
+        selectedStyleId: state.initialDefaultSelectedStyleId
+      }))
     },
 
     // --- Border Template Actions ---
@@ -409,7 +426,7 @@ const createQrConfigStore = (set: any, get: any): QRConfigState => {
       }
     },
     setNextBorderTemplate: () => {
-      set(state => ({
+      set((state: QRConfigState) => ({
         selectedBorderId: getNextPrevId(
           state.selectedBorderId,
           templatesData.borderTemplates,
@@ -418,7 +435,7 @@ const createQrConfigStore = (set: any, get: any): QRConfigState => {
       }))
     },
     setPrevBorderTemplate: () => {
-      set(state => ({
+      set((state: QRConfigState) => ({
         selectedBorderId: getNextPrevId(
           state.selectedBorderId,
           templatesData.borderTemplates,
@@ -427,7 +444,9 @@ const createQrConfigStore = (set: any, get: any): QRConfigState => {
       }))
     },
     resetBorderTemplate: () => {
-      set(state => ({ selectedBorderId: state.initialDefaultSelectedBorderId }))
+      set((state: QRConfigState) => ({
+        selectedBorderId: state.initialDefaultSelectedBorderId
+      }))
     },
 
     // --- Text Template Actions ---
@@ -439,7 +458,7 @@ const createQrConfigStore = (set: any, get: any): QRConfigState => {
       }
     },
     setNextTextTemplate: () => {
-      set(state => ({
+      set((state: QRConfigState) => ({
         selectedTextTemplateId: getNextPrevId(
           state.selectedTextTemplateId,
           templatesData.textTemplates,
@@ -448,7 +467,7 @@ const createQrConfigStore = (set: any, get: any): QRConfigState => {
       }))
     },
     setPrevTextTemplate: () => {
-      set(state => ({
+      set((state: QRConfigState) => ({
         selectedTextTemplateId: getNextPrevId(
           state.selectedTextTemplateId,
           templatesData.textTemplates,
@@ -457,7 +476,7 @@ const createQrConfigStore = (set: any, get: any): QRConfigState => {
       }))
     },
     resetTextTemplate: () => {
-      set(state => ({
+      set((state: QRConfigState) => ({
         selectedTextTemplateId: state.initialDefaultSelectedTextTemplateId
       }))
     },
@@ -474,7 +493,7 @@ const createQrConfigStore = (set: any, get: any): QRConfigState => {
       }
     },
     setNextImage: () => {
-      set(state => {
+      set((state: QRConfigState) => {
         const nextId = getNextPrevId(state.selectedImageId, imageOptions, 'next')
         const nextImageOption = imageOptions.find(img => img.id === nextId)
         return {
@@ -484,7 +503,7 @@ const createQrConfigStore = (set: any, get: any): QRConfigState => {
       })
     },
     setPrevImage: () => {
-      set(state => {
+      set((state: QRConfigState) => {
         const prevId = getNextPrevId(state.selectedImageId, imageOptions, 'prev')
         const prevImageOption = imageOptions.find(img => img.id === prevId)
         return {
@@ -494,7 +513,7 @@ const createQrConfigStore = (set: any, get: any): QRConfigState => {
       })
     },
     resetImage: () => {
-      set(state => {
+      set((state: QRConfigState) => {
         const initialImageOption = imageOptions.find(
           img => img.id === state.initialDefaultSelectedImageId
         )
@@ -525,7 +544,7 @@ const createQrConfigStore = (set: any, get: any): QRConfigState => {
       const selectedImageOption = imageOptions.find(
         img => img.id === get().initialDefaultSelectedImageId
       )
-      set(state => ({
+      set((state: QRConfigState) => ({
         qrData: state.initialDefaultQrData,
         selectedTemplateId: state.initialDefaultSelectedTemplateId,
         selectedStyleId: state.initialDefaultSelectedStyleId,
@@ -724,7 +743,37 @@ const createQrConfigStore = (set: any, get: any): QRConfigState => {
       const image = imageOptions.find(img => img.id === state.selectedImageId)
       return image ? image.name : 'Default'
     },
-    setActiveGalleryTabId: tabId => set({ activeGalleryTabId: tabId })
+    setActiveGalleryTabId: tabId => set({ activeGalleryTabId: tabId }),
+    browseAndScrollToGalleryTab: (tabId: string) => {
+      set({
+        activeGalleryTabId: tabId,
+        scrollToGalleryTabId: tabId
+      })
+    },
+    clearScrollToGalleryTrigger: () => set({ scrollToGalleryTabId: null }),
+    setTemplatesFromUrl: (params: UrlTemplateParams) => {
+      set((state: QRConfigState) => {
+        const newState: Partial<QRConfigState> = {}
+        if (typeof params.templateId === 'string') {
+          newState.selectedTemplateId = params.templateId
+        }
+        if (typeof params.styleId === 'string') {
+          newState.selectedStyleId = params.styleId
+        }
+        if (typeof params.borderId === 'string') {
+          newState.selectedBorderId = params.borderId
+        }
+        if (typeof params.textTemplateId === 'string') {
+          newState.selectedTextTemplateId = params.textTemplateId
+        }
+        if (typeof params.imageId === 'string') {
+          newState.selectedImageId = params.imageId
+          const selectedImageOption = imageOptions.find(img => img.id === params.imageId)
+          newState.selectedImage = selectedImageOption?.value || undefined
+        }
+        return { ...state, ...newState }
+      })
+    }
   }
 }
 

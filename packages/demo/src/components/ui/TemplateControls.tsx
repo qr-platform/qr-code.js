@@ -48,7 +48,7 @@ const TemplateControls: React.FC<TemplateControlsProps> = ({
   noSelectionItem,
   galleryTabId
 }) => {
-  const { setActiveGalleryTabId } = useQrConfigStore()
+  const { browseAndScrollToGalleryTab } = useQrConfigStore()
 
   return (
     <Box className="mb-4 space-y-2 group">
@@ -56,7 +56,7 @@ const TemplateControls: React.FC<TemplateControlsProps> = ({
         <Box
           className="block text-md font-medium text-gray-700 dark:text-gray-300 cursor-pointer hover:underline"
           title={`Browse ${label} Templates`}
-          onClick={() => setActiveGalleryTabId(galleryTabId)}
+          onClick={() => browseAndScrollToGalleryTab(galleryTabId)}
         >
           {label}
         </Box>

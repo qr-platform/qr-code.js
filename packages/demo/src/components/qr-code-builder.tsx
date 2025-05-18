@@ -54,7 +54,7 @@ export const QRCodeBuilder: React.FC = () => {
       <div className="lg:col-span-2">
         <Card className="border border-default-200 shadow-sm rounded-lg h-full">
           <CardBody className="gap-6">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col lg:flex-row justify-between items-center">
               <h2 className="text-xl font-semibold">QR Code Configuration</h2>
               <div className="flex items-center gap-2">
                 <Tabs
@@ -77,19 +77,21 @@ export const QRCodeBuilder: React.FC = () => {
                   />
                   <Tab
                     key="Advanced"
+                    disabled
                     title={
                       <div className="flex items-center space-x-2">
                         <Settings className="text-default-400 w-4 h-4" />
-                        <span>Advanced</span>
+                        <span>Advanced (Soon)</span>
                       </div>
                     }
                   />
                   <Tab
                     key="Code"
+                    disabled
                     title={
                       <div className="flex items-center space-x-2">
                         <Code className="text-default-400 w-4 h-4" />
-                        <span>Code</span>
+                        <span>Code (Soon)</span>
                       </div>
                     }
                   />

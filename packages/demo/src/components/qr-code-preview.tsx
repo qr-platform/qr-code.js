@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useDeferredValue } from 'react'
 import {
   addToast,
   Button,
@@ -14,23 +14,16 @@ import { Options as QRCodeJsOptions } from '@qr-platform/qr-code.js' // QRCodeJs
 import { useAtomValue } from 'jotai'
 import { CheckCircle, Download, Image } from 'lucide-react'
 
+import useThrottle from '../hooks/use-throttle' // Import useThrottle
 import qrCodeService from '../services/qr-code-service'
 import { qrConfigAtom } from '../store'
 import { Box, Flex } from './ui/boxes'
 
 export const QRCodePreview: React.FC = () => {
   const qrConfig = useAtomValue(qrConfigAtom)
-  const {
-    selectedTemplateId,
-    selectedStyleId,
-    selectedImage,
-    selectedTextTemplateId,
-    selectedBorderId,
-    qrData,
-    isAdvancedMode,
-    advancedOptions,
-    selectedImageId
-  } = qrConfig
+  const throttledQrConfig = useThrottle(qrConfig, 300)
+  const defferedQrConfig = useDeferredValue(qrConfig)
+  const { isAdvancedMode } = qrConfig // For instant UI updates if needed
 
   const [isLoading, setIsLoading] = React.useState(false)
   const [isValidating, setIsValidating] = React.useState(false)
@@ -50,143 +43,142 @@ export const QRCodePreview: React.FC = () => {
     []
   )
 
-  React.useEffect(() => {
-    const effectLogic = async () => {
+  // QR code generation logic, wrapped in useCallback
+  const generateQRCodeAsync = React.useCallback(
+    async (currentConfig: typeof qrConfig, container: HTMLDivElement | null) => {
+      if (!container) {
+        setIsLoading(false)
+        return
+      }
+
       setIsQrVisible(false)
-      await new Promise(resolve => setTimeout(resolve, 200))
+      await new Promise(resolve => setTimeout(resolve, 300)) // For fade effect
 
-      // Renamed original function to be part of the effect logic
-      const generateQRCodeAsync = async () => {
-        setIsLoading(true)
-        setIsValid(null)
+      setIsLoading(true)
+      setIsValid(null)
 
-        try {
-          const initialized = await qrCodeService.initialize()
-          if (!initialized) {
-            addToast({
-              title: 'Error',
-              description:
-                'Failed to initialize QR code service. Check console for details.',
-              color: 'danger'
-            })
-            setIsLoading(false)
-            if (qrContainerRef.current) {
-              qrContainerRef.current.textContent = 'QR Service initialization failed.'
-            }
-            return
-          }
-
-          let generationAttempted = false
-          let generationSuccess = false // To track if the service call was successful
-
-          if (isAdvancedMode) {
-            if (qrData && advancedOptions && qrContainerRef.current) {
-              const optionsForLib: QRCodeJsOptions = {
-                ...(advancedOptions as any), // Temporary cast
-                data: qrData // Ensure qrData from store overrides
-              }
-              generationSuccess = await qrCodeService.generateQRCode({
-                element: qrContainerRef.current!,
-                data: qrData,
-                templateId: null, // templateId - not used in advanced mode directly here
-                template: null, // template - not used in advanced mode directly here
-                styleId: null, // styleId - not used in advanced mode directly here
-                style: null, // style - not used in advanced mode directly here
-                image: null, // handled by advancedOptions
-                text: null, // handled by advancedOptions
-                textId: null, // handled by advancedOptions
-                options: optionsForLib
-              })
-              generationAttempted = true
-            } else {
-              console.warn('Advanced mode: qrData or advancedOptions missing.')
-            }
-          } else {
-            // Simple Mode
-            if (qrData) {
-              generationSuccess = await qrCodeService.generateQRCode({
-                element: qrContainerRef.current!,
-                data: qrData,
-                templateId: selectedTemplateId,
-                template: null, // template (raw content)
-                styleId: selectedStyleId,
-                borderId: selectedBorderId,
-                style: null, // style (raw content)
-                image: selectedImage,
-                text: null, // text (raw content)
-                textId: selectedTextTemplateId,
-                options: { isResponsive: true }
-              })
-              generationAttempted = true
-            } else {
-              console.warn('Simple mode: qrData missing.')
-            }
-          }
-
-          if (!generationAttempted && qrContainerRef.current) {
-            qrContainerRef.current.textContent =
-              'Cannot generate QR: Missing data or options.'
-            addToast({
-              title: 'Info',
-              description: 'Not enough data or options to generate QR code.',
-              color: 'default'
-            })
-          } else if (
-            generationAttempted &&
-            !generationSuccess &&
-            qrContainerRef.current &&
-            qrContainerRef.current.innerHTML === ''
-          ) {
-            // If generation was attempted, failed, and service didn't put an error message
-            qrContainerRef.current.textContent = 'Failed to generate QR code.'
-            addToast({
-              title: 'Error',
-              description: 'Failed to generate QR code. Service indicated failure.',
-              color: 'danger'
-            })
-          }
-        } catch (error) {
-          console.error('Error during QR code generation process:', error)
+      try {
+        if (!qrContainerRef.current) {
+          // Good to check the ref if it's used elsewhere or for direct manipulation
+          setIsLoading(false)
+          return
+        }
+        const initialized = await qrCodeService.initialize()
+        if (!initialized) {
           addToast({
             title: 'Error',
             description:
-              error instanceof Error ? error.message : 'Failed to generate QR code',
+              'Failed to initialize QR code service. Check console for details.',
             color: 'danger'
           })
-          if (qrContainerRef.current && qrContainerRef.current.innerHTML === '') {
-            qrContainerRef.current.textContent =
-              'Failed to generate QR code due to an error.'
-          }
-        } finally {
           setIsLoading(false)
-          // Start fade-in animation after QR code is potentially updated and spinner is hidden
-          requestAnimationFrame(() => {
-            setIsQrVisible(true)
+          if (container) {
+            container.textContent = 'QR Service initialization failed.'
+          }
+          return
+        }
+
+        let generationAttempted = false
+        let generationSuccess = false
+        const {
+          selectedTemplateId: currentSelectedTemplateId,
+          selectedStyleId: currentSelectedStyleId,
+          selectedImage: currentSelectedImage,
+          selectedTextTemplateId: currentSelectedTextTemplateId,
+          selectedBorderId: currentSelectedBorderId,
+          qrData: currentQrData,
+          isAdvancedMode: currentConfigIsAdvancedMode, // Use from currentConfig
+          advancedOptions: currentAdvancedOptions
+        } = currentConfig
+
+        if (currentConfigIsAdvancedMode) {
+          if (currentQrData && currentAdvancedOptions && container) {
+            const optionsForLib: QRCodeJsOptions = {
+              ...(currentAdvancedOptions as any),
+              data: currentQrData
+            }
+            generationSuccess = await qrCodeService.generateQRCode({
+              element: container,
+              data: currentQrData,
+              templateId: null,
+              template: null,
+              styleId: null,
+              style: null,
+              image: null,
+              text: null,
+              textId: null,
+              options: optionsForLib
+            })
+            generationAttempted = true
+          } else {
+            console.warn('Advanced mode: qrData or advancedOptions missing.')
+          }
+        } else {
+          // Simple Mode
+          if (currentQrData && container) {
+            generationSuccess = await qrCodeService.generateQRCode({
+              element: container,
+              data: currentQrData,
+              templateId: currentSelectedTemplateId,
+              template: null,
+              styleId: currentSelectedStyleId,
+              borderId: currentSelectedBorderId,
+              style: null,
+              image: currentSelectedImage,
+              text: null,
+              textId: currentSelectedTextTemplateId,
+              options: { isResponsive: true }
+            })
+            generationAttempted = true
+          } else {
+            console.warn('Simple mode: qrData missing or container missing.')
+          }
+        }
+
+        if (!generationAttempted && container) {
+          container.textContent = 'Cannot generate QR : Missing data or options.'
+          addToast({
+            title: 'Info',
+            description: 'Not enough data or options to generate QR code.',
+            color: 'default'
+          })
+        } else if (
+          generationAttempted &&
+          !generationSuccess &&
+          container &&
+          container.innerHTML === ''
+        ) {
+          container.textContent = 'Failed to generate QR code.'
+          addToast({
+            title: 'Error',
+            description: 'Failed to generate QR code. Service indicated failure.',
+            color: 'danger'
           })
         }
+      } catch (error) {
+        console.error('Error during QR code generation process:', error)
+        addToast({
+          title: 'Error',
+          description:
+            error instanceof Error ? error.message : 'Failed to generate QR code',
+          color: 'danger'
+        })
+        if (container && container.innerHTML === '') {
+          container.textContent = 'Failed to generate QR code due to an error.'
+        }
+      } finally {
+        setIsLoading(false)
+        requestAnimationFrame(() => {
+          setIsQrVisible(true)
+        })
       }
+    },
+    []
+  ) // Assuming stable setters (setIsLoading, etc.) and stable imports (qrCodeService, addToast)
 
-      if (qrContainerRef.current) {
-        void generateQRCodeAsync() // Call the inner function that contains the original logic
-      }
-    } // Closing bracket for effectLogic
-
-    // Call the new effectLogic function
-    if (qrContainerRef.current) {
-      // Still check qrContainerRef.current before starting
-      void effectLogic()
-    }
-  }, [
-    qrData,
-    selectedTemplateId,
-    selectedStyleId,
-    selectedImageId,
-    selectedTextTemplateId,
-    // qrContainerRef.current, // qrContainerRef.current should not be a dependency
-    selectedBorderId,
-    isAdvancedMode,
-    advancedOptions
-  ])
+  React.useEffect(() => {
+    void generateQRCodeAsync(defferedQrConfig, qrContainerRef.current)
+  }, [defferedQrConfig]) // Dependencies
 
   const handleValidate = async () => {
     setIsValidating(true)
@@ -340,7 +332,7 @@ export const QRCodePreview: React.FC = () => {
                 isValid === true ? 'success' : isValid === false ? 'danger' : 'primary'
               }
               isLoading={isValidating}
-              onPress={handleValidate}
+              onPress={() => void handleValidate()}
               startContent={<CheckCircle className="w-4 h-4" />}
             >
               Validate
