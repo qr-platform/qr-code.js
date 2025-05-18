@@ -273,7 +273,7 @@ export const QRCodePreview: React.FC = () => {
           ) : (
             <Flex
               ref={qrContainerRef}
-              className={`w-80 transition-opacity duration-200 ease-in-out ${
+              className={`w-80 min-h-80 transition-opacity duration-200 ease-in-out ${
                 isQrVisible ? 'opacity-100' : 'opacity-0'
               }`}
             >
