@@ -56,39 +56,41 @@ const TemplateControls: React.FC<TemplateControlsProps> = ({
     <Box className="mb-4 space-y-2 group">
       <Flex className="justify-start gap-2">
         <Box
-          className="block text-md font-medium text-gray-700 dark:text-gray-300 cursor-pointer hover:underline"
+          className={`${!isDisabled ? 'text-gray-700 dark:text-gray-300' : 'text-gray-300 dark:text-gray-600'} block text-md font-medium cursor-pointer hover:underline`}
           title={`Browse ${label} Templates`}
           onClick={() => browseAndScrollToGalleryTab(galleryTabId)}
         >
           {label}
         </Box>
-        <Flex className="animate-in opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out">
-          <Button
-            isIconOnly
-            size="sm"
-            className="border-none shadow-none w-4 h-6"
-            variant="ghost"
-            onPress={onPrev}
-            aria-label="Previous"
-            title="Next"
-            isDisabled={isDisabled} // Disable button
-          >
-            <ChevronLeft size={16} />
-          </Button>
+        {!isDisabled && (
+          <Flex className="animate-in opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out">
+            <Button
+              isIconOnly
+              size="sm"
+              className="border-none shadow-none w-4 h-6"
+              variant="ghost"
+              onPress={onPrev}
+              aria-label="Previous"
+              title="Next"
+              isDisabled={isDisabled} // Disable button
+            >
+              <ChevronLeft size={16} />
+            </Button>
 
-          <Button
-            isIconOnly
-            size="sm"
-            className="border-none shadow-none w-4 h-6"
-            variant="ghost"
-            onPress={onNext}
-            aria-label="Next"
-            title="Next"
-            isDisabled={isDisabled} // Disable button
-          >
-            <ChevronRight size={16} />
-          </Button>
-        </Flex>
+            <Button
+              isIconOnly
+              size="sm"
+              className="border-none shadow-none w-4 h-6"
+              variant="ghost"
+              onPress={onNext}
+              aria-label="Next"
+              title="Next"
+              isDisabled={isDisabled} // Disable button
+            >
+              <ChevronRight size={16} />
+            </Button>
+          </Flex>
+        )}
       </Flex>
 
       <Flex className="space-x-2 justify-start">
