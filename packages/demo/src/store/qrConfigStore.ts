@@ -99,6 +99,17 @@ export interface QRConfigState {
   activeGalleryTabId?: string
   scrollToGalleryTabId: string | null
 
+  // Custom Text Override State
+  isCustomTextOverrideEnabled: boolean
+  customTextOverridePosition: 'all' | 'top' | 'bottom' | 'left' | 'right'
+  customTextOverrides: {
+    all?: string
+    top?: string
+    bottom?: string
+    left?: string
+    right?: string
+  }
+
   initialDefaultQrData: string
   initialDefaultSelectedTemplateId: string
   initialDefaultSelectedStyleId: string
@@ -107,6 +118,15 @@ export interface QRConfigState {
   initialDefaultSelectedImageId: string
   initialDefaultEditMode: string
   initialDefaultAdvancedOptions: AdvancedQROptions
+  initialDefaultIsCustomTextOverrideEnabled: boolean
+  initialDefaultCustomTextOverridePosition: 'all' | 'top' | 'bottom' | 'left' | 'right'
+  initialDefaultCustomTextOverrides: {
+    all?: string
+    top?: string
+    bottom?: string
+    left?: string
+    right?: string
+  }
 
   setQrData: (data: string) => void
   setSelectedTemplateId: (id: string) => void
@@ -183,6 +203,17 @@ export interface QRConfigState {
   setRandomAllTemplates: () => void
   resetAllTemplates: () => void
 
+  // Custom Text Override Actions
+  setIsCustomTextOverrideEnabled: (enabled: boolean) => void
+  setCustomTextOverridePosition: (
+    position: 'all' | 'top' | 'bottom' | 'left' | 'right'
+  ) => void
+  setCustomTextOverride: (
+    position: 'all' | 'top' | 'bottom' | 'left' | 'right',
+    text: string
+  ) => void
+  resetCustomTextOverrides: () => void
+
   resetToDefaults: () => void
   savePreset: (presetName: string) => void
   loadPreset: (presetName: string) => void
@@ -214,6 +245,16 @@ const initialBorderId = templatesData.borderTemplates[0]?.id || 'square-border-t
 const initialTextTemplateId = templatesData.textTemplates[0]?.id || 'scan-me'
 const initialImageId = imageOptions[0]?.id || 'none'
 const initialImage = undefined
+
+// Initial values for custom text override
+const initialIsCustomTextOverrideEnabled = false
+const initialCustomTextOverridePosition = 'all' as
+  | 'all'
+  | 'top'
+  | 'bottom'
+  | 'left'
+  | 'right'
+const initialCustomTextOverrides = {}
 
 const createQrConfigStore = (set: any, get: any): QRConfigState => {
   // Helper function for circular navigation
@@ -256,6 +297,11 @@ const createQrConfigStore = (set: any, get: any): QRConfigState => {
     activeGalleryTabId: 'base',
     scrollToGalleryTabId: null,
 
+    // Custom Text Override State
+    isCustomTextOverrideEnabled: initialIsCustomTextOverrideEnabled,
+    customTextOverridePosition: initialCustomTextOverridePosition,
+    customTextOverrides: { ...initialCustomTextOverrides },
+
     initialDefaultQrData: initialQrData,
     initialDefaultSelectedTemplateId: initialTemplateId,
     initialDefaultSelectedStyleId: initialStyleId,
@@ -263,6 +309,9 @@ const createQrConfigStore = (set: any, get: any): QRConfigState => {
     initialDefaultSelectedTextTemplateId: initialTextTemplateId,
     initialDefaultSelectedImageId: initialImageId,
     initialDefaultAdvancedOptions: JSON.parse(JSON.stringify(defaultAdvancedOptions)), // Deep copy
+    initialDefaultIsCustomTextOverrideEnabled: initialIsCustomTextOverrideEnabled,
+    initialDefaultCustomTextOverridePosition: initialCustomTextOverridePosition,
+    initialDefaultCustomTextOverrides: { ...initialCustomTextOverrides },
 
     setQrData: data => {
       set({ qrData: data })
@@ -538,7 +587,27 @@ const createQrConfigStore = (set: any, get: any): QRConfigState => {
       get().resetBorderTemplate()
       get().resetTextTemplate()
       get().resetImage()
+      get().resetCustomTextOverrides() // Reset custom text overrides as well
     },
+
+    // --- Custom Text Override Actions ---
+    setIsCustomTextOverrideEnabled: enabled =>
+      set({ isCustomTextOverrideEnabled: enabled }),
+    setCustomTextOverridePosition: position =>
+      set({ customTextOverridePosition: position }),
+    setCustomTextOverride: (position, text) =>
+      set((state: QRConfigState) => ({
+        customTextOverrides: {
+          ...state.customTextOverrides,
+          [position]: text
+        }
+      })),
+    resetCustomTextOverrides: () =>
+      set((state: QRConfigState) => ({
+        isCustomTextOverrideEnabled: state.initialDefaultIsCustomTextOverrideEnabled,
+        customTextOverridePosition: state.initialDefaultCustomTextOverridePosition,
+        customTextOverrides: { ...state.initialDefaultCustomTextOverrides }
+      })),
 
     resetToDefaults: () => {
       const selectedImageOption = imageOptions.find(
@@ -553,7 +622,10 @@ const createQrConfigStore = (set: any, get: any): QRConfigState => {
         selectedImageId: state.initialDefaultSelectedImageId,
         selectedImage: selectedImageOption?.value || undefined,
         editMode: state.initialDefaultEditMode,
-        advancedOptions: JSON.parse(JSON.stringify(state.initialDefaultAdvancedOptions)) // Deep copy
+        advancedOptions: JSON.parse(JSON.stringify(state.initialDefaultAdvancedOptions)), // Deep copy
+        isCustomTextOverrideEnabled: state.initialDefaultIsCustomTextOverrideEnabled,
+        customTextOverridePosition: state.initialDefaultCustomTextOverridePosition,
+        customTextOverrides: { ...state.initialDefaultCustomTextOverrides }
       }))
     },
 

@@ -19,8 +19,9 @@ import { imageOptions } from '../data/qr-data'
 import { qrConfigAtom, templatesData } from '../store'
 import { AdvancedCustomization } from './advanced-customization'
 import { QRCodePreview } from './qr-code-preview'
-import { Flex } from './ui/boxes'
-import TemplateControls from './ui/TemplateControls' // Changed to default import
+import { Box, Flex } from './ui/boxes' // Corrected import order
+import { CustomTextOverrideControls } from './ui/CustomTextOverrideControls' // ESLint preferred order
+import TemplateControls from './ui/TemplateControls' // ESLint preferred order
 
 export const QRCodeBuilder: React.FC = () => {
   const qrConfig = useAtomValue(qrConfigAtom)
@@ -208,27 +209,38 @@ export const QRCodeBuilder: React.FC = () => {
                       galleryTabId="images"
                     />
                   </div>
-                  <div className="w-full">
-                    <TemplateControls
-                      label="Text Template"
-                      placeholder="Select a text template"
-                      options={templatesData.textTemplates}
-                      isDefaultSelected={
-                        qrConfig.selectedTextTemplateId ===
-                        qrConfig.initialDefaultSelectedTextTemplateId
-                      }
-                      selectedKey={qrConfig.selectedTextTemplateId || ''}
-                      onSelectionChange={(key: React.Key | null) =>
-                        qrConfig.setSelectedTextTemplateId(key?.toString() || '')
-                      }
-                      onRandom={qrConfig.setRandomTextTemplate}
-                      onNext={qrConfig.setNextTextTemplate}
-                      onPrev={qrConfig.setPrevTextTemplate}
-                      onReset={qrConfig.resetTextTemplate}
-                      startContentIcon={<Text className="text-default-400 w-5 h-5" />}
-                      noSelectionItem={{ key: '', textValue: '-- No Text Override --' }}
-                      galleryTabId="text"
-                    />
+                  <div className="w-full md:col-span-2">
+                    <Flex className="gap-3 flex-col md:flex-row">
+                      <Box className="w-full md:w-1/2">
+                        <TemplateControls
+                          label="Text Template"
+                          placeholder="Select a text template"
+                          options={templatesData.textTemplates}
+                          isDefaultSelected={
+                            qrConfig.selectedTextTemplateId ===
+                            qrConfig.initialDefaultSelectedTextTemplateId
+                          }
+                          selectedKey={qrConfig.selectedTextTemplateId || ''}
+                          onSelectionChange={(key: React.Key | null) =>
+                            qrConfig.setSelectedTextTemplateId(key?.toString() || '')
+                          }
+                          onRandom={qrConfig.setRandomTextTemplate}
+                          onNext={qrConfig.setNextTextTemplate}
+                          onPrev={qrConfig.setPrevTextTemplate}
+                          onReset={qrConfig.resetTextTemplate}
+                          startContentIcon={<Text className="text-default-400 w-5 h-5" />}
+                          noSelectionItem={{
+                            key: '', // ESLint formatting fix
+                            textValue: '-- No Text Override --' // ESLint formatting fix
+                          }}
+                          galleryTabId="text"
+                          isDisabled={qrConfig.isCustomTextOverrideEnabled} // Disable if override is on
+                        />
+                      </Box>
+                      <Box className="w-full md:w-1/2">
+                        <CustomTextOverrideControls />
+                      </Box>
+                    </Flex>
                   </div>
                 </div>
                 <Flex className="gap-4 mt-6">

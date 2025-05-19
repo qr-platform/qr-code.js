@@ -27,7 +27,9 @@ export const QRCodePreview: React.FC = () => {
     selectedBorderId,
     qrData,
     isAdvancedMode,
-    advancedOptions
+    advancedOptions,
+    isCustomTextOverrideEnabled, // Added
+    customTextOverrides // Added
   } = qrConfig
 
   const [isLoading, setIsLoading] = React.useState(false)
@@ -47,7 +49,9 @@ export const QRCodePreview: React.FC = () => {
       selectedTextTemplateId,
       selectedBorderId,
       qrData,
-      advancedOptions
+      advancedOptions,
+      isCustomTextOverrideEnabled, // Added
+      customTextOverrides // Added
     }),
     [
       isAdvancedMode,
@@ -57,7 +61,9 @@ export const QRCodePreview: React.FC = () => {
       selectedTextTemplateId,
       selectedBorderId,
       qrData,
-      advancedOptions
+      advancedOptions,
+      isCustomTextOverrideEnabled, // Added
+      customTextOverrides // Added
     ]
   )
 
@@ -117,55 +123,107 @@ export const QRCodePreview: React.FC = () => {
         selectedTemplateId: currentSelectedTemplateId,
         selectedStyleId: currentSelectedStyleId,
         selectedImage: currentSelectedImage,
-        selectedTextTemplateId: currentSelectedTextTemplateId,
+        selectedTextTemplateId: currentSelectedTextTemplateIdFromConfig, // Renamed to avoid conflict
         selectedBorderId: currentSelectedBorderId,
         qrData: currentQrData,
         isAdvancedMode: currentConfigIsAdvancedMode, // Use from currentConfig
-        advancedOptions: currentAdvancedOptions
+        advancedOptions: currentAdvancedOptions,
+        isCustomTextOverrideEnabled: currentConfigIsCustomTextOverrideEnabled, // Added
+        customTextOverrides: currentConfigCustomTextOverrides // Added
       } = currentConfig
 
+      let finalOptionsForService: QRCodeJsOptions = {}
+      let textIdForService: string | null = null
+
       if (currentConfigIsAdvancedMode) {
-        if (currentQrData && currentAdvancedOptions && container) {
-          const optionsForLib: QRCodeJsOptions = {
-            ...(currentAdvancedOptions as any),
-            data: currentQrData
-          }
-          generationSuccess = await qrCodeService.generateQRCode({
-            element: container,
-            data: currentQrData,
-            templateId: null,
-            template: null,
-            styleId: null,
-            style: null,
-            image: null,
-            text: null,
-            textId: null,
-            options: optionsForLib
+        finalOptionsForService = {
+          ...(currentAdvancedOptions as any),
+          data: currentQrData
+        }
+        textIdForService = null // Advanced mode typically defines text within options
+
+        if (currentConfigIsCustomTextOverrideEnabled) {
+          const decorations: any = {}
+          const sides: Array<'top' | 'bottom' | 'left' | 'right'> = [
+            'top',
+            'bottom',
+            'left',
+            'right'
+          ]
+          sides.forEach(side => {
+            const textValue =
+              currentConfigCustomTextOverrides[side] || // ESLint formatting
+              currentConfigCustomTextOverrides.all
+            if (textValue) {
+              decorations[side] = { enableText: true, type: 'text', value: textValue }
+            } else {
+              decorations[side] = { enableText: false }
+            }
           })
-          generationAttempted = true
-        } else {
-          console.warn('Advanced mode: qrData or advancedOptions missing.')
+          finalOptionsForService.borderOptions = {
+            ...(finalOptionsForService.borderOptions || {}),
+            hasBorder: true, // Ensure border is on if custom text is applied
+            decorations
+          }
+          // Nullify any other text properties if they exist in advancedOptions
+          // Removed: if (finalOptionsForService.text) finalOptionsForService.text = null
+          if ((finalOptionsForService as any).textId)
+            (finalOptionsForService as any).textId = null
         }
       } else {
         // Simple Mode
-        if (currentQrData && container) {
-          generationSuccess = await qrCodeService.generateQRCode({
-            element: container,
-            data: currentQrData,
-            templateId: currentSelectedTemplateId,
-            template: null,
-            styleId: currentSelectedStyleId,
-            borderId: currentSelectedBorderId,
-            style: null,
-            image: currentSelectedImage,
-            text: null,
-            textId: currentSelectedTextTemplateId,
-            options: { isResponsive: true }
+        finalOptionsForService = { isResponsive: true }
+        textIdForService = currentSelectedTextTemplateIdFromConfig
+
+        if (currentConfigIsCustomTextOverrideEnabled) {
+          const decorations: any = {}
+          const sides: Array<'top' | 'bottom' | 'left' | 'right'> = [
+            'top',
+            'bottom',
+            'left',
+            'right'
+          ]
+          sides.forEach(side => {
+            const textValue =
+              currentConfigCustomTextOverrides[side] || // ESLint formatting
+              currentConfigCustomTextOverrides.all
+            if (textValue) {
+              decorations[side] = { enableText: true, type: 'text', value: textValue }
+            } else {
+              decorations[side] = { enableText: false }
+            }
           })
-          generationAttempted = true
-        } else {
-          console.warn('Simple mode: qrData missing or container missing.')
+          finalOptionsForService.borderOptions = {
+            // Assuming simple mode might not have existing borderOptions from elsewhere
+            hasBorder: true, // Ensure border is on
+            decorations
+          }
+          textIdForService = null // Override template text
         }
+      }
+
+      if (currentQrData && container) {
+        generationSuccess = await qrCodeService.generateQRCode({
+          element: container,
+          data: currentQrData,
+          templateId: currentConfigIsAdvancedMode ? null : currentSelectedTemplateId,
+          template: null,
+          styleId: currentConfigIsAdvancedMode ? null : currentSelectedStyleId,
+          borderId: currentConfigIsAdvancedMode ? null : currentSelectedBorderId,
+          style: null,
+          image: currentConfigIsAdvancedMode ? null : currentSelectedImage,
+          text: null, // Text object is not used directly by service when textId or borderOptions.decorations are primary
+          textId: textIdForService,
+          options: finalOptionsForService
+        })
+        generationAttempted = true
+      } else if (container) {
+        // This condition implies currentQrData is missing
+        console.warn('QR Data missing, cannot generate.')
+        container.textContent = 'QR Data is required to generate the code.'
+      } else {
+        // This condition implies container is missing (should be rare due to initial check)
+        console.warn('QR container missing.')
       }
 
       if (!generationAttempted && container) {
@@ -287,7 +345,7 @@ export const QRCodePreview: React.FC = () => {
 
   return (
     <Card className="h-full border border-default-200 shadow-sm rounded-lg bg-white dark:bg-gray-950">
-      <CardBody className="flex flex-col items-center justify-center">
+      <CardBody className="flex flex-col items-center justify-start">
         <Flex
           className={`rounded-lg p-4 overflow-hidden
             ${

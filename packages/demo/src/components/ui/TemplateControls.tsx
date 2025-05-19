@@ -31,6 +31,7 @@ interface TemplateControlsProps {
   startContentIcon?: React.ReactNode
   noSelectionItem?: NoSelectionItem
   galleryTabId: string
+  isDisabled?: boolean // Added isDisabled prop
 }
 
 const TemplateControls: React.FC<TemplateControlsProps> = ({
@@ -46,7 +47,8 @@ const TemplateControls: React.FC<TemplateControlsProps> = ({
   isDefaultSelected,
   startContentIcon,
   noSelectionItem,
-  galleryTabId
+  galleryTabId,
+  isDisabled // Destructure isDisabled
 }) => {
   const { browseAndScrollToGalleryTab } = useQrConfigStore()
 
@@ -69,6 +71,7 @@ const TemplateControls: React.FC<TemplateControlsProps> = ({
             onPress={onPrev}
             aria-label="Previous"
             title="Next"
+            isDisabled={isDisabled} // Disable button
           >
             <ChevronLeft size={16} />
           </Button>
@@ -81,6 +84,7 @@ const TemplateControls: React.FC<TemplateControlsProps> = ({
             onPress={onNext}
             aria-label="Next"
             title="Next"
+            isDisabled={isDisabled} // Disable button
           >
             <ChevronRight size={16} />
           </Button>
@@ -104,6 +108,7 @@ const TemplateControls: React.FC<TemplateControlsProps> = ({
               }}
               startContent={startContentIcon}
               className={`w-full group ${!isDefaultSelected ? 'select-hides-default-arrow' : ''}`}
+              isDisabled={isDisabled} // Disable select
             >
               {(noSelectionItem
                 ? [
@@ -145,6 +150,7 @@ const TemplateControls: React.FC<TemplateControlsProps> = ({
           onPress={onRandom}
           aria-label="Random"
           title="Random"
+          isDisabled={isDisabled} // Disable button
         >
           <Shuffle size={18} />
         </Button>
