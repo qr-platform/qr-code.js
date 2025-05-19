@@ -17,7 +17,7 @@ const positionOptions: Array<{
   { key: 'right', label: 'Right Side' }
 ]
 
-export const CustomTextOverrideControls: React.FC = () => {
+export const CustomTextControls: React.FC = () => {
   const {
     isCustomTextOverrideEnabled,
     customTextOverridePosition,
@@ -101,6 +101,7 @@ export const CustomTextOverrideControls: React.FC = () => {
           placeholder={`Enter text for ${customTextOverridePosition}...`}
           value={currentTextValue}
           onValueChange={handleTextChange}
+          isClearable
           isDisabled={!isCustomTextOverrideEnabled}
           classNames={{ inputWrapper: 'border-default-300' }}
           className="w-full"
@@ -109,8 +110,7 @@ export const CustomTextOverrideControls: React.FC = () => {
           isIconOnly
           variant="flat"
           onPress={resetCustomTextOverrides}
-          aria-label="Random"
-          title="Random"
+          title="Reset and Disable"
           isDisabled={!isCustomTextOverrideEnabled}
         >
           <RotateCcw size={18} />

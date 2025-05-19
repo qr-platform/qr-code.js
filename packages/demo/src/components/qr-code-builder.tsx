@@ -20,7 +20,7 @@ import { qrConfigAtom, templatesData } from '../store'
 import { AdvancedCustomization } from './advanced-customization'
 import { QRCodePreview } from './qr-code-preview'
 import { Box, Flex } from './ui/boxes' // Corrected import order
-import { CustomTextOverrideControls } from './ui/CustomTextOverrideControls' // ESLint preferred order
+import { CustomTextControls } from './ui/CustomTextControls' // ESLint preferred order
 import TemplateControls from './ui/TemplateControls' // ESLint preferred order
 
 export const QRCodeBuilder: React.FC = () => {
@@ -238,7 +238,7 @@ export const QRCodeBuilder: React.FC = () => {
                         />
                       </Box>
                       <Box className="w-full md:w-1/2">
-                        <CustomTextOverrideControls />
+                        <CustomTextControls />
                       </Box>
                     </Flex>
                   </div>
