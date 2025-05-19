@@ -40,11 +40,11 @@ export const CustomTextOverrideControls: React.FC = () => {
   }
 
   return (
-    <Box className="space-y-3 p-1 border border-dashed border-default-300 rounded-md">
-      <Flex className="justify-between items-center">
+    <Box className="mb-4 space-y-2 p-2 border border-default-200 rounded-md">
+      <Flex className="justify-between items-center gap-2">
         <label
           htmlFor="custom-text-override-toggle"
-          className="text-md font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2 cursor-pointer"
+          className="flex items-center gap-2 text-md font-medium text-gray-700 dark:text-gray-300 cursor-pointer"
         >
           <Settings2 size={18} className="text-default-500" />
           Custom Text Override
@@ -54,15 +54,15 @@ export const CustomTextOverrideControls: React.FC = () => {
           isSelected={isCustomTextOverrideEnabled}
           onValueChange={setIsCustomTextOverrideEnabled}
           aria-label="Enable Custom Text Override"
+          size="sm"
         />
       </Flex>
 
-      {isCustomTextOverrideEnabled && (
-        <Box className="space-y-3 animate-in fade-in duration-300">
+      <Flex className="space-x-2 justify-start">
+        <Box className="w-full lg:max-w-[160px]">
           <Select
-            label="Text Position"
             aria-label="Text Position"
-            placeholder="Select text position"
+            placeholder="Text Position"
             selectedKeys={
               customTextOverridePosition
                 ? new Set([customTextOverridePosition])
@@ -81,7 +81,8 @@ export const CustomTextOverrideControls: React.FC = () => {
                 }
               }
             }}
-            disabled={!isCustomTextOverrideEnabled}
+            isDisabled={!isCustomTextOverrideEnabled}
+            className="w-full"
           >
             {positionOptions.map(option => (
               <SelectItem key={option.key} textValue={option.label}>
@@ -89,48 +90,40 @@ export const CustomTextOverrideControls: React.FC = () => {
               </SelectItem>
             ))}
           </Select>
-
-          <Input
-            label={getLabelForPosition(customTextOverridePosition)}
-            aria-label={getLabelForPosition(customTextOverridePosition)}
-            placeholder={`Enter text for ${customTextOverridePosition}...`}
-            value={currentTextValue}
-            onValueChange={handleTextChange}
-            disabled={!isCustomTextOverrideEnabled}
-            classNames={{
-              inputWrapper: 'border-default-300'
-            }}
-          />
-          <Button
-            size="sm"
-            variant="light"
-            color="danger"
-            onPress={() => {
-              // Reset only the current position's text or all if 'all' is selected?
-              // For now, let's make it reset all custom texts if the toggle is on.
-              // Or perhaps a more granular reset for the current field?
-              // The plan mentions resetCustomTextOverrides for the whole feature.
-              // Let's add a button to clear the current field.
-              setCustomTextOverride(customTextOverridePosition, '')
-            }}
-            disabled={!isCustomTextOverrideEnabled || !currentTextValue}
-            className="mt-1"
-          >
-            Clear Current Text
-          </Button>
-          <Button
-            size="sm"
-            variant="ghost"
-            color="warning"
-            onPress={resetCustomTextOverrides}
-            disabled={!isCustomTextOverrideEnabled}
-            startContent={<RotateCcw size={14} />}
-            className="mt-1"
-          >
-            Reset All Custom Text Settings
-          </Button>
         </Box>
-      )}
+
+        <Input
+          aria-label={getLabelForPosition(customTextOverridePosition)}
+          placeholder={`Enter text for ${customTextOverridePosition}...`}
+          value={currentTextValue}
+          onValueChange={handleTextChange}
+          isDisabled={!isCustomTextOverrideEnabled}
+          classNames={{ inputWrapper: 'border-default-300' }}
+          className="w-full"
+        />
+      </Flex>
+
+      <Flex className="justify-end gap-2 pt-1">
+        <Button
+          size="sm"
+          variant="light"
+          color="danger"
+          onPress={() => setCustomTextOverride(customTextOverridePosition, '')}
+          isDisabled={!isCustomTextOverrideEnabled || !currentTextValue}
+        >
+          Clear
+        </Button>
+        <Button
+          size="sm"
+          variant="ghost"
+          color="warning"
+          onPress={resetCustomTextOverrides}
+          isDisabled={!isCustomTextOverrideEnabled}
+          startContent={<RotateCcw size={14} />}
+        >
+          Reset All
+        </Button>
+      </Flex>
     </Box>
   )
 }
