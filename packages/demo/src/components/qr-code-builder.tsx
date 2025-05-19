@@ -244,7 +244,7 @@ export const QRCodeBuilder: React.FC = () => {
                   <Button
                     onPress={handleCopyLink}
                     startContent={<LinkIcon className="w-4 h-4" />}
-                    variant="ghost"
+                    variant="light"
                     color="primary"
                   >
                     Copy Link

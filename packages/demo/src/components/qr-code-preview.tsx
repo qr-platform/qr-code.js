@@ -1,4 +1,4 @@
-import React, { useDeferredValue } from 'react'
+import React from 'react'
 import {
   addToast,
   Button,
@@ -6,8 +6,6 @@ import {
   Card,
   CardBody,
   CardFooter,
-  // removeToast was assumed, but not exported by @heroui/react
-  // Spinner,
   Tooltip
 } from '@heroui/react'
 import { Options as QRCodeJsOptions } from '@qr-platform/qr-code.js' // QRCodeJs direct import removed
@@ -21,16 +19,55 @@ import { Box, Flex } from './ui/boxes'
 
 export const QRCodePreview: React.FC = () => {
   const qrConfig = useAtomValue(qrConfigAtom)
-  const defferedQrConfig = useDeferredValue(qrConfig)
+  const {
+    selectedTemplateId,
+    selectedStyleId,
+    selectedImage,
+    selectedTextTemplateId,
+    selectedBorderId,
+    qrData,
+    isAdvancedMode,
+    advancedOptions
+  } = qrConfig
 
-  const throttledQrConfig = useThrottle(defferedQrConfig, 300)
-  const { isAdvancedMode } = qrConfig // For instant UI updates if needed
-
+  const [isLoading, setIsLoading] = React.useState(false)
   const [isValidating, setIsValidating] = React.useState(false)
   const [isValid, setIsValid] = React.useState<boolean | null>(null)
   const qrContainerRef = React.useRef<HTMLDivElement>(null)
-  const [isQrVisible, setIsQrVisible] = React.useState(true) // For fade animation
-  const validationTimerRef = React.useRef<number | null>(null) // Changed NodeJS.Timeout to number
+  const [isQrVisible, setIsQrVisible] = React.useState(true)
+  const validationTimerRef = React.useRef<number | null>(null)
+
+  // Create an object of dependencies for throttling
+  const qrGenerationParams = React.useMemo(
+    () => ({
+      isAdvancedMode,
+      selectedTemplateId,
+      selectedStyleId,
+      selectedImage,
+      selectedTextTemplateId,
+      selectedBorderId,
+      qrData,
+      advancedOptions
+    }),
+    [
+      isAdvancedMode,
+      selectedTemplateId,
+      selectedStyleId,
+      selectedImage,
+      selectedTextTemplateId,
+      selectedBorderId,
+      qrData,
+      advancedOptions
+    ]
+  )
+
+  const throttledQrGenerationParams = useThrottle(qrGenerationParams, 300)
+
+  React.useEffect(() => {
+    void generateQRCodeAsync(throttledQrGenerationParams, qrContainerRef.current)
+  }, [throttledQrGenerationParams, qrContainerRef.current]) // Dependency is now the throttled object
+
+  // console.log(defferedQrConfig)
 
   React.useEffect(
     () =>
@@ -45,16 +82,18 @@ export const QRCodePreview: React.FC = () => {
 
   // QR code generation logic, wrapped in useCallback
   const generateQRCodeAsync = async (
-    currentConfig: typeof qrConfig,
+    currentConfig: any,
     container: HTMLDivElement | null
   ) => {
     if (!container) {
+      setIsLoading(false)
       return
     }
 
     setIsQrVisible(false)
     await new Promise(resolve => setTimeout(resolve, 300)) // For fade effect
 
+    setIsLoading(true)
     setIsValid(null)
 
     try {
@@ -65,6 +104,7 @@ export const QRCodePreview: React.FC = () => {
           description: 'Failed to initialize QR code service. Check console for details.',
           color: 'danger'
         })
+        setIsLoading(false)
         if (container) {
           container.textContent = 'QR Service initialization failed.'
         }
@@ -160,15 +200,10 @@ export const QRCodePreview: React.FC = () => {
         container.textContent = 'Failed to generate QR code due to an error.'
       }
     } finally {
-      requestAnimationFrame(() => {
-        setIsQrVisible(true)
-      })
+      setIsLoading(false)
+      setIsQrVisible(true)
     }
   }
-
-  React.useEffect(() => {
-    void generateQRCodeAsync(throttledQrConfig, qrContainerRef.current)
-  }, [throttledQrConfig]) // Dependencies
 
   const handleValidate = async () => {
     setIsValidating(true)
@@ -263,14 +298,16 @@ export const QRCodePreview: React.FC = () => {
                   : 'border-2 border-transparent'
             }`}
         >
-          <Flex
-            ref={qrContainerRef}
-            className={`w-80 min-h-80 transition-opacity duration-200 ease-in-out ${
-              isQrVisible ? 'opacity-100' : 'opacity-0'
-            }`}
-          >
-            {/* QR code will be appended here by QRCodeJs library */}
-          </Flex>
+          <Box className="w-80 min-h-80">
+            {!isLoading && (
+              <Flex
+                ref={qrContainerRef}
+                className={`transition-opacity duration-200 ease-in-out ${
+                  isQrVisible ? 'opacity-100' : 'opacity-0'
+                }`}
+              />
+            )}
+          </Box>
         </Flex>
 
         <Box className="my-2 w-full text-sm text-default-500">

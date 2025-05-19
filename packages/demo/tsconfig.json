@@ -42,6 +42,6 @@
     "jsx": "react-jsx",
 
   },
-  "include": ["src", "eslint.config.js"],
+  "include": ["src", "eslint.config.js", "tailwind.config.ts"],
   "references": [{"path": "./tsconfig.node.json"}]
 }

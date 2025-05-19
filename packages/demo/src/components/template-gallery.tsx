@@ -289,7 +289,7 @@ export const TemplateGallery: React.FC = () => {
             ))}
           </Tabs>
         </ScrollShadow>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+        <div className="animate-in fade-in duration-700 ease-in-out grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
           {itemsToDisplay.map((item, index) => (
             <motion.div
               key={`${activeGalleryTabId}-${item.id}-${index}`}
@@ -320,6 +320,7 @@ export const TemplateGallery: React.FC = () => {
                         templateRefs.current[item.id] = el
                       }
                     }}
+                    key={`${activeGalleryTabId}-${item.id}-${index}`}
                     className="w-full h-full" // Ensure the ref div takes full space for QR code
                   >
                     {/* QR code will be appended here */}
