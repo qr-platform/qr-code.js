@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, Input, Select, SelectItem, Switch } from '@heroui/react'
 import type { Selection } from '@react-types/shared' // Removed AriaKey
-import { RotateCcw, Settings2 } from 'lucide-react' // Icons
+import { RotateCcw } from 'lucide-react' // Icons
 
 import { useQrConfigStore } from '../../store/qrConfigStore' // Adjusted path
 import { Box, Flex } from './boxes'
@@ -40,26 +40,30 @@ export const CustomTextOverrideControls: React.FC = () => {
   }
 
   return (
-    <Box className="mb-4 space-y-2 p-2 border border-default-200 rounded-md">
-      <Flex className="justify-between items-center gap-2">
-        <label
-          htmlFor="custom-text-override-toggle"
-          className="flex items-center gap-2 text-md font-medium text-gray-700 dark:text-gray-300 cursor-pointer"
+    <Box className="mb-4 space-y-2 p-0">
+      <Flex className="justify-start items-center gap-2">
+        <Box
+          onClick={() => setIsCustomTextOverrideEnabled(!isCustomTextOverrideEnabled)}
+          className={`${isCustomTextOverrideEnabled ? 'text-gray-700 dark:text-gray-300' : 'text-gray-300 dark:text-gray-600'} flex items-center gap-2 text-md font-medium cursor-pointer`}
         >
-          <Settings2 size={18} className="text-default-500" />
-          Custom Text Override
-        </label>
+          Custom Text
+        </Box>
         <Switch
           id="custom-text-override-toggle"
           isSelected={isCustomTextOverrideEnabled}
           onValueChange={setIsCustomTextOverrideEnabled}
-          aria-label="Enable Custom Text Override"
+          aria-label="Enable Custom Text"
+          defaultSelected
+          color="default"
           size="sm"
+          classNames={{
+            base: 'scale-85 origin-left'
+          }}
         />
       </Flex>
 
       <Flex className="space-x-2 justify-start">
-        <Box className="w-full lg:max-w-[160px]">
+        <Box className="w-full lg:max-w-[130px]">
           <Select
             aria-label="Text Position"
             placeholder="Text Position"
@@ -101,27 +105,15 @@ export const CustomTextOverrideControls: React.FC = () => {
           classNames={{ inputWrapper: 'border-default-300' }}
           className="w-full"
         />
-      </Flex>
-
-      <Flex className="justify-end gap-2 pt-1">
         <Button
-          size="sm"
-          variant="light"
-          color="danger"
-          onPress={() => setCustomTextOverride(customTextOverridePosition, '')}
-          isDisabled={!isCustomTextOverrideEnabled || !currentTextValue}
-        >
-          Clear
-        </Button>
-        <Button
-          size="sm"
-          variant="ghost"
-          color="warning"
+          isIconOnly
+          variant="flat"
           onPress={resetCustomTextOverrides}
+          aria-label="Random"
+          title="Random"
           isDisabled={!isCustomTextOverrideEnabled}
-          startContent={<RotateCcw size={14} />}
         >
-          Reset All
+          <RotateCcw size={18} />
         </Button>
       </Flex>
     </Box>
