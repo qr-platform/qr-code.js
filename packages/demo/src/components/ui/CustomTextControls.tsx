@@ -101,9 +101,10 @@ export const CustomTextControls: React.FC = () => {
           placeholder={`Enter text for ${customTextOverridePosition}...`}
           value={currentTextValue}
           onValueChange={handleTextChange}
+          variant="faded"
           isClearable
           isDisabled={!isCustomTextOverrideEnabled}
-          classNames={{ inputWrapper: 'border-default-300' }}
+          classNames={{ inputWrapper: 'border-default-200' }}
           className="w-full"
         />
         <Button
