@@ -20,6 +20,7 @@ import {
   QROptions as BuilderQROptions, // Renamed to avoid conflict
   CornerDotOptions,
   CornerSquareOptions,
+  DecorationItem,
   DotsOptions
 } from '../types/qr-options'
 
@@ -83,6 +84,14 @@ export interface UrlTemplateParams {
   textTemplateId?: string
 }
 
+export interface CustomTextDecorationOptions {
+  all?: Partial<DecorationItem>
+  top?: Partial<DecorationItem>
+  bottom?: Partial<DecorationItem>
+  left?: Partial<DecorationItem>
+  right?: Partial<DecorationItem>
+}
+
 export interface QRConfigState {
   qrData: string
   selectedTemplateId: string
@@ -109,6 +118,7 @@ export interface QRConfigState {
     left?: string
     right?: string
   }
+  customTextDecorationOptions: CustomTextDecorationOptions
 
   initialDefaultQrData: string
   initialDefaultSelectedTemplateId: string
@@ -127,6 +137,7 @@ export interface QRConfigState {
     left?: string
     right?: string
   }
+  initialDefaultCustomTextDecorationOptions: CustomTextDecorationOptions
 
   setQrData: (data: string) => void
   setSelectedTemplateId: (id: string) => void
@@ -213,6 +224,11 @@ export interface QRConfigState {
     text: string
   ) => void
   resetCustomTextOverrides: () => void
+  setCustomTextDecorationOption: (
+    position: 'all' | 'top' | 'bottom' | 'left' | 'right',
+    option: Partial<DecorationItem>
+  ) => void
+  resetCustomTextDecorationOptions: () => void
 
   resetToDefaults: () => void
   savePreset: (presetName: string) => void
@@ -255,6 +271,7 @@ const initialCustomTextOverridePosition = 'all' as
   | 'left'
   | 'right'
 const initialCustomTextOverrides = {}
+const initialCustomTextDecorationOptions: CustomTextDecorationOptions = {}
 
 const createQrConfigStore = (set: any, get: any): QRConfigState => {
   // Helper function for circular navigation
@@ -301,6 +318,7 @@ const createQrConfigStore = (set: any, get: any): QRConfigState => {
     isCustomTextOverrideEnabled: initialIsCustomTextOverrideEnabled,
     customTextOverridePosition: initialCustomTextOverridePosition,
     customTextOverrides: { ...initialCustomTextOverrides },
+    customTextDecorationOptions: { ...initialCustomTextDecorationOptions },
 
     initialDefaultQrData: initialQrData,
     initialDefaultSelectedTemplateId: initialTemplateId,
@@ -312,6 +330,9 @@ const createQrConfigStore = (set: any, get: any): QRConfigState => {
     initialDefaultIsCustomTextOverrideEnabled: initialIsCustomTextOverrideEnabled,
     initialDefaultCustomTextOverridePosition: initialCustomTextOverridePosition,
     initialDefaultCustomTextOverrides: { ...initialCustomTextOverrides },
+    initialDefaultCustomTextDecorationOptions: {
+      ...initialCustomTextDecorationOptions
+    },
 
     setQrData: data => {
       set({ qrData: data })
@@ -588,6 +609,7 @@ const createQrConfigStore = (set: any, get: any): QRConfigState => {
       get().resetTextTemplate()
       get().resetImage()
       get().resetCustomTextOverrides() // Reset custom text overrides as well
+      get().resetCustomTextDecorationOptions()
     },
 
     // --- Custom Text Override Actions ---
@@ -602,11 +624,37 @@ const createQrConfigStore = (set: any, get: any): QRConfigState => {
           [position]: text
         }
       })),
+    setCustomTextDecorationOption: (position, option) =>
+      set((state: QRConfigState) => {
+        const current = state.customTextDecorationOptions[position] || {}
+        const mergedStyle = option.style
+          ? { ...(current.style || {}), ...option.style }
+          : current.style
+        return {
+          customTextDecorationOptions: {
+            ...state.customTextDecorationOptions,
+            [position]: {
+              ...current,
+              ...option,
+              ...(option.style ? { style: mergedStyle } : {})
+            }
+          }
+        }
+      }),
     resetCustomTextOverrides: () =>
       set((state: QRConfigState) => ({
         isCustomTextOverrideEnabled: state.initialDefaultIsCustomTextOverrideEnabled,
         customTextOverridePosition: state.initialDefaultCustomTextOverridePosition,
-        customTextOverrides: { ...state.initialDefaultCustomTextOverrides }
+        customTextOverrides: { ...state.initialDefaultCustomTextOverrides },
+        customTextDecorationOptions: {
+          ...state.initialDefaultCustomTextDecorationOptions
+        }
+      })),
+    resetCustomTextDecorationOptions: () =>
+      set((state: QRConfigState) => ({
+        customTextDecorationOptions: {
+          ...state.initialDefaultCustomTextDecorationOptions
+        }
       })),
 
     resetToDefaults: () => {
@@ -625,7 +673,10 @@ const createQrConfigStore = (set: any, get: any): QRConfigState => {
         advancedOptions: JSON.parse(JSON.stringify(state.initialDefaultAdvancedOptions)), // Deep copy
         isCustomTextOverrideEnabled: state.initialDefaultIsCustomTextOverrideEnabled,
         customTextOverridePosition: state.initialDefaultCustomTextOverridePosition,
-        customTextOverrides: { ...state.initialDefaultCustomTextOverrides }
+        customTextOverrides: { ...state.initialDefaultCustomTextOverrides },
+        customTextDecorationOptions: {
+          ...state.initialDefaultCustomTextDecorationOptions
+        }
       }))
     },
 

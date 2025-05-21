@@ -1,10 +1,20 @@
 import React from 'react'
-import { Button, Input, Select, SelectItem, Switch } from '@heroui/react'
-import type { Selection } from '@react-types/shared' // Removed AriaKey
-import { RotateCcw } from 'lucide-react' // Icons
+import {
+  Button,
+  Input,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Select,
+  SelectItem,
+  Switch
+} from '@heroui/react'
+import type { Selection } from '@react-types/shared'
+import { Minus, Plus, Sliders } from 'lucide-react'
 
 import { useQrConfigStore } from '../../store/qrConfigStore' // Adjusted path
 import { Box, Flex } from './boxes'
+import GradientEditor from './GradientEditor'
 
 const positionOptions: Array<{
   key: 'all' | 'top' | 'bottom' | 'left' | 'right'
@@ -22,10 +32,11 @@ export const CustomTextControls: React.FC = () => {
     isCustomTextOverrideEnabled,
     customTextOverridePosition,
     customTextOverrides,
+    customTextDecorationOptions,
     setIsCustomTextOverrideEnabled,
     setCustomTextOverridePosition,
     setCustomTextOverride,
-    resetCustomTextOverrides
+    setCustomTextDecorationOption
   } = useQrConfigStore()
 
   const handleTextChange = (value: string) => {
@@ -33,6 +44,31 @@ export const CustomTextControls: React.FC = () => {
   }
 
   const currentTextValue = customTextOverrides[customTextOverridePosition] || ''
+
+  const currentDecoration = customTextDecorationOptions[customTextOverridePosition] || {}
+  const currentFontSize = currentDecoration.style?.fontSize || 28
+  const currentFontColor = currentDecoration.style?.fontColor || '#ffffff'
+  const currentOffset = currentDecoration.offset || 0
+
+  const adjustFontSize = (delta: number) => {
+    setCustomTextDecorationOption(customTextOverridePosition, {
+      style: { fontSize: currentFontSize + delta }
+    })
+  }
+
+  const adjustOffset = (delta: number) => {
+    setCustomTextDecorationOption(customTextOverridePosition, {
+      offset: currentOffset + delta
+    })
+  }
+
+  const handleColorChange = (value: string | any) => {
+    const color =
+      typeof value === 'string' ? value : value?.colorStops?.[0]?.color || '#000000'
+    setCustomTextDecorationOption(customTextOverridePosition, {
+      style: { fontColor: color }
+    })
+  }
 
   const getLabelForPosition = (position: 'all' | 'top' | 'bottom' | 'left' | 'right') => {
     const option = positionOptions.find(opt => opt.key === position)
@@ -106,15 +142,67 @@ export const CustomTextControls: React.FC = () => {
           classNames={{ inputWrapper: 'border-default-300' }}
           className="w-full"
         />
-        <Button
-          isIconOnly
-          variant="flat"
-          onPress={resetCustomTextOverrides}
-          title="Reset and Disable"
-          isDisabled={!isCustomTextOverrideEnabled}
-        >
-          <RotateCcw size={18} />
-        </Button>
+        <Popover placement="bottom-end">
+          <PopoverTrigger>
+            <Button
+              isIconOnly
+              variant="flat"
+              title="Adjust Text"
+              isDisabled={!isCustomTextOverrideEnabled}
+            >
+              <Sliders size={18} />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="p-2 space-y-3 w-56">
+            <div className="flex items-center justify-between">
+              <span className="text-sm">Font Size: {currentFontSize}px</span>
+              <div className="flex gap-1">
+                <Button
+                  isIconOnly
+                  size="sm"
+                  variant="flat"
+                  onPress={() => adjustFontSize(-1)}
+                >
+                  <Minus size={14} />
+                </Button>
+                <Button
+                  isIconOnly
+                  size="sm"
+                  variant="flat"
+                  onPress={() => adjustFontSize(1)}
+                >
+                  <Plus size={14} />
+                </Button>
+              </div>
+            </div>
+            <GradientEditor
+              value={currentFontColor}
+              onChange={handleColorChange}
+              label="Font Color"
+            />
+            <div className="flex items-center justify-between">
+              <span className="text-sm">Offset: {currentOffset}</span>
+              <div className="flex gap-1">
+                <Button
+                  isIconOnly
+                  size="sm"
+                  variant="flat"
+                  onPress={() => adjustOffset(-1)}
+                >
+                  <Minus size={14} />
+                </Button>
+                <Button
+                  isIconOnly
+                  size="sm"
+                  variant="flat"
+                  onPress={() => adjustOffset(1)}
+                >
+                  <Plus size={14} />
+                </Button>
+              </div>
+            </div>
+          </PopoverContent>
+        </Popover>
       </Flex>
     </Box>
   )
