@@ -28,8 +28,9 @@ export const QRCodePreview: React.FC = () => {
     qrData,
     isAdvancedMode,
     advancedOptions,
-    isCustomTextOverrideEnabled, // Added
-    customTextOverrides // Added
+    isCustomTextOverrideEnabled,
+    customTextOverrides,
+    customTextDecorationOptions
   } = qrConfig
 
   const [isLoading, setIsLoading] = React.useState(false)
@@ -50,8 +51,9 @@ export const QRCodePreview: React.FC = () => {
       selectedBorderId,
       qrData,
       advancedOptions,
-      isCustomTextOverrideEnabled, // Added
-      customTextOverrides // Added
+      isCustomTextOverrideEnabled,
+      customTextOverrides,
+      customTextDecorationOptions
     }),
     [
       isAdvancedMode,
@@ -62,8 +64,9 @@ export const QRCodePreview: React.FC = () => {
       selectedBorderId,
       qrData,
       advancedOptions,
-      isCustomTextOverrideEnabled, // Added
-      customTextOverrides // Added
+      isCustomTextOverrideEnabled,
+      customTextOverrides,
+      customTextDecorationOptions
     ]
   )
 
@@ -128,8 +131,9 @@ export const QRCodePreview: React.FC = () => {
         qrData: currentQrData,
         isAdvancedMode: currentConfigIsAdvancedMode, // Use from currentConfig
         advancedOptions: currentAdvancedOptions,
-        isCustomTextOverrideEnabled: currentConfigIsCustomTextOverrideEnabled, // Added
-        customTextOverrides: currentConfigCustomTextOverrides // Added
+        isCustomTextOverrideEnabled: currentConfigIsCustomTextOverrideEnabled,
+        customTextOverrides: currentConfigCustomTextOverrides,
+        customTextDecorationOptions: currentConfigCustomTextDecorationOptions
       } = currentConfig
 
       let finalOptionsForService: QRCodeJsOptions = {}
@@ -154,10 +158,20 @@ export const QRCodePreview: React.FC = () => {
             const textValue =
               currentConfigCustomTextOverrides[side] || // ESLint formatting
               currentConfigCustomTextOverrides.all
+            const deco =
+              currentConfigCustomTextDecorationOptions[side] ||
+              currentConfigCustomTextDecorationOptions.all ||
+              {}
             if (textValue) {
-              decorations[side] = { enableText: true, type: 'text', value: textValue }
+              decorations[side] = {
+                enableText: true,
+                type: 'text',
+                value: textValue,
+                ...deco,
+                ...(deco.style ? { style: { ...deco.style } } : {})
+              }
             } else {
-              decorations[side] = { enableText: false }
+              decorations[side] = { enableText: false, ...deco }
             }
           })
           finalOptionsForService.borderOptions = {
@@ -187,10 +201,20 @@ export const QRCodePreview: React.FC = () => {
             const textValue =
               currentConfigCustomTextOverrides[side] || // ESLint formatting
               currentConfigCustomTextOverrides.all
+            const deco =
+              currentConfigCustomTextDecorationOptions[side] ||
+              currentConfigCustomTextDecorationOptions.all ||
+              {}
             if (textValue) {
-              decorations[side] = { enableText: true, type: 'text', value: textValue }
+              decorations[side] = {
+                enableText: true,
+                type: 'text',
+                value: textValue,
+                ...deco,
+                ...(deco.style ? { style: { ...deco.style } } : {})
+              }
             } else {
-              decorations[side] = { enableText: false }
+              decorations[side] = { enableText: false, ...deco }
             }
           })
           finalOptionsForService.borderOptions = {
