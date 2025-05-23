@@ -14,7 +14,7 @@ import { CheckCircle, Download, Image } from 'lucide-react'
 
 import useThrottle from '../hooks/use-throttle' // Import useThrottle
 import qrCodeService from '../services/qr-code-service'
-import { qrConfigAtom } from '../store'
+import { qrConfigAtom, useQrConfigStore } from '../store' // Added useQrConfigStore
 import { Box, Flex } from './ui/boxes'
 
 export const QRCodePreview: React.FC = () => {
@@ -31,6 +31,9 @@ export const QRCodePreview: React.FC = () => {
     isCustomTextOverrideEnabled, // Added
     customTextOverrides // Added
   } = qrConfig
+
+  // Access style information from Zustand store
+  const { getCustomTextStyle, customTextStyleOverrides: storeCustomTextStyleOverrides } = useQrConfigStore();
 
   const [isLoading, setIsLoading] = React.useState(false)
   const [isValidating, setIsValidating] = React.useState(false)
@@ -51,7 +54,8 @@ export const QRCodePreview: React.FC = () => {
       qrData,
       advancedOptions,
       isCustomTextOverrideEnabled, // Added
-      customTextOverrides // Added
+      customTextOverrides, // Added
+      storeCustomTextStyleOverrides // Added from Zustand
     }),
     [
       isAdvancedMode,
@@ -63,7 +67,8 @@ export const QRCodePreview: React.FC = () => {
       qrData,
       advancedOptions,
       isCustomTextOverrideEnabled, // Added
-      customTextOverrides // Added
+      customTextOverrides, // Added
+      storeCustomTextStyleOverrides // Added from Zustand
     ]
   )
 
@@ -155,9 +160,19 @@ export const QRCodePreview: React.FC = () => {
               currentConfigCustomTextOverrides[side] || // ESLint formatting
               currentConfigCustomTextOverrides.all
             if (textValue) {
-              decorations[side] = { enableText: true, type: 'text', value: textValue }
+              const sideStyles = getCustomTextStyle(side);
+              decorations[side] = {
+                enableText: true,
+                type: 'text',
+                value: textValue,
+                style: {
+                  fontSize: sideStyles.fontSize,
+                  fontColor: sideStyles.fontColor as string // Cast for now, as per doc for DecorationOptions.style.fontColor
+                },
+                offset: sideStyles.offset
+              };
             } else {
-              decorations[side] = { enableText: false }
+              decorations[side] = { enableText: false };
             }
           })
           finalOptionsForService.borderOptions = {
@@ -188,9 +203,19 @@ export const QRCodePreview: React.FC = () => {
               currentConfigCustomTextOverrides[side] || // ESLint formatting
               currentConfigCustomTextOverrides.all
             if (textValue) {
-              decorations[side] = { enableText: true, type: 'text', value: textValue }
+              const sideStyles = getCustomTextStyle(side);
+              decorations[side] = {
+                enableText: true,
+                type: 'text',
+                value: textValue,
+                style: {
+                  fontSize: sideStyles.fontSize,
+                  fontColor: sideStyles.fontColor as string // Cast for now
+                },
+                offset: sideStyles.offset
+              };
             } else {
-              decorations[side] = { enableText: false }
+              decorations[side] = { enableText: false };
             }
           })
           finalOptionsForService.borderOptions = {

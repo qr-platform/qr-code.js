@@ -1,10 +1,11 @@
 import React from 'react'
-import { Button, Input, Select, SelectItem, Switch } from '@heroui/react'
+import { Button, Input, Select, SelectItem, Switch, Popover, PopoverTrigger, PopoverContent } from '@heroui/react'
 import type { Selection } from '@react-types/shared' // Removed AriaKey
-import { RotateCcw } from 'lucide-react' // Icons
+// Icons - RotateCcw removed as it's no longer used
 
 import { useQrConfigStore } from '../../store/qrConfigStore' // Adjusted path
 import { Box, Flex } from './boxes'
+import { GradientEditor } from './GradientEditor'
 
 const positionOptions: Array<{
   key: 'all' | 'top' | 'bottom' | 'left' | 'right'
@@ -25,8 +26,16 @@ export const CustomTextControls: React.FC = () => {
     setIsCustomTextOverrideEnabled,
     setCustomTextOverridePosition,
     setCustomTextOverride,
-    resetCustomTextOverrides
+    resetCustomTextOverrides,
+    // New store items for text styling
+    getCustomTextStyle,
+    setFontSize,
+    setFontColor,
+    setOffset
   } = useQrConfigStore()
+
+  // Get current style for the selected position
+  const currentStyle = getCustomTextStyle(customTextOverridePosition);
 
   const handleTextChange = (value: string) => {
     setCustomTextOverride(customTextOverridePosition, value)
@@ -107,15 +116,59 @@ export const CustomTextControls: React.FC = () => {
           classNames={{ inputWrapper: 'border-default-200' }}
           className="w-full"
         />
-        <Button
-          isIconOnly
-          variant="flat"
-          onPress={resetCustomTextOverrides}
-          title="Reset and Disable"
-          isDisabled={!isCustomTextOverrideEnabled}
-        >
-          <RotateCcw size={18} />
-        </Button>
+        <Popover placement="bottom-end">
+          <PopoverTrigger>
+            <Button
+              onPress={() => console.log('Adjust Text Style clicked')}
+              disabled={!isCustomTextOverrideEnabled}
+            >
+              Adjust Text Style
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="p-4">
+            <Flex className="items-center space-x-2">
+              <span className="text-sm mr-2">Font Size: {currentStyle.fontSize}px</span>
+              <Button
+                size="sm"
+                variant="flat"
+                onPress={() => setFontSize(customTextOverridePosition, (currentStyle.fontSize || 0) - 1)}
+              >
+                A-
+              </Button>
+              <Button
+                size="sm"
+                variant="flat"
+                onPress={() => setFontSize(customTextOverridePosition, (currentStyle.fontSize || 0) + 1)}
+              >
+                A+
+              </Button>
+            </Flex>
+            <Box className="mt-4">
+              <GradientEditor
+                value={currentStyle.fontColor as string | object} // Cast to make TS happy, store returns object for gradient
+                onChange={(newColor) => setFontColor(customTextOverridePosition, newColor)}
+                label="Text Color"
+              />
+            </Box>
+            <Flex className="mt-4 items-center space-x-2">
+              <span className="text-sm mr-2">Offset: {currentStyle.offset}</span>
+              <Button
+                size="sm"
+                variant="flat"
+                onPress={() => setOffset(customTextOverridePosition, (currentStyle.offset || 0) - 1)}
+              >
+                - Offset
+              </Button>
+              <Button
+                size="sm"
+                variant="flat"
+                onPress={() => setOffset(customTextOverridePosition, (currentStyle.offset || 0) + 1)}
+              >
+                + Offset
+              </Button>
+            </Flex>
+          </PopoverContent>
+        </Popover>
       </Flex>
     </Box>
   )
