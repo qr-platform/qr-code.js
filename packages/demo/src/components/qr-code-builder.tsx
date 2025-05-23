@@ -64,6 +64,9 @@ export const QRCodeBuilder: React.FC = () => {
                   size="lg"
                   variant="solid"
                   onSelectionChange={selectedMode => {
+                    if (selectedMode === 'Advanced') {
+                      qrConfig.applyTemplatesToAdvancedOptions?.()
+                    }
                     setEditMode(selectedMode as string)
                   }}
                 >
@@ -78,11 +81,10 @@ export const QRCodeBuilder: React.FC = () => {
                   />
                   <Tab
                     key="Advanced"
-                    disabled
                     title={
                       <div className="flex items-center space-x-2">
                         <Settings className="text-default-400 w-4 h-4" />
-                        <span>Advanced (Soon)</span>
+                        <span>Advanced</span>
                       </div>
                     }
                   />

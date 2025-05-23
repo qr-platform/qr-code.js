@@ -173,7 +173,7 @@ export const TemplateGallery: React.FC = () => {
               ? null
               : imageOptions.find(img => img.id === deferredImageId)?.value || null
 
-          const options = {
+          const options: any = {
             element: el,
             data: deferredQrData,
             templateId: deferredTemplateId,
@@ -181,7 +181,47 @@ export const TemplateGallery: React.FC = () => {
             borderId: deferredBorderId,
             image: baseImage,
             textId: deferredTextTemplateId,
-            options: { isResponsive: false }
+            options: _isAdvancedMode
+              ? { ..._advancedOptions, isResponsive: false }
+              : { isResponsive: false }
+          }
+
+          if (
+            _isAdvancedMode &&
+            _advancedOptions &&
+            _advancedOptions.borderOptions &&
+            qrConfigStoreState.isCustomTextOverrideEnabled
+          ) {
+            const decorations: any = {}
+            const sides: Array<'top' | 'bottom' | 'left' | 'right'> = [
+              'top',
+              'bottom',
+              'left',
+              'right'
+            ]
+            sides.forEach(side => {
+              const textValue =
+                qrConfigStoreState.customTextOverrides[side] ||
+                qrConfigStoreState.customTextOverrides.all
+              if (textValue) {
+                const existingDecoration =
+                  _advancedOptions.borderOptions?.decorations?.[side]
+                decorations[side] = {
+                  ...existingDecoration,
+                  enableText: true,
+                  type: 'text',
+                  value: textValue
+                }
+              } else {
+                decorations[side] = { enableText: false }
+              }
+            })
+            options.options.borderOptions = {
+              ...(options.options.borderOptions || {}),
+              decorations,
+              hasBorder: true
+            }
+            options.textId = null
           }
 
           switch (activeGalleryTabId) {
@@ -230,7 +270,11 @@ export const TemplateGallery: React.FC = () => {
     deferredStyleId,
     deferredImageId,
     deferredTextTemplateId,
-    activeCategory
+    activeCategory,
+    _isAdvancedMode,
+    _advancedOptions,
+    qrConfigStoreState.isCustomTextOverrideEnabled,
+    qrConfigStoreState.customTextOverrides
   ])
 
   const handleTemplateSelect = (item: any) => {

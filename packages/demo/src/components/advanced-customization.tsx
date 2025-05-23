@@ -20,12 +20,15 @@ import {
   CornerSquareType,
   DotType,
   ErrorCorrectionLevel,
+  ImageMode,
+  Mode,
   ShapeType
 } from '@qr-platform/qr-code.js'
 import { useAtomValue } from 'jotai'
 import { LinkIcon } from 'lucide-react'
 
 import { qrConfigAtom } from '../store'
+import { BorderCustomization } from './border-customization'
 import GradientEditor from './ui/GradientEditor'
 
 export const AdvancedCustomization: React.FC = () => {
@@ -195,7 +198,6 @@ export const AdvancedCustomization: React.FC = () => {
                 ]}
               />
             </div>
-            {/* TODO: Add controls for qrOptions.typeNumber and qrOptions.mode */}
             <Input
               type="number"
               label="QR Type Number (0 for auto)"
@@ -207,7 +209,23 @@ export const AdvancedCustomization: React.FC = () => {
               min="0"
               max="40"
             />
-            {/* Consider Select for qrOptions.mode if it's an enum */}
+            <Select
+              label="Encoding Mode"
+              selectedKeys={
+                advancedOptions.qrOptions?.mode ? [advancedOptions.qrOptions.mode] : []
+              }
+              onSelectionChange={keys => {
+                const selected = Array.from(keys)[0] as any
+                handleQrOptionChange('mode', selected)
+              }}
+              variant="bordered"
+            >
+              {Object.values(Mode).map(m => (
+                <SelectItem key={m} textValue={m}>
+                  {m.charAt(0).toUpperCase() + m.slice(1)}
+                </SelectItem>
+              ))}
+            </Select>
           </div>
         </Tab>
 
@@ -417,19 +435,99 @@ export const AdvancedCustomization: React.FC = () => {
                 }
                 variant="bordered"
               />
-              {/* TODO: Add more image options: mode, imageSize, margin, crossOrigin, fill */}
-              <p className="text-sm text-default-500">
-                More image options (size, margin, etc.) coming soon.
-              </p>
+              <Select
+                label="Image Mode"
+                selectedKeys={
+                  advancedOptions.imageOptions?.mode
+                    ? [advancedOptions.imageOptions.mode]
+                    : []
+                }
+                onSelectionChange={keys => {
+                  const selected = Array.from(keys)[0] as ImageMode | undefined
+                  if (selected) qrConfig.setAdvancedImageOption?.('mode', selected)
+                }}
+                variant="bordered"
+              >
+                {Object.values(ImageMode).map(m => (
+                  <SelectItem key={m} textValue={m}>
+                    {m.charAt(0).toUpperCase() + m.slice(1)}
+                  </SelectItem>
+                ))}
+              </Select>
+
+              <div>
+                <p className="text-sm mb-2">Image Size</p>
+                <Slider
+                  size="sm"
+                  step={0.05}
+                  minValue={0.1}
+                  maxValue={1}
+                  value={advancedOptions.imageOptions?.imageSize || 0.4}
+                  onChange={v =>
+                    qrConfig.setAdvancedImageOption?.(
+                      'imageSize',
+                      typeof v === 'number' ? v : 0.4
+                    )
+                  }
+                  className="max-w-md"
+                />
+              </div>
+
+              <div>
+                <p className="text-sm mb-2">Image Margin</p>
+                <Slider
+                  size="sm"
+                  step={1}
+                  minValue={0}
+                  maxValue={20}
+                  value={advancedOptions.imageOptions?.margin || 0}
+                  onChange={v =>
+                    qrConfig.setAdvancedImageOption?.(
+                      'margin',
+                      typeof v === 'number' ? v : 0
+                    )
+                  }
+                  className="max-w-md"
+                />
+              </div>
+
+              <Input
+                label="Cross Origin"
+                placeholder="anonymous"
+                value={advancedOptions.imageOptions?.crossOrigin || ''}
+                onValueChange={val =>
+                  qrConfig.setAdvancedImageOption?.('crossOrigin', val)
+                }
+                variant="bordered"
+              />
+
+              <GradientEditor
+                label="Image Fill"
+                value={
+                  advancedOptions.imageOptions?.fill?.gradient ||
+                  advancedOptions.imageOptions?.fill?.color ||
+                  'rgba(255,255,255,1)'
+                }
+                onChange={val => {
+                  if (typeof val === 'string') {
+                    qrConfig.setAdvancedImageOption?.('fill', { color: val })
+                  } else {
+                    qrConfig.setAdvancedImageOption?.('fill', { gradient: val })
+                  }
+                }}
+              />
             </div>
           </div>
         </Tab>
         <Tab key="borders" title="Borders">
           <div className="pt-4">
-            {/* TODO: Implement Border Options UI here from BorderCustomization.tsx or similar */}
-            <p className="text-default-500">
-              Full border customization options will be implemented here.
-            </p>
+            <BorderCustomization
+              borderOptions={advancedOptions.borderOptions}
+              updateBorderOption={(path, value) =>
+                qrConfig.setAdvancedBorderOption &&
+                qrConfig.setAdvancedBorderOption(path as any, value)
+              }
+            />
           </div>
         </Tab>
         <Tab key="presets" title="Presets Management">

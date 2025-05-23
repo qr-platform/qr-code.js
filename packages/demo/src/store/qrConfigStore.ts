@@ -168,6 +168,7 @@ export interface QRConfigState {
     key: K,
     value: BorderOptions[K]
   ) => void
+  applyTemplatesToAdvancedOptions: () => void
 
   // Base Template Actions
   setRandomBaseTemplate: () => void
@@ -401,6 +402,67 @@ const createQrConfigStore = (set: any, get: any): QRConfigState => {
           borderOptions: { ...state.advancedOptions.borderOptions, [key]: value }
         }
       })),
+
+    applyTemplatesToAdvancedOptions: () => {
+      const state = get()
+      const { findTemplateById, findBorderById, findStyleById, findTextTemplateById } =
+        templatesData
+
+      const mergeDefaults = (target: any, source: any) => {
+        if (!source) return target
+        for (const k of Object.keys(source)) {
+          const sv = source[k]
+          if (sv && typeof sv === 'object' && !Array.isArray(sv)) {
+            if (target[k] == null) target[k] = {}
+            mergeDefaults(target[k], sv)
+          } else if (target[k] === undefined) {
+            target[k] = sv
+          }
+        }
+        return target
+      }
+
+      const defaults: any = { data: state.qrData }
+
+      mergeDefaults(defaults, findTemplateById(state.selectedTemplateId)?.options)
+      mergeDefaults(defaults, findBorderById(state.selectedBorderId)?.options)
+
+      const style = findStyleById(state.selectedStyleId)?.style
+      if (style) {
+        mergeDefaults(defaults, {
+          dotsOptions: { color: style.primaryColor },
+          cornersSquareOptions: { color: style.secondaryColor },
+          cornersDotOptions: { color: style.thirdColor },
+          backgroundOptions: { color: style.backgroundColor }
+        })
+      }
+
+      const text = findTextTemplateById(state.selectedTextTemplateId)?.options
+      if (text) {
+        const decorations: any = {}
+        if (text.topValue)
+          decorations.top = { enableText: true, type: 'text', value: text.topValue }
+        if (text.bottomValue)
+          decorations.bottom = {
+            enableText: true,
+            type: 'text',
+            value: text.bottomValue
+          }
+        if (text.value)
+          decorations.bottom = { enableText: true, type: 'text', value: text.value }
+        if (Object.keys(decorations).length) {
+          mergeDefaults(defaults, { borderOptions: { decorations } })
+        }
+      }
+
+      if (state.selectedImage) {
+        mergeDefaults(defaults, { imageOptions: { image: state.selectedImage } })
+      }
+
+      const newOptions = JSON.parse(JSON.stringify(state.advancedOptions))
+      mergeDefaults(newOptions, defaults)
+      set({ advancedOptions: newOptions })
+    },
 
     // --- Base Template Actions ---
     setRandomBaseTemplate: () => {

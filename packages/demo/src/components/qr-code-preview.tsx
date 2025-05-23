@@ -140,7 +140,7 @@ export const QRCodePreview: React.FC = () => {
           ...(currentAdvancedOptions as any),
           data: currentQrData
         }
-        textIdForService = null // Advanced mode typically defines text within options
+        textIdForService = currentSelectedTextTemplateIdFromConfig
 
         if (currentConfigIsCustomTextOverrideEnabled) {
           const decorations: any = {}
@@ -176,6 +176,7 @@ export const QRCodePreview: React.FC = () => {
           // Removed: if (finalOptionsForService.text) finalOptionsForService.text = null
           if ((finalOptionsForService as any).textId)
             (finalOptionsForService as any).textId = null
+          textIdForService = null
         }
       } else {
         // Simple Mode
@@ -221,13 +222,13 @@ export const QRCodePreview: React.FC = () => {
         generationSuccess = await qrCodeService.generateQRCode({
           element: container,
           data: currentQrData,
-          templateId: currentConfigIsAdvancedMode ? null : currentSelectedTemplateId,
+          templateId: currentSelectedTemplateId,
           template: null,
-          styleId: currentConfigIsAdvancedMode ? null : currentSelectedStyleId,
-          borderId: currentConfigIsAdvancedMode ? null : currentSelectedBorderId,
+          styleId: currentSelectedStyleId,
+          borderId: currentSelectedBorderId,
           style: null,
-          image: currentConfigIsAdvancedMode ? null : currentSelectedImage,
-          text: null, // Text object is not used directly by service when textId or borderOptions.decorations are primary
+          image: currentSelectedImage,
+          text: null,
           textId: textIdForService,
           options: finalOptionsForService
         })
