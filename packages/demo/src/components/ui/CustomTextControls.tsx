@@ -85,7 +85,9 @@ export const CustomTextControls: React.FC = () => {
 
   const updateDecorationSetting = (key: string, value: any) => {
     const { advancedOptions: currentAdvancedOptions } = useQrConfigStore.getState()
-    const currentBorderOptions = { ...currentAdvancedOptions.borderOptions }
+    const currentBorderOptions = structuredClone(
+      currentAdvancedOptions.borderOptions || {}
+    )
 
     if (!currentBorderOptions.decorations) {
       currentBorderOptions.decorations = {}
@@ -146,7 +148,9 @@ export const CustomTextControls: React.FC = () => {
 
   const resetCurrentSideSettings = () => {
     const { advancedOptions: currentAdvancedOptions } = useQrConfigStore.getState()
-    const currentBorderOptions = { ...currentAdvancedOptions.borderOptions }
+    const currentBorderOptions = structuredClone(
+      currentAdvancedOptions.borderOptions || {}
+    )
 
     if (!currentBorderOptions.decorations) {
       return
