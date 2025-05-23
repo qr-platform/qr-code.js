@@ -155,15 +155,22 @@ export const QRCodePreview: React.FC = () => {
               currentConfigCustomTextOverrides[side] || // ESLint formatting
               currentConfigCustomTextOverrides.all
             if (textValue) {
-              decorations[side] = { enableText: true, type: 'text', value: textValue }
+              const existingDecoration =
+                currentAdvancedOptions.borderOptions?.decorations?.[side]
+              decorations[side] = {
+                ...existingDecoration, // Include existing decoration settings first
+                enableText: true,
+                type: 'text',
+                value: textValue // Override with custom text value
+              }
             } else {
               decorations[side] = { enableText: false }
             }
           })
           finalOptionsForService.borderOptions = {
             ...(finalOptionsForService.borderOptions || {}),
-            hasBorder: true, // Ensure border is on if custom text is applied
-            decorations
+            decorations,
+            hasBorder: true // Ensure border is on if custom text is applied (override any existing value)
           }
           // Nullify any other text properties if they exist in advancedOptions
           // Removed: if (finalOptionsForService.text) finalOptionsForService.text = null
@@ -188,15 +195,23 @@ export const QRCodePreview: React.FC = () => {
               currentConfigCustomTextOverrides[side] || // ESLint formatting
               currentConfigCustomTextOverrides.all
             if (textValue) {
-              decorations[side] = { enableText: true, type: 'text', value: textValue }
+              // In simple mode, use decoration settings from advanced options if available
+              const existingDecoration =
+                currentAdvancedOptions?.borderOptions?.decorations?.[side]
+              decorations[side] = {
+                ...existingDecoration, // Include existing decoration settings first
+                enableText: true,
+                type: 'text',
+                value: textValue // Override with custom text value
+              }
             } else {
               decorations[side] = { enableText: false }
             }
           })
           finalOptionsForService.borderOptions = {
             // Assuming simple mode might not have existing borderOptions from elsewhere
-            hasBorder: true, // Ensure border is on
-            decorations
+            decorations,
+            hasBorder: true // Ensure border is on (override any existing value)
           }
           textIdForService = null // Override template text
         }
