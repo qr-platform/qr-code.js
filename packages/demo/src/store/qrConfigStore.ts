@@ -23,45 +23,9 @@ import {
   DotsOptions
 } from '../types/qr-options'
 
-// Default Advanced Options
+// Default Advanced Options - minimal defaults to avoid conflicts
 const defaultAdvancedOptions: AdvancedQROptions = {
-  data: 'https://qr-platform.com/advanced',
-  shape: ShapeType.square,
-  margin: 0,
-  qrOptions: {
-    errorCorrectionLevel: ErrorCorrectionLevel.Q,
-    typeNumber: 0,
-    mode: undefined // Let library auto-detect
-  },
-  dotsOptions: {
-    type: DotType.square,
-    color: '#000000'
-  },
-  cornersSquareOptions: {
-    type: CornerSquareType.square,
-    color: '#000000'
-  },
-  cornersDotOptions: {
-    type: CornerDotType.square,
-    color: '#000000'
-  },
-  backgroundOptions: {
-    color: '#FFFFFF'
-  },
-  imageOptions: {
-    image: undefined,
-    imageSize: 0.4,
-    margin: 4,
-    mode: ImageMode.center
-  },
-  borderOptions: {
-    hasBorder: false
-  },
-  isResponsive: false,
-  scale: 1,
-  offset: 0,
-  verticalOffset: 0,
-  horizontalOffset: 0
+  data: 'https://qr-platform.com/advanced'
 }
 
 export interface QRCodePreset {
@@ -314,7 +278,11 @@ const createQrConfigStore = (set: any, get: any): QRConfigState => {
     initialDefaultCustomTextOverrides: { ...initialCustomTextOverrides },
 
     setQrData: data => {
-      set({ qrData: data })
+      set((state: QRConfigState) => ({
+        qrData: data,
+        // Always keep advanced options data in sync
+        advancedOptions: { ...state.advancedOptions, data }
+      }))
     },
     setSelectedTemplateId: id => set({ selectedTemplateId: id }),
     setSelectedStyleId: id => set({ selectedStyleId: id }),
@@ -335,13 +303,27 @@ const createQrConfigStore = (set: any, get: any): QRConfigState => {
         isPreviewMode: mode === 'Preview'
       }),
     setAdvancedOptions: options =>
-      set((state: QRConfigState) => ({
-        advancedOptions: { ...state.advancedOptions, ...options }
-      })),
+      set((state: QRConfigState) => {
+        // Ensure we don't set undefined values that could cause issues
+        const cleanOptions = Object.fromEntries(
+          Object.entries(options).filter(([_, value]) => value !== undefined)
+        )
+        return {
+          advancedOptions: { ...state.advancedOptions, ...cleanOptions }
+        }
+      }),
     setAdvancedOption: (key, value) =>
-      set((state: QRConfigState) => ({
-        advancedOptions: { ...state.advancedOptions, [key]: value }
-      })),
+      set((state: QRConfigState) => {
+        if (value === undefined || value === null) {
+          // Remove the key if value is undefined/null
+          const newOptions = { ...state.advancedOptions }
+          delete newOptions[key]
+          return { advancedOptions: newOptions }
+        }
+        return {
+          advancedOptions: { ...state.advancedOptions, [key]: value }
+        }
+      }),
 
     setAdvancedDotsOption: (key, value) =>
       set((state: QRConfigState) => ({

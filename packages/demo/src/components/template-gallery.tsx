@@ -77,7 +77,7 @@ export const TemplateGallery: React.FC = () => {
     selectedTextTemplateId: storeSelectedTextTemplateId, // Renamed
     qrData,
     isAdvancedMode: _isAdvancedMode, // Currently not used for gallery generation logic but kept for context
-    advancedOptions: _advancedOptions, // Same as above
+    advancedOptions: storeAdvancedOptions, // Use advanced options for gallery previews
     scrollToGalleryTabId
   } = qrConfigStoreState
 
@@ -90,6 +90,7 @@ export const TemplateGallery: React.FC = () => {
   const deferredImageId = useDeferredValue(storeSelectedImageId)
   const deferredTextTemplateId = useDeferredValue(storeSelectedTextTemplateId)
   const deferredQrData = useDeferredValue(qrData)
+  const deferredAdvancedOptions = useDeferredValue(storeAdvancedOptions)
 
   const templateRefs = React.useRef<Record<string, HTMLDivElement | null>>({})
   const activeCategory = galleryCategories.find(cat => cat.id === activeGalleryTabId)
@@ -173,6 +174,29 @@ export const TemplateGallery: React.FC = () => {
               ? null
               : imageOptions.find(img => img.id === deferredImageId)?.value || null
 
+          // Prepare base options with advanced overrides
+          let galleryOptions = { isResponsive: false }
+          
+          // Apply advanced options as overrides if they exist and have meaningful content
+          if (deferredAdvancedOptions && Object.keys(deferredAdvancedOptions).length > 1) {
+            const advancedOverrides = { ...deferredAdvancedOptions }
+            delete advancedOverrides.data // Don't override data
+            
+            // Clean up advanced options to remove undefined/empty values that might cause issues
+            const cleanAdvancedOverrides = Object.fromEntries(
+              Object.entries(advancedOverrides).filter(([_, value]) => {
+                if (value === undefined || value === null) return false
+                if (typeof value === 'object' && Object.keys(value).length === 0) return false
+                return true
+              })
+            )
+            
+            galleryOptions = {
+              ...galleryOptions,
+              ...cleanAdvancedOverrides
+            }
+          }
+
           const options = {
             element: el,
             data: deferredQrData,
@@ -181,7 +205,7 @@ export const TemplateGallery: React.FC = () => {
             borderId: deferredBorderId,
             image: baseImage,
             textId: deferredTextTemplateId,
-            options: { isResponsive: false }
+            options: galleryOptions
           }
 
           switch (activeGalleryTabId) {
@@ -230,6 +254,7 @@ export const TemplateGallery: React.FC = () => {
     deferredStyleId,
     deferredImageId,
     deferredTextTemplateId,
+    deferredAdvancedOptions,
     activeCategory
   ])
 

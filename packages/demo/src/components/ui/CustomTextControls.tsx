@@ -137,6 +137,11 @@ export const CustomTextControls: React.FC = () => {
     }
 
     setAdvancedBorderOption('decorations', currentBorderOptions.decorations)
+    
+    // Ensure border is enabled when custom text is applied
+    if (!currentBorderOptions.hasBorder) {
+      setAdvancedBorderOption('hasBorder', true)
+    }
   }
 
   const currentDecoration = getCurrentDecorationSettings()
@@ -168,6 +173,11 @@ export const CustomTextControls: React.FC = () => {
     }
 
     setAdvancedBorderOption('decorations', currentBorderOptions.decorations)
+    
+    // Ensure border is enabled when custom text is applied
+    if (!currentBorderOptions.hasBorder) {
+      setAdvancedBorderOption('hasBorder', true)
+    }
   }
 
   return (

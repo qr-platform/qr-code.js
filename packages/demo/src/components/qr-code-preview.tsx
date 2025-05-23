@@ -135,102 +135,142 @@ export const QRCodePreview: React.FC = () => {
       let finalOptionsForService: QRCodeJsOptions = {}
       let textIdForService: string | null = null
 
-      if (currentConfigIsAdvancedMode) {
+      // Always start with template mode as base, then apply advanced overrides
+      finalOptionsForService = { isResponsive: true }
+      textIdForService = currentSelectedTextTemplateIdFromConfig
+
+      // Apply advanced options as overrides if they exist
+      if (currentAdvancedOptions && Object.keys(currentAdvancedOptions).length > 1) { // More than just data
+        // Merge advanced options over template-based options, but filter out empty/undefined values
+        const advancedOverrides = { ...currentAdvancedOptions }
+        delete advancedOverrides.data // Don't override data from advanced options
+        
+        // Clean up advanced options to remove undefined/empty values that might cause issues
+        const cleanAdvancedOverrides = Object.fromEntries(
+          Object.entries(advancedOverrides).filter(([key, value]) => {
+            if (value === undefined || value === null) return false
+            if (typeof value === 'object' && value !== null) {
+              if (Array.isArray(value) && value.length === 0) return false
+              if (!Array.isArray(value) && Object.keys(value).length === 0) return false
+              
+              // Special handling for nested objects that might have undefined values
+              if (key === 'qrOptions' || key === 'dotsOptions' || key === 'cornersSquareOptions' || 
+                  key === 'cornersDotOptions' || key === 'backgroundOptions' || key === 'imageOptions' || 
+                  key === 'borderOptions') {
+                const cleanedObject = Object.fromEntries(
+                  Object.entries(value).filter(([_, nestedValue]) => 
+                    nestedValue !== undefined && nestedValue !== null
+                  )
+                )
+                if (Object.keys(cleanedObject).length === 0) return false
+                // Update the value to the cleaned object
+                advancedOverrides[key as keyof typeof advancedOverrides] = cleanedObject
+              }
+            }
+            return true
+          })
+        )
+        
         finalOptionsForService = {
-          ...(currentAdvancedOptions as any),
-          data: currentQrData
+          ...finalOptionsForService,
+          ...cleanAdvancedOverrides
         }
-        textIdForService = null // Advanced mode typically defines text within options
-
-        if (currentConfigIsCustomTextOverrideEnabled) {
-          const decorations: any = {}
-          const sides: Array<'top' | 'bottom' | 'left' | 'right'> = [
-            'top',
-            'bottom',
-            'left',
-            'right'
-          ]
-          sides.forEach(side => {
-            const textValue =
-              currentConfigCustomTextOverrides[side] || // ESLint formatting
-              currentConfigCustomTextOverrides.all
-            if (textValue) {
-              const existingDecoration =
-                currentAdvancedOptions.borderOptions?.decorations?.[side]
-              decorations[side] = {
-                ...existingDecoration, // Include existing decoration settings first
-                enableText: true,
-                type: 'text',
-                value: textValue // Override with custom text value
-              }
-            } else {
-              decorations[side] = { enableText: false }
-            }
-          })
-          finalOptionsForService.borderOptions = {
-            ...(finalOptionsForService.borderOptions || {}),
-            decorations,
-            hasBorder: true // Ensure border is on if custom text is applied (override any existing value)
+        
+        // If advanced mode has border options with text, override textId
+        if (cleanAdvancedOverrides.borderOptions?.decorations) {
+          const hasTextInDecorations = Object.values(cleanAdvancedOverrides.borderOptions.decorations).some(
+            decoration => decoration?.enableText && decoration?.value
+          )
+          if (hasTextInDecorations) {
+            textIdForService = null // Advanced border text takes precedence
           }
-          // Nullify any other text properties if they exist in advancedOptions
-          // Removed: if (finalOptionsForService.text) finalOptionsForService.text = null
-          if ((finalOptionsForService as any).textId)
-            (finalOptionsForService as any).textId = null
-        }
-      } else {
-        // Simple Mode
-        finalOptionsForService = { isResponsive: true }
-        textIdForService = currentSelectedTextTemplateIdFromConfig
-
-        if (currentConfigIsCustomTextOverrideEnabled) {
-          const decorations: any = {}
-          const sides: Array<'top' | 'bottom' | 'left' | 'right'> = [
-            'top',
-            'bottom',
-            'left',
-            'right'
-          ]
-          sides.forEach(side => {
-            const textValue =
-              currentConfigCustomTextOverrides[side] || // ESLint formatting
-              currentConfigCustomTextOverrides.all
-            if (textValue) {
-              // In simple mode, use decoration settings from advanced options if available
-              const existingDecoration =
-                currentAdvancedOptions?.borderOptions?.decorations?.[side]
-              decorations[side] = {
-                ...existingDecoration, // Include existing decoration settings first
-                enableText: true,
-                type: 'text',
-                value: textValue // Override with custom text value
-              }
-            } else {
-              decorations[side] = { enableText: false }
-            }
-          })
-          finalOptionsForService.borderOptions = {
-            // Assuming simple mode might not have existing borderOptions from elsewhere
-            decorations,
-            hasBorder: true // Ensure border is on (override any existing value)
-          }
-          textIdForService = null // Override template text
         }
       }
 
-      if (currentQrData && container) {
-        generationSuccess = await qrCodeService.generateQRCode({
-          element: container,
-          data: currentQrData,
-          templateId: currentConfigIsAdvancedMode ? null : currentSelectedTemplateId,
-          template: null,
-          styleId: currentConfigIsAdvancedMode ? null : currentSelectedStyleId,
-          borderId: currentConfigIsAdvancedMode ? null : currentSelectedBorderId,
-          style: null,
-          image: currentConfigIsAdvancedMode ? null : currentSelectedImage,
-          text: null, // Text object is not used directly by service when textId or borderOptions.decorations are primary
-          textId: textIdForService,
-          options: finalOptionsForService
+      // Handle custom text overrides (applies to both template and advanced modes)
+      if (currentConfigIsCustomTextOverrideEnabled) {
+        const decorations: any = {}
+        const sides: Array<'top' | 'bottom' | 'left' | 'right'> = [
+          'top',
+          'bottom',
+          'left',
+          'right'
+        ]
+        sides.forEach(side => {
+          const textValue =
+            currentConfigCustomTextOverrides[side] || 
+            currentConfigCustomTextOverrides.all
+          if (textValue) {
+            const existingDecoration =
+              finalOptionsForService.borderOptions?.decorations?.[side]
+            decorations[side] = {
+              ...existingDecoration, // Include existing decoration settings first
+              enableText: true,
+              type: 'text',
+              value: textValue // Override with custom text value
+            }
+          } else {
+            decorations[side] = { enableText: false }
+          }
         })
+        finalOptionsForService.borderOptions = {
+          ...(finalOptionsForService.borderOptions || {}),
+          decorations,
+          hasBorder: true // Ensure border is on if custom text is applied
+        }
+        textIdForService = null // Custom text overrides template text
+      }
+
+      if (currentQrData && container) {
+        // Debug logging for advanced options
+        if (currentConfigIsAdvancedMode || Object.keys(finalOptionsForService).length > 1) {
+          console.log('QR Generation with advanced options:', {
+            mode: currentConfigIsAdvancedMode ? 'Advanced' : 'Template',
+            finalOptions: finalOptionsForService,
+            templateId: currentSelectedTemplateId,
+            hasAdvancedOptions: currentAdvancedOptions && Object.keys(currentAdvancedOptions).length > 1
+          })
+        }
+
+        try {
+          generationSuccess = await qrCodeService.generateQRCode({
+            element: container,
+            data: currentQrData,
+            templateId: currentSelectedTemplateId,
+            template: null,
+            styleId: currentSelectedStyleId,
+            borderId: currentSelectedBorderId,
+            style: null,
+            image: currentSelectedImage,
+            text: null, // Text object is not used directly by service when textId or borderOptions.decorations are primary
+            textId: textIdForService,
+            options: finalOptionsForService // Advanced options will override template options
+          })
+        } catch (qrGenerationError) {
+          console.error('QR Generation Error:', qrGenerationError)
+          console.log('Failed with options:', finalOptionsForService)
+          
+          // Try to generate with minimal options as fallback
+          try {
+            console.log('Attempting fallback generation with minimal options...')
+            generationSuccess = await qrCodeService.generateQRCode({
+              element: container,
+              data: currentQrData,
+              templateId: currentSelectedTemplateId,
+              template: null,
+              styleId: currentSelectedStyleId,
+              borderId: currentSelectedBorderId,
+              style: null,
+              image: currentSelectedImage,
+              text: null,
+              textId: textIdForService,
+              options: { isResponsive: true } // Minimal fallback options
+            })
+          } catch (fallbackError) {
+            console.error('Fallback generation also failed:', fallbackError)
+            throw qrGenerationError // Re-throw original error
+          }
+        }
         generationAttempted = true
       } else if (container) {
         // This condition implies currentQrData is missing
