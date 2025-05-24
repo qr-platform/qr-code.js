@@ -1,0 +1,34 @@
+/* --- START: Link card styling ------*/
+.sl-markdown-content .sl-link-card {
+  border: 2px solid var(--sk-logo-orange);
+  background-color: var(--sk-logo-orange-transparent);
+
+  .description {
+    color: var(--sl-color-gray-2);
+  }
+}
+
+/* Hover effects */
+.sl-markdown-content .sl-link-card:hover {
+  border: 2px solid var(--sk-logo-blue);
+  background-color: var(--sk-logo-blue-transparent);
+
+  .description {
+    color: var(--sl-color-gray-1);
+  }
+}
+
+/* --- END: Link card styling ------*/
+
+/* --- START: Card styling ------*/
+
+article.card {
+  background: var(--sl-color-gray-6);
+  color: var(--sl-color-gray-2);
+  border: 1px solid var(--sk-logo-dark-blue);
+  border-radius: 0.5rem;
+  width: 95%;
+  box-shadow: var(--sl-shadow-md);
+}
+
+/* --- END: Card styling ------*/

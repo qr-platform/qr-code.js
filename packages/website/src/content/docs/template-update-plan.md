@@ -1,1 +1,0 @@
-/app/docs/template-update-plan.md
