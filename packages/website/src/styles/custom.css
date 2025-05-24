@@ -1,0 +1,81 @@
+/* Basic body styles - Starlight uses CSS variables, so we can override those,
+   or apply directly if preferred. Overriding variables is often cleaner. */
+:root {
+  --sl-font-main: 'Inter', sans-serif; /* Ensure Inter is primary */
+  --sl-font-system: 'Inter', sans-serif; /* Override system font stack too */
+  --sl-color-bg: #f0f9ff; /* Light blue, inspired by the mesh gradient */
+  --sl-color-text: #1f2937; /* Equivalent to text-gray-800 */
+  --sl-color-accent-low: #dbeafe; /* Lighter blue for subtle accents */
+  --sl-color-accent: #667eea; /* Blue accent from theme */
+  --sl-color-accent-high: #764ba2; /* Purple accent from theme */
+
+  /* Custom gradient for text */
+  --text-gradient: linear-gradient(to right, var(--sl-color-accent), var(--sl-color-accent-high));
+}
+
+body {
+  font-family: var(--sl-font-main);
+  background-color: var(--sl-color-bg);
+  color: var(--sl-color-text);
+}
+
+/* Basic link styling - Starlight links use --sl-color-accent */
+a {
+  color: var(--sl-color-accent); /* Use Starlight's accent color variable */
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Header glass effect */
+/* Starlight's header is typically '.sl-header' */
+.sl-header {
+  background: rgba(255, 255, 255, 0.1) !important; /* Using !important to ensure override */
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important; /* For Safari */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+  /* Ensure text color in header remains readable */
+  color: var(--sl-color-text) !important; 
+}
+
+/* Ensure header links are also readable */
+.sl-header a {
+    color: var(--sl-color-text) !important;
+    opacity: 0.8 !important; /* Make them slightly less prominent than main text */
+}
+.sl-header a:hover {
+    opacity: 1 !important;
+}
+
+
+/* Site title in sidebar/header - usually a link with class .site-title */
+.site-title {
+  background-image: var(--text-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent !important; /* Important to override default link color */
+  font-weight: 700; /* Make it bolder */
+}
+
+
+/* Page Title gradient text */
+/* Starlight's page title is typically '.sl-page-title' or h1 in main content */
+.sl-main-content h1, .sl-page-title {
+  background-image: var(--text-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-bottom: 0.3em; /* Add some space if gradient cuts off */
+}
+
+/* Any other prominent titles or specific elements can be styled similarly */
+/* For example, if there's a hero section title that's not the main page title:
+.starlight-hero-section .title-class {
+  background-image: var(--text-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+*/

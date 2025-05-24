@@ -1,0 +1,1 @@
+/app/docs/border-text-implementation-plan.md
