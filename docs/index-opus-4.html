@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>QRCode.js - Next-Gen QR Code Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            background: #0a0a0a;
+            color: #fff;
+        }
+        
+        /* Animated gradient background */
+        .gradient-bg {
+            background: linear-gradient(-45deg, #1a1a2e, #16213e, #0f3460, #e94560);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* Glassmorphism effect */
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Neon glow effects */
+        .neon-text {
+            text-shadow: 0 0 10px rgba(59, 130, 246, 0.8),
+                         0 0 20px rgba(59, 130, 246, 0.6),
+                         0 0 30px rgba(59, 130, 246, 0.4);
+        }
+        
+        .neon-box {
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3),
+                        inset 0 0 20px rgba(59, 130, 246, 0.1);
+        }
+        
+        /* Floating animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        /* Pulse animation */
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        /* Rotating QR pattern */
+        .qr-pattern {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0.03;
+            background-image: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 10px,
+                rgba(255, 255, 255, 0.05) 10px,
+                rgba(255, 255, 255, 0.05) 20px
+            ),
+            repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 10px,
+                rgba(255, 255, 255, 0.05) 10px,
+                rgba(255, 255, 255, 0.05) 20px
+            );
+            animation: rotate 60s linear infinite;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Glitch effect */
+        @keyframes glitch {
+            0%, 100% { text-shadow: 2px 0 #ff00de, -2px 0 #00ffff; }
+            25% { text-shadow: -2px 0 #ff00de, 2px 0 #00ffff; }
+            50% { text-shadow: 2px 0 #00ffff, -2px 0 #ff00de; }
+            75% { text-shadow: -2px 0 #00ffff, 2px 0 #ff00de; }
+        }
+        
+        .glitch:hover {
+            animation: glitch 0.3s ease infinite;
+        }
+        
+        /* Card hover effects */
+        .hover-lift {
+            transition: all 0.3s ease;
+        }
+        
+        .hover-lift:hover {
+            transform: translateY(-10px) scale(1.02);
+        }
+        
+        /* Gradient borders */
+        .gradient-border {
+            position: relative;
+            background: #1a1a2e;
+            border-radius: 1rem;
+        }
+        
+        .gradient-border::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899, #3b82f6);
+            border-radius: 1rem;
+            background-size: 400% 400%;
+            z-index: -1;
+            animation: gradientShift 3s ease infinite;
+        }
+        
+        /* Smooth scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #1a1a2e;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+            border-radius: 5px;
+        }
+        
+        /* Particle effect */
+        .particle {
+            position: absolute;
+            background: rgba(59, 130, 246, 0.5);
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+            animation: particleFloat 10s linear infinite;
+        }
+        
+        @keyframes particleFloat {
+            0% {
+                opacity: 0;
+                transform: translateY(100vh) scale(0);
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100vh) scale(1);
+            }
+        }
+        
+        /* Typography enhancements */
+        .hero-title {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #fff 0%, #3b82f6 50%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Interactive QR code */
+        .qr-demo {
+            width: 200px;
+            height: 200px;
+            background: #fff;
+            border-radius: 20px;
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            grid-template-rows: repeat(10, 1fr);
+            gap: 2px;
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+        
+        .qr-cell {
+            background: #000;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+        
+        .qr-demo:hover .qr-cell:nth-child(odd) {
+            background: #3b82f6;
+            transform: scale(0.9);
+        }
+        
+        .qr-demo:hover .qr-cell:nth-child(even) {
+            background: #8b5cf6;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated particles background -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="particle" style="left: 10%; width: 4px; height: 4px; animation-delay: 0s;"></div>
+        <div class="particle" style="left: 20%; width: 3px; height: 3px; animation-delay: 2s;"></div>
+        <div class="particle" style="left: 30%; width: 5px; height: 5px; animation-delay: 4s;"></div>
+        <div class="particle" style="left: 40%; width: 2px; height: 2px; animation-delay: 6s;"></div>
+        <div class="particle" style="left: 50%; width: 4px; height: 4px; animation-delay: 8s;"></div>
+        <div class="particle" style="left: 60%; width: 3px; height: 3px; animation-delay: 10s;"></div>
+        <div class="particle" style="left: 70%; width: 5px; height: 5px; animation-delay: 12s;"></div>
+        <div class="particle" style="left: 80%; width: 2px; height: 2px; animation-delay: 14s;"></div>
+        <div class="particle" style="left: 90%; width: 4px; height: 4px; animation-delay: 16s;"></div>
+    </div>
+    
+    <!-- QR Pattern Background -->
+    <div class="qr-pattern"></div>
+    
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 glass">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex items-center space-x-3 group cursor-pointer">
+                    <div class="relative">
+                        <span class="material-icons text-4xl text-blue-500 group-hover:text-purple-500 transition-colors duration-300">qr_code_2</span>
+                        <div class="absolute inset-0 bg-blue-500 blur-xl opacity-50 group-hover:opacity-75 transition-opacity duration-300"></div>
+                    </div>
+                    <span class="text-2xl font-bold neon-text glitch">QRCode.js</span>
+                </div>
+                
+                <nav class="hidden md:flex items-center space-x-8">
+                    <a class="text-gray-300 hover:text-blue-400 transition-all duration-300 hover:scale-110" href="#features">Features</a>
+                    <a class="text-gray-300 hover:text-blue-400 transition-all duration-300 hover:scale-110" href="#showcase">Showcase</a>
+                    <a class="text-gray-300 hover:text-blue-400 transition-all duration-300 hover:scale-110" href="#pricing">Pricing</a>
+                    <a class="text-gray-300 hover:text-blue-400 transition-all duration-300 hover:scale-110" href="#docs">Docs</a>
+                </nav>
+                
+                <div class="flex items-center space-x-4">
+                    <button class="gradient-border px-6 py-2.5 text-white font-medium hover:scale-105 transition-transform duration-300">
+                        Get Started
+                    </button>
+                    <button class="md:hidden p-2 rounded-lg glass">
+                        <span class="material-icons text-white">menu</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Hero Section -->
+    <section class="min-h-screen flex items-center justify-center gradient-bg relative overflow-hidden">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center">
+                <!-- Animated QR Code Demo -->
+                <div class="qr-demo mx-auto mb-12 floating neon-box">
+                    <!-- Generate 100 cells for the QR pattern -->
+                    <div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div>
+                    <div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div>
+                    <div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div>
+                    <div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div>
+                    <div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div>
+                    <div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div>
+                    <div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div>
+                    <div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div>
+                    <div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div>
+                    <div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div>
+                    <div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div>
+                    <div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div>
+                    <div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div>
+                    <div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div>
+                    <div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div>
+                    <div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div>
+                    <div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div>
+                    <div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div>
+                    <div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div>
+                    <div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div>
+                </div>
+                
+                <h1 class="hero-title mb-6">
+                    Next-Generation<br/>QR Code Magic
+                </h1>
+                
+                <p class="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-12 leading-relaxed">
+                    Transform boring QR codes into stunning visual experiences with the most powerful JavaScript library for QR generation
+                </p>
+                
+                <div class="flex flex-col sm:flex-row justify-center items-center gap-6">
+                    <button class="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full font-semibold text-lg overflow-hidden transition-all duration-300 hover:scale-105">
+                        <span class="relative z-10 flex items-center">
+                            <span class="material-icons mr-2">rocket_launch</span>
+                            Start Building
+                        </span>
+                        <div class="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    </button>
+                    
+                    <button class="glass px-8 py-4 rounded-full font-semibold text-lg hover:scale-105 transition-all duration-300 hover:bg-white/10">
+                        <span class="flex items-center">
+                            <span class="material-icons mr-2">play_circle</span>
+                            Watch Demo
+                        </span>
+                    </button>
+                </div>
+                
+                <!-- Stats -->
+                <div class="grid grid-cols-3 gap-8 max-w-2xl mx-auto mt-20">
+                    <div class="text-center">
+                        <div class="text-4xl font-bold text-blue-400 mb-2">50K+</div>
+                        <div class="text-gray-400">Downloads</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl font-bold text-purple-400 mb-2">4.9★</div>
+                        <div class="text-gray-400">Rating</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl font-bold text-pink-400 mb-2">1M+</div>
+                        <div class="text-gray-400">QR Codes</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section class="py-32 relative" id="features">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-20">
+                <h2 class="text-5xl font-bold mb-6">
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600">
+                        Superpowers
+                    </span>
+                    <br/>
+                    <span class="text-white">For Your QR Codes</span>
+                </h2>
+                <p class="text-xl text-gray-400 max-w-2xl mx-auto">
+                    Unlock features that transform simple QR codes into powerful brand assets
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature Cards -->
+                <div class="gradient-border p-8 hover-lift group">
+                    <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <span class="material-icons text-white text-3xl">auto_awesome</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-4">AI-Powered Design</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Let our AI suggest the perfect color schemes and patterns for your brand
+                    </p>
+                </div>
+                
+                <div class="gradient-border p-8 hover-lift group">
+                    <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <span class="material-icons text-white text-3xl">animation</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-4">Animated QR Codes</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Create eye-catching animated QR codes that capture attention instantly
+                    </p>
+                </div>
+                
+                <div class="gradient-border p-8 hover-lift group">
+                    <div class="w-16 h-16 bg-gradient-to-br from-pink-500 to-orange-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <span class="material-icons text-white text-3xl">insights</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-4">Analytics Dashboard</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Track scans, locations, and user engagement in real-time
+                    </p>
+                </div>
+                
+                <div class="gradient-border p-8 hover-lift group">
+                    <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-teal-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <span class="material-icons text-white text-3xl">security</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-4">Enterprise Security</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Bank-level encryption and authentication for sensitive data
+                    </p>
+                </div>
+                
+                <div class="gradient-border p-8 hover-lift group">
+                    <div class="w-16 h-16 bg-gradient-to-br from-teal-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <span class="material-icons text-white text-3xl">api</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-4">Developer First</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Powerful APIs, TypeScript support, and extensive documentation
+                    </p>
+                </div>
+                
+                <div class="gradient-border p-8 hover-lift group">
+                    <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <span class="material-icons text-white text-3xl">speed</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-4">Lightning Fast</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Generate thousands of QR codes in milliseconds with optimized algorithms
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Interactive Demo Section -->
+    <section class="py-32 gradient-bg" id="showcase">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-20">
+                <h2 class="text-5xl font-bold text-white mb-6">See It In Action</h2>
+                <p class="text-xl text-gray-300 max-w-2xl mx-auto">
+                    Experience the power of customization with our interactive playground
+                </p>
+            </div>
+            
+            <div class="max-w-6xl mx-auto">
+                <div class="glass rounded-3xl p-12">
+                    <div class="grid md:grid-cols-2 gap-12 items-center">
+                        <div>
+                            <h3 class="text-3xl font-bold text-white mb-6">Live Customizer</h3>
+                            <div class="space-y-6">
+                                <div>
+                                    <label class="text-gray-300 block mb-2">Pattern Style</label>
+                                    <div class="grid grid-cols-3 gap-3">
+                                        <button class="glass p-3 rounded-lg hover:bg-white/10 transition-colors">Dots</button>
+                                        <button class="glass p-3 rounded-lg hover:bg-white/10 transition-colors">Squares</button>
+                                        <button class="glass p-3 rounded-lg hover:bg-white/10 transition-colors">Rounded</button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="text-gray-300 block mb-2">Color Theme</label>
+                                    <div class="flex gap-3">
+                                        <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 cursor-pointer hover:scale-110 transition-transform"></div>
+                                        <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-green-500 to-teal-600 cursor-pointer hover:scale-110 transition-transform"></div>
+                                        <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-pink-500 to-orange-600 cursor-pointer hover:scale-110 transition-transform"></div>
+                                        <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 cursor-pointer hover:scale-110 transition-transform"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="text-gray-300 block mb-2">Add Logo</label>
+                                    <button class="glass px-6 py-3 rounded-lg w-full hover:bg-white/10 transition-colors">
+                                        <span class="material-icons mr-2">upload</span>
+                                        Upload Image
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-center">
+                            <div class="relative">
+                                <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 blur-3xl opacity-30"></div>
+                                <div class="relative bg-white rounded-3xl p-8 transform hover:rotate-3 transition-transform duration-300">
+                                    <div class="w-64 h-64 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl pulse"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Pricing Section -->
+    <section class="py-32" id="pricing">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-20">
+                <h2 class="text-5xl font-bold text-white mb-6">Simple, Transparent Pricing</h2>
+                <p class="text-xl text-gray-400 max-w-2xl mx-auto">
+                    Choose the perfect plan for your needs. Always flexible to scale
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <!-- Free Plan -->
+                <div class="glass rounded-3xl p-8 hover-lift">
+                    <h3 class="text-2xl font-bold text-white mb-2">Starter</h3>
+                    <p class="text-gray-400 mb-6">Perfect for personal projects</p>
+                    <div class="text-4xl font-bold text-white mb-6">
+                        $0<span class="text-lg font-normal text-gray-400">/month</span>
+                    </div>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center text-gray-300">
+                            <span class="material-icons text-green-500 mr-3">check</span>
+                            100 QR codes/month
+                        </li>
+                        <li class="flex items-center text-gray-300">
+                            <span class="material-icons text-green-500 mr-3">check</span>
+                            Basic customization
+                        </li>
+                        <li class="flex items-center text-gray-300">
+                            <span class="material-icons text-green-500 mr-3">check</span>
+                            PNG & SVG export
+                        </li>
+                    </ul>
+                    <button class="w-full glass py-3 rounded-lg hover:bg-white/10 transition-colors">
+                        Get Started Free
+                    </button>
+                </div>
+                
+                <!-- Pro Plan -->
+                <div class="relative">
+                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                        <span class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-1 rounded-full text-sm font-semibold">
+                            MOST POPULAR
+                        </span>
+                    </div>
+                    <div class="gradient-border p-8 hover-lift transform scale-105">
+                        <h3 class="text-2xl font-bold text-white mb-2">Professional</h3>
+                        <p class="text-gray-400 mb-6">For growing businesses</p>
+                        <div class="text-4xl font-bold text-white mb-6">
+                            $29<span class="text-lg font-normal text-gray-400">/month</span>
+                        </div>
+                        <ul class="space-y-4 mb-8">
+                            <li class="flex items-center text-gray-300">
+                                <span class="material-icons text-green-500 mr-3">check</span>
+                                Unlimited QR codes
+                            </li>
+                            <li class="flex items-center text-gray-300">
+                                <span class="material-icons text-green-500 mr-3">check</span>
+                                Advanced customization
+                            </li>
+                            <li class="flex items-center text-gray-300">
+                                <span class="material-icons text-green-500 mr-3">check</span>
+                                Analytics dashboard
+                            </li>
+                            <li class="flex items-center text-gray-300">
+                                <span class="material-icons text-green-500 mr-3">check</span>
+                                Priority support
+                            </li>
+                        </ul>
+                        <button class="w-full bg-gradient-to-r from-blue-600 to-purple-600 py-3 rounded-lg hover:scale-105 transition-transform">
+                            Start Free Trial
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Enterprise Plan -->
+                <div class="glass rounded-3xl p-8 hover-lift">
+                    <h3 class="text-2xl font-bold text-white mb-2">Enterprise</h3>
+                    <p class="text-gray-400 mb-6">For large organizations</p>
+                    <div class="text-4xl font-bold text-white mb-6">
+                        Custom
+                    </div>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center text-gray-300">
+                            <span class="material-icons text-green-500 mr-3">check</span>
+                            Everything in Pro
+                        </li>
+                        <li class="flex items-center text-gray-300">
+                            <span class="material-icons text-green-500 mr-3">check</span>
+                            Custom integrations
+                        </li>
+                        <li class="flex items-center text-gray-300">
+                            <span class="material-icons text-green-500 mr-3">check</span>
+                            Dedicated support
+                        </li>
+                        <li class="flex items-center text-gray-300">
+                            <span class="material-icons text-green-500 mr-3">check</span>
+                            SLA guarantee
+                        </li>
+                    </ul>
+                    <button class="w-full glass py-3 rounded-lg hover:bg-white/10 transition-colors">
+                        Contact Sales
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- CTA Section -->
+    <section class="py-32 relative overflow-hidden">
+        <div class="absolute inset-0 gradient-bg opacity-20"></div>
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <h2 class="text-5xl md:text-6xl font-bold text-white mb-8">
+                Ready to Create Amazing QR Codes?
+            </h2>
+            <p class="text-2xl text-gray-300 max-w-3xl mx-auto mb-12">
+                Join thousands of developers and designers who are building the future of QR codes
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-6">
+                <button class="group relative px-10 py-5 bg-white text-black rounded-full font-bold text-lg overflow-hidden transition-all duration-300 hover:scale-105">
+                    <span class="relative z-10">Start Building Now</span>
+                    <div class="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <span class="absolute inset-0 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        Start Building Now
+                    </span>
+                </button>
+                <a href="#" class="text-gray-300 hover:text-white transition-colors duration-300 flex items-center">
+                    <span class="material-icons mr-2">book</span>
+                    Read Documentation
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="py-20 border-t border-gray-800">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <h5 class="text-lg font-semibold text-white mb-6">Product</h5>
+                    <ul class="space-y-3">
+                        <li><a class="text-gray-400 hover:text-blue-400 transition-colors" href="#">Features</a></li>
+                        <li><a class="text-gray-400 hover:text-blue-400 transition-colors" href="#">Pricing</a></li>
+                        <li><a class="text-gray-400 hover:text-blue-400 transition-colors" href="#">Changelog</a></li>
+                        <li><a class="text-gray-400 hover:text-blue-400 transition-colors" href="#">Roadmap</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="text-lg font-semibold text-white mb-6">Developers</h5>
+                    <ul class="space-y-3">
+                        <li><a class="text-gray-400 hover:text-blue-400 transition-colors" href="#">Documentation</a></li>
+                        <li><a class="text-gray-400 hover:text-blue-400 transition-colors" href="#">API Reference</a></li>
+                        <li><a class="text-gray-400 hover:text-blue-400 transition-colors" href="#">Examples</a></li>
+                        <li><a class="text-gray-400 hover:text-blue-400 transition-colors" href="#">GitHub</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="text-lg font-semibold text-white mb-6">Company</h5>
+                    <ul class="space-y-3">
+                        <li><a class="text-gray-400 hover:text-blue-400 transition-colors" href="#">About</a></li>
+                        <li><a class="text-gray-400 hover:text-blue-400 transition-colors" href="#">Blog</a></li>
+                        <li><a class="text-gray-400 hover:text-blue-400 transition-colors" href="#">Careers</a></li>
+                        <li><a class="text-gray-400 hover:text-blue-400 transition-colors" href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="text-lg font-semibold text-white mb-6">Connect</h5>
+                    <ul class="space-y-3">
+                        <li><a class="text-gray-400 hover:text-blue-400 transition-colors" href="#">Twitter</a></li>
+                        <li><a class="text-gray-400 hover:text-blue-400 transition-colors" href="#">Discord</a></li>
+                        <li><a class="text-gray-400 hover:text-blue-400 transition-colors" href="#">LinkedIn</a></li>
+                        <li><a class="text-gray-400 hover:text-blue-400 transition-colors" href="#">YouTube</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center space-x-3 mb-4 md:mb-0">
+                    <span class="material-icons text-3xl text-blue-500">qr_code_2</span>
+                    <span class="text-xl font-bold text-white">QRCode.js</span>
+                </div>
+                <p class="text-gray-400">© 2024 QRCode.js. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // Add smooth parallax effect on scroll
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelector('.qr-pattern');
+            parallax.style.transform = `translateY(${scrolled * 0.5}px)`;
+        });
+        
+        // Add interactive hover effects
+        document.querySelectorAll('.qr-cell').forEach((cell, index) => {
+            cell.style.animationDelay = `${index * 0.01}s`;
+        });
+    </script>
+</body>
+</html>
