@@ -216,6 +216,7 @@ qrChained.append(document.getElementById('template-style-chain-container'));
 Demonstrating fundamental settings like data, shape, and error correction.
 
 **Example 1: Minimal QR Code**
+```javascript
 
 const qrMinimal = new QRCodeJs({
   data: 'Just the data!'
@@ -224,6 +225,7 @@ qrMinimal.append(document.getElementById('minimal-qr-container'));
 ```
 
 **Example 2: Circle Shape**
+```javascript
 
 const qrCircle = new QRCodeJs({
   data: 'https://example.com/circle',
@@ -233,6 +235,7 @@ qrCircle.append(document.getElementById('circle-qr-container'));
 ```
 
 **Example 3: High Error Correction**
+```javascript
 
 const qrHighEC = new QRCodeJs({
   data: 'Important Data',
@@ -250,6 +253,7 @@ qrHighEC.append(document.getElementById('high-ec-qr-container'));
 Controlling margin, scale, and offsets.
 
 **Example 1: Adding Margin**
+```javascript
 
 const qrMargin = new QRCodeJs({
   data: 'With Margin',
@@ -259,6 +263,7 @@ qrMargin.append(document.getElementById('margin-qr-container'));
 ```
 
 **Example 2: Scaling Down**
+```javascript
 
 const qrScaled = new QRCodeJs({
   data: 'Scaled Down',
@@ -274,6 +279,7 @@ qrScaled.append(document.getElementById('scaled-qr-container'));
 Changing the appearance of the data dots.
 
 **Example 1: Rounded Dots**
+```javascript
 
 const qrRoundedDots = new QRCodeJs({
   data: 'Rounded Dots',
@@ -286,6 +292,7 @@ qrRoundedDots.append(document.getElementById('rounded-dots-container'));
 ```
 
 **Example 2: Dot Style Dots**
+```javascript
 
 const qrDotDots = new QRCodeJs({
   data: 'Dot Style Dots',
@@ -302,6 +309,7 @@ qrDotDots.append(document.getElementById('dot-dots-container'));
 ### Styling Options - Corner Squares
 
 Customizing the large corner squares.
+```javascript
 
 const qrStyledCorners = new QRCodeJs({
   data: 'Styled Corners',
@@ -319,6 +327,7 @@ qrStyledCorners.append(document.getElementById('styled-corners-container'));
 ### Styling Options - Corner Dots
 
 Customizing the small dots inside the corner squares.
+```javascript
 
 const qrStyledCornerDots = new QRCodeJs({
   data: 'Styled Corner Dots',
@@ -339,6 +348,7 @@ qrStyledCornerDots.append(document.getElementById('styled-corner-dots-container'
 Modifying the background color and shape.
 
 **Example 1: Colored Background**
+```javascript
 
 const qrColoredBg = new QRCodeJs({
   data: 'Colored Background',
@@ -351,6 +361,7 @@ qrColoredBg.append(document.getElementById('colored-bg-container'));
 ```
 
 **Example 2: Rounded Background**
+```javascript
 
 const qrRoundedBg = new QRCodeJs({
   data: 'Rounded Background',
@@ -421,6 +432,7 @@ qrGradientBg.append(document.getElementById('gradient-bg-container'));
 ### Image Embedding
 
 Adding a simple logo.
+```javascript
 
 const qrWithLogo = new QRCodeJs({
   data: 'QR with Logo',
@@ -679,6 +691,7 @@ qrUseSettings1.append(document.getElementById('builder-usesettings-container-1')
 ### Border Options (Free Version)
 
 Adding a basic border (includes "QR-Platform" branding).
+```javascript
 
 const qrFreeBorder = new QRCodeJs({
   data: 'Free Border Example',
@@ -693,6 +706,7 @@ const qrFreeBorder = new QRCodeJs({
 qrFreeBorder.append(document.getElementById('free-border-container'));
 ```
 **Example: Setting a Global Default Border**
+```javascript
 
 
 // Set a default border configuration by name
@@ -710,6 +724,7 @@ qrWithDefaultBorder.append(document.getElementById('default-border-container'));
 ```
 
 **Example: Using the Builder Pattern for Borders**
+```javascript
 
 
 // Start the builder with a border configuration by name
