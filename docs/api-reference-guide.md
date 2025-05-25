@@ -1,4 +1,4 @@
-## API Reference Guide for QRCode.js Library
+# API Reference Guide for QRCode.js Library
 <a id="start"></a>
 
 ### Basic Usage

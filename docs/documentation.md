@@ -1,4 +1,4 @@
-## QRCode.js Documentation
+# QRCode.js Documentation
 <a id="start"></a>
 
 ## Introduction
