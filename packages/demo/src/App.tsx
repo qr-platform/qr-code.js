@@ -55,7 +55,7 @@ export default function App() {
           <CardBody className="flex flex-col gap-8 bg-gray-50 dark:bg-gray-900 h-full overflow-y-hidden">
             <div className="flex flex-col gap-8">
               <QRCodeBuilder />
-              <TemplateGallery />
+              {/* <TemplateGallery /> */}
             </div>
           </CardBody>
         </Card>

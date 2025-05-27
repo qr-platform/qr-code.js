@@ -7,8 +7,7 @@ import {
   PopoverTrigger,
   Select,
   SelectItem,
-  Slider,
-  Switch
+  Slider
 } from '@heroui/react'
 import type { Selection } from '@react-types/shared' // Removed AriaKey
 import { Minus, Plus, Settings2 } from 'lucide-react' // Icons
@@ -41,25 +40,60 @@ const positionOptions: Array<{
 
 export const CustomTextControls: React.FC = () => {
   const {
-    isCustomTextOverrideEnabled,
     customTextOverridePosition,
     customTextOverrides,
     advancedOptions,
-    setIsCustomTextOverrideEnabled,
     setCustomTextOverridePosition,
     setCustomTextOverride,
     setAdvancedBorderOption
   } = useQrConfigStore()
 
   const handleTextChange = (value: string) => {
+    // Step 1: Update the primary text store (existing behavior)
     setCustomTextOverride(customTextOverridePosition, value)
+
+    // Step 2: Get current advanced options and prepare for updating decorations
+    const { advancedOptions: currentAdvancedOptions } = useQrConfigStore.getState()
+    // Deep clone to avoid direct state mutation, ensuring default object if undefined
+    const currentBorderOptions = structuredClone(
+      currentAdvancedOptions.borderOptions || {}
+    )
+
+    // Ensure the 'decorations' property itself exists on currentBorderOptions
+    if (!currentBorderOptions.decorations) {
+      currentBorderOptions.decorations = {}
+    }
+
+    // Step 3: Update the 'text' property within the decorations object
+    const sidesToUpdate: Array<'top' | 'bottom' | 'left' | 'right'> =
+      customTextOverridePosition === 'all'
+        ? ['top', 'bottom', 'left', 'right']
+        : [customTextOverridePosition]
+
+    sidesToUpdate.forEach(side => {
+      // Ensure the specific side's decoration object exists, initializing if necessary
+      if (!currentBorderOptions.decorations![side]) {
+        // Initialize with default style/offset and an empty text if creating new
+        currentBorderOptions.decorations![side] = {}
+      }
+      // Set or update the text property for the side
+      // We cast to 'any' here to dynamically add/update 'text'. Ideally, types would be updated.
+      if (value && value.trim() !== '') {
+        currentBorderOptions.decorations![side].value = value
+      } else {
+        delete currentBorderOptions.decorations![side].value
+      }
+    })
+
+    // Step 4: Persist the updated decorations to the store
+    setAdvancedBorderOption('decorations', currentBorderOptions.decorations)
   }
 
   const currentTextValue = customTextOverrides[customTextOverridePosition] || ''
 
   const getLabelForPosition = (position: 'all' | 'top' | 'bottom' | 'left' | 'right') => {
     const option = positionOptions.find(opt => opt.key === position)
-    return option ? `Text for ${option.label}` : 'Custom Text'
+    return option ? `Text for ${option.label}` : 'Text Customization'
   }
 
   // Get current decoration settings for the selected position
@@ -104,7 +138,7 @@ export const CustomTextControls: React.FC = () => {
         // Handle nested property updates
         if (key.includes('.')) {
           const keys = key.split('.')
-          let current = currentBorderOptions.decorations![side] as any
+          let current = currentBorderOptions.decorations![side] as Record<string, any>
           for (let i = 0; i < keys.length - 1; i++) {
             if (!current[keys[i]]) {
               current[keys[i]] = {}
@@ -113,7 +147,7 @@ export const CustomTextControls: React.FC = () => {
           }
           current[keys[keys.length - 1]] = value
         } else {
-          ;(currentBorderOptions.decorations![side] as any)[key] = value
+          ;(currentBorderOptions.decorations![side] as Record<string, any>)[key] = value
         }
       })
     } else {
@@ -177,24 +211,7 @@ export const CustomTextControls: React.FC = () => {
   return (
     <Box className="mb-4 space-y-2 p-0">
       <Flex className="justify-start items-center gap-2">
-        <Box
-          onClick={() => setIsCustomTextOverrideEnabled(!isCustomTextOverrideEnabled)}
-          className={`${isCustomTextOverrideEnabled ? 'text-gray-700 dark:text-gray-300' : 'text-gray-300 dark:text-gray-600'} flex items-center gap-2 text-md font-medium cursor-pointer`}
-        >
-          Custom Text
-        </Box>
-        <Switch
-          id="custom-text-override-toggle"
-          isSelected={isCustomTextOverrideEnabled}
-          onValueChange={setIsCustomTextOverrideEnabled}
-          aria-label="Enable Custom Text"
-          defaultSelected
-          color="default"
-          size="sm"
-          classNames={{
-            base: 'scale-85 origin-left'
-          }}
-        />
+        <Box className="text-md font-medium">Text Customization</Box>
       </Flex>
 
       <Flex className="space-x-2 justify-start">
@@ -220,7 +237,6 @@ export const CustomTextControls: React.FC = () => {
                 }
               }
             }}
-            isDisabled={!isCustomTextOverrideEnabled}
             className="w-full"
           >
             {positionOptions.map(option => (
@@ -238,18 +254,12 @@ export const CustomTextControls: React.FC = () => {
           onValueChange={handleTextChange}
           variant="faded"
           isClearable
-          isDisabled={!isCustomTextOverrideEnabled}
           classNames={{ inputWrapper: 'border-default-200' }}
           className="w-full"
         />
         <Popover placement="top">
           <PopoverTrigger>
-            <Button
-              isIconOnly
-              variant="flat"
-              title="Adjust Text Decoration"
-              isDisabled={!isCustomTextOverrideEnabled}
-            >
+            <Button isIconOnly variant="flat" title="Adjust Text Decoration">
               <Settings2 size={18} />
             </Button>
           </PopoverTrigger>

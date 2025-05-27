@@ -8,7 +8,6 @@ import {
   CardFooter,
   Tooltip
 } from '@heroui/react'
-import { Options as QRCodeJsOptions } from '@qr-platform/qr-code.js' // QRCodeJs direct import removed
 import { useAtomValue } from 'jotai'
 import { CheckCircle, Download, Image } from 'lucide-react'
 
@@ -27,9 +26,7 @@ export const QRCodePreview: React.FC = () => {
     selectedBorderId,
     qrData,
     isAdvancedMode,
-    advancedOptions,
-    isCustomTextOverrideEnabled, // Added
-    customTextOverrides // Added
+    advancedOptions
   } = qrConfig
 
   const [isLoading, setIsLoading] = React.useState(false)
@@ -49,9 +46,7 @@ export const QRCodePreview: React.FC = () => {
       selectedTextTemplateId,
       selectedBorderId,
       qrData,
-      advancedOptions,
-      isCustomTextOverrideEnabled, // Added
-      customTextOverrides // Added
+      advancedOptions
     }),
     [
       isAdvancedMode,
@@ -61,9 +56,7 @@ export const QRCodePreview: React.FC = () => {
       selectedTextTemplateId,
       selectedBorderId,
       qrData,
-      advancedOptions,
-      isCustomTextOverrideEnabled, // Added
-      customTextOverrides // Added
+      advancedOptions
     ]
   )
 
@@ -126,97 +119,36 @@ export const QRCodePreview: React.FC = () => {
         selectedTextTemplateId: currentSelectedTextTemplateIdFromConfig, // Renamed to avoid conflict
         selectedBorderId: currentSelectedBorderId,
         qrData: currentQrData,
-        isAdvancedMode: currentConfigIsAdvancedMode, // Use from currentConfig
-        advancedOptions: currentAdvancedOptions,
-        isCustomTextOverrideEnabled: currentConfigIsCustomTextOverrideEnabled, // Added
-        customTextOverrides: currentConfigCustomTextOverrides // Added
+        advancedOptions: currentAdvancedOptions
       } = currentConfig
 
-      let finalOptionsForService: QRCodeJsOptions = {}
-      let textIdForService: string | null = null
+      // if (hasActiveCustomText && customTextIsMeaningful) {
+      //   textIdForService = null // Custom text overrides template text
+      // }
 
-      if (currentConfigIsAdvancedMode) {
-        finalOptionsForService = {
-          ...(currentAdvancedOptions as any),
-          data: currentQrData
-        }
-        textIdForService = currentSelectedTextTemplateIdFromConfig
+      console.log('advancedOptions', currentAdvancedOptions)
 
-        if (currentConfigIsCustomTextOverrideEnabled) {
-          const decorations: any = {}
-          const sides: Array<'top' | 'bottom' | 'left' | 'right'> = [
-            'top',
-            'bottom',
-            'left',
-            'right'
-          ]
-          sides.forEach(side => {
-            const textValue =
-              currentConfigCustomTextOverrides[side] || // ESLint formatting
-              currentConfigCustomTextOverrides.all
-            if (textValue) {
-              const existingDecoration =
-                currentAdvancedOptions.borderOptions?.decorations?.[side]
-              decorations[side] = {
-                ...existingDecoration, // Include existing decoration settings first
-                enableText: true,
-                type: 'text',
-                value: textValue // Override with custom text value
-              }
-            } else {
-              decorations[side] = { enableText: false }
-            }
-          })
-          finalOptionsForService.borderOptions = {
-            ...(finalOptionsForService.borderOptions || {}),
-            decorations,
-            hasBorder: true // Ensure border is on if custom text is applied (override any existing value)
-          }
-          // Nullify any other text properties if they exist in advancedOptions
-          // Removed: if (finalOptionsForService.text) finalOptionsForService.text = null
-          if ((finalOptionsForService as any).textId)
-            (finalOptionsForService as any).textId = null
-          textIdForService = null
-        }
-      } else {
-        // Simple Mode
-        finalOptionsForService = { isResponsive: true }
-        textIdForService = currentSelectedTextTemplateIdFromConfig
-
-        if (currentConfigIsCustomTextOverrideEnabled) {
-          const decorations: any = {}
-          const sides: Array<'top' | 'bottom' | 'left' | 'right'> = [
-            'top',
-            'bottom',
-            'left',
-            'right'
-          ]
-          sides.forEach(side => {
-            const textValue =
-              currentConfigCustomTextOverrides[side] || // ESLint formatting
-              currentConfigCustomTextOverrides.all
-            if (textValue) {
-              // In simple mode, use decoration settings from advanced options if available
-              const existingDecoration =
-                currentAdvancedOptions?.borderOptions?.decorations?.[side]
-              decorations[side] = {
-                ...existingDecoration, // Include existing decoration settings first
-                enableText: true,
-                type: 'text',
-                value: textValue // Override with custom text value
-              }
-            } else {
-              decorations[side] = { enableText: false }
-            }
-          })
-          finalOptionsForService.borderOptions = {
-            // Assuming simple mode might not have existing borderOptions from elsewhere
-            decorations,
-            hasBorder: true // Ensure border is on (override any existing value)
-          }
-          textIdForService = null // Override template text
-        }
-      }
+      // let finalOptionsForService: QRCodeJsOptions
+      // if (currentConfigIsAdvancedMode) {
+      //   // AdvancedOptions from the store already have text overrides merged by applyTemplatesToAdvancedOptions
+      //   const { data: _advancedData, ...restOfAdvancedOptions } =
+      //     currentAdvancedOptions as any
+      //   finalOptionsForService = {
+      //     ...restOfAdvancedOptions,
+      //     data: currentQrData // Explicitly use currentQrData
+      //     // borderOptions.decorations are already correctly set in restOfAdvancedOptions by the store
+      //   }
+      // } else {
+      // Simple Mode
+      // finalOptionsForService = { isResponsive: true } // Base for simple mode
+      // If custom text is active and meaningful, merge the borderOptions from the (already processed) advancedOptions.
+      // This ensures custom text (which is part of advancedOptions.borderOptions) appears even in simple mode.
+      // if (hasActiveCustomText && customTextIsMeaningful) {
+      // if (currentAdvancedOptions.borderOptions) {
+      // finalOptionsForService.borderOptions = currentAdvancedOptions.borderOptions
+      // }
+      // }
+      // }
 
       if (currentQrData && container) {
         generationSuccess = await qrCodeService.generateQRCode({
@@ -229,8 +161,8 @@ export const QRCodePreview: React.FC = () => {
           style: null,
           image: currentSelectedImage,
           text: null,
-          textId: textIdForService,
-          options: finalOptionsForService
+          textId: currentSelectedTextTemplateIdFromConfig,
+          options: currentAdvancedOptions
         })
         generationAttempted = true
       } else if (container) {

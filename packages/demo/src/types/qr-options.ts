@@ -5,8 +5,7 @@ import {
   ErrorCorrectionLevel,
   GradientType,
   ImageMode,
-  Mode,
-  ShapeType
+  Mode
 } from '@qr-platform/qr-code.js'
 
 export interface GradientColorStop {
@@ -81,6 +80,7 @@ export interface DecorationItem {
   curveRadius?: string // e.g., '50%', '100px'
   type?: 'text' | 'image'
   value?: string
+  text?: string // Added for custom text on border decorations
   style?: FontStyle
 }
 
@@ -111,37 +111,4 @@ export interface BorderOptions {
     bottom?: DecorationItem
     left?: DecorationItem
   }
-}
-
-export interface AdvancedQROptions {
-  // Core
-  data: string
-  shape?: ShapeType
-  margin?: number
-  qrOptions?: QROptions
-
-  // Dots
-  dotsOptions?: DotsOptions
-
-  // Corner Squares
-  cornersSquareOptions?: CornerSquareOptions
-
-  // Corner Dots
-  cornersDotOptions?: CornerDotOptions
-
-  // Background
-  backgroundOptions?: BackgroundOptions
-
-  // Image
-  imageOptions?: ImageOptions
-
-  // Layout
-  isResponsive?: boolean
-  scale?: number // 0 to 1.5
-  offset?: number
-  verticalOffset?: number
-  horizontalOffset?: number
-
-  // Borders
-  borderOptions?: BorderOptions
 }
