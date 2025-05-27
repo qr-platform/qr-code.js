@@ -1,5 +1,7 @@
-# Advanced Examples for QR-Code.js
-<a id="start"></a>
+---
+title: 'Advanced Examples for QR-Code.js'
+description: 'Advanced examples demonstrating the customization capabilities of QRCode.js'
+---
 
 This document provides advanced examples demonstrating the customization capabilities of QRCode.js. Each section focuses on specific options to help you create unique and visually appealing QR codes.
 
@@ -875,9 +877,268 @@ createAndValidate();
 
 ---
 
-### See Also
-- [QRCode.js Documentation](./documentation.md#start)
-- [API Reference Guide](./api-reference-guide.md#start)
-- [TypeScript Types and Definitions](./typescript-types-definitions.md#start)
-- [License Management](./license-management.md#start)
-- [Basic Examples](./examples.md#start)
+### Node.js Static Validation Methods (Premium Feature)
+
+QRCode.js provides static validation methods specifically for Node.js environments to validate existing QR codes from image data or SVG strings.
+
+**Example 1: Validating Image Data (Node.js Only)**
+
+```typescript
+// Node.js import
+import { QRCodeJs } from '@qr-platform/qr-code.js/node';
+import fs from 'fs';
+
+// Ensure license is activated first
+// await QRCodeJs.license('YOUR-LICENSE-KEY');
+
+async function validateQRFromImage() {
+  try {
+    // Read image file as buffer
+    const imageBuffer = fs.readFileSync('path/to/qr-code-image.png');
+    
+    // Validate the QR code from image data
+    const result = await QRCodeJs.validateImageData(imageBuffer);
+    
+    if (result.isValid) {
+      console.log(`QR code is valid! Decoded text: ${result.data}`);
+      console.log(`Validator used: ${result.validator}`);
+    } else {
+      console.warn(`QR code validation failed: ${result.message}`);
+    }
+  } catch (error) {
+    console.error('Error validating image:', error);
+  }
+}
+
+validateQRFromImage();
+```
+
+**Example 2: Validating SVG Strings (Node.js Only)**
+
+```typescript
+// Node.js import
+import { QRCodeJs } from '@qr-platform/qr-code.js/node';
+
+// Ensure license is activated first
+// await QRCodeJs.license('YOUR-LICENSE-KEY');
+
+async function validateQRFromSVG() {
+  try {
+    // SVG string from file or generated QR code
+    const svgString = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+        <!-- SVG QR code content here -->
+      </svg>
+    `;
+    
+    // Or read from file
+    // const svgString = fs.readFileSync('path/to/qr-code.svg', 'utf8');
+    
+    // Validate the QR code from SVG
+    const result = await QRCodeJs.validateSvg(svgString);
+    
+    if (result.isValid) {
+      console.log(`SVG QR code is valid! Decoded text: ${result.data}`);
+      console.log(`Validator used: ${result.validator}`);
+    } else {
+      console.warn(`SVG QR code validation failed: ${result.message}`);
+    }
+  } catch (error) {
+    console.error('Error validating SVG:', error);
+  }
+}
+
+validateQRFromSVG();
+```
+
+**Example 3: Batch Validation of Multiple QR Codes**
+
+```typescript
+import { QRCodeJs } from '@qr-platform/qr-code.js/node';
+import fs from 'fs';
+import path from 'path';
+
+// Ensure license is activated first
+// await QRCodeJs.license('YOUR-LICENSE-KEY');
+
+async function batchValidateQRCodes() {
+  const qrDirectory = 'path/to/qr-codes/';
+  const results = [];
+  
+  try {
+    const files = fs.readdirSync(qrDirectory);
+    
+    for (const file of files) {
+      const filePath = path.join(qrDirectory, file);
+      const ext = path.extname(file).toLowerCase();
+      
+      let validationResult;
+      
+      if (['.png', '.jpg', '.jpeg', '.gif', '.bmp'].includes(ext)) {
+        // Validate image files
+        const imageBuffer = fs.readFileSync(filePath);
+        validationResult = await QRCodeJs.validateImageData(imageBuffer);
+      } else if (ext === '.svg') {
+        // Validate SVG files
+        const svgString = fs.readFileSync(filePath, 'utf8');
+        validationResult = await QRCodeJs.validateSvg(svgString);
+      } else {
+        console.log(`Skipping unsupported file: ${file}`);
+        continue;
+      }
+      
+      results.push({
+        file,
+        isValid: validationResult.isValid,
+        data: validationResult.data,
+        message: validationResult.message,
+        validator: validationResult.validator
+      });
+      
+      console.log(`${file}: ${validationResult.isValid ? 'VALID' : 'INVALID'} - ${validationResult.data || validationResult.message}`);
+    }
+    
+    // Summary
+    const validCount = results.filter(r => r.isValid).length;
+    const totalCount = results.length;
+    console.log(`\nBatch validation complete: ${validCount}/${totalCount} QR codes are valid`);
+    
+    return results;
+  } catch (error) {
+    console.error('Error during batch validation:', error);
+    return [];
+  }
+}
+
+batchValidateQRCodes();
+```
+
+**Example 4: Validation with Error Handling and Retry Logic**
+
+```typescript
+import { QRCodeJs } from '@qr-platform/qr-code.js/node';
+
+// Ensure license is activated first
+// await QRCodeJs.license('YOUR-LICENSE-KEY');
+
+async function validateWithRetry(imageData, maxRetries = 3) {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      console.log(`Validation attempt ${attempt}/${maxRetries}`);
+      
+      const result = await QRCodeJs.validateImageData(imageData);
+      
+      if (result.isValid) {
+        console.log(`✅ Validation successful on attempt ${attempt}`);
+        return result;
+      } else {
+        console.warn(`❌ Validation failed on attempt ${attempt}: ${result.message}`);
+        
+        if (attempt === maxRetries) {
+          throw new Error(`Validation failed after ${maxRetries} attempts: ${result.message}`);
+        }
+        
+        // Wait before retrying
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+    } catch (error) {
+      console.error(`Error on attempt ${attempt}:`, error.message);
+      
+      if (attempt === maxRetries) {
+        throw error;
+      }
+      
+      // Wait before retrying
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+  }
+}
+
+// Usage
+async function validateQRWithRetry() {
+  try {
+    const imageBuffer = fs.readFileSync('path/to/problematic-qr.png');
+    const result = await validateWithRetry(imageBuffer);
+    console.log('Final result:', result);
+  } catch (error) {
+    console.error('All validation attempts failed:', error.message);
+  }
+}
+
+validateQRWithRetry();
+```
+
+**Example 5: Integration with Express.js API**
+
+```typescript
+import express from 'express';
+import multer from 'multer';
+import { QRCodeJs } from '@qr-platform/qr-code.js/node';
+
+const app = express();
+const upload = multer({ memory: true });
+
+// Ensure license is activated on server startup
+// await QRCodeJs.license('YOUR-LICENSE-KEY');
+
+// API endpoint for QR code validation
+app.post('/api/validate-qr', upload.single('qrImage'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No image file provided' });
+    }
+    
+    const imageBuffer = req.file.buffer;
+    const result = await QRCodeJs.validateImageData(imageBuffer);
+    
+    res.json({
+      success: true,
+      validation: {
+        isValid: result.isValid,
+        data: result.data,
+        message: result.message,
+        validator: result.validator
+      }
+    });
+  } catch (error) {
+    console.error('Validation API error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error during validation'
+    });
+  }
+});
+
+// API endpoint for SVG validation
+app.post('/api/validate-qr-svg', express.text({ type: 'image/svg+xml' }), async (req, res) => {
+  try {
+    const svgString = req.body;
+    
+    if (!svgString) {
+      return res.status(400).json({ error: 'No SVG content provided' });
+    }
+    
+    const result = await QRCodeJs.validateSvg(svgString);
+    
+    res.json({
+      success: true,
+      validation: {
+        isValid: result.isValid,
+        data: result.data,
+        message: result.message,
+        validator: result.validator
+      }
+    });
+  } catch (error) {
+    console.error('SVG validation API error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error during SVG validation'
+    });
+  }
+});
+
+app.listen(3000, () => {
+  console.log('QR validation API server running on port 3000');
+});
+```

@@ -1,9 +1,9 @@
-# QRCode.js Examples
-<a id="start"></a>
-
-This document provides basic examples to help you get started with QRCode.js and understand its core features. For more complex scenarios, refer to the [Advanced Examples](./advanced-examples.md#start).
-
 ---
+title: 'Basic Examples'
+description: 'Basic examples to get started with QRCode.js'
+---
+
+This document provides basic examples to help you get started with QRCode.js and understand its core features. For more complex scenarios, refer to the [Advanced Examples](./advanced-examples).
 
 ## Basic Usage
 
@@ -24,14 +24,10 @@ const qrCode = new QRCodeJs(options);
 
 // Append the generated SVG to your document (in browser)
 const container = document.getElementById('qr-container');
-if (container && qrCode.svgElement) {
-  container.appendChild(qrCode.svgElement);
-} else if (!container) {
-  console.error("Container element not found.");
+if (container) {
+  qrCode.append(container);
 } else {
-  console.error("SVG element not generated.");
-  // Handle SVG generation for Node.js if needed (e.g., serialize to string)
-  // qrCode.serialize().then(svgString => { /* save string */ });
+  console.error("Container element not found.");
 }
 ```
 
@@ -799,15 +795,125 @@ qrBuilderWithTextOverride.append(document.getElementById('builder-text-override-
 // Reset global text when done
 QRCodeJs.setText(null);
 ```
-
-*For custom border text and advanced features like inner/outer borders, a [Premium License](./license-management.md#start) is required.*
+*For custom border text and advanced features like inner/outer borders, a [Premium License](./license-management) is required.*
 
 ---
 
-### See Also
-- [QRCode.js Documentation](./documentation.md#start)
-- [Usage Guide](./usage-guide.md#start)
-- [API Reference Guide](./api-reference-guide.md#start)
-- [TypeScript Types and Definitions](./typescript-types-definitions.md#start)
-- [License Management](./license-management.md#start)
-- [Advanced Examples](./advanced-examples.md#start)
+## Metadata Management
+
+QRCode.js supports metadata for better organization and tracking:
+
+### Metadata Management with Builder Pattern
+
+The builder pattern supports metadata methods for assigning identifiers, names, descriptions, and custom metadata to QR code instances.
+
+**Example 1: Basic Metadata with Builder Pattern**
+```javascript
+// Create QR code with metadata using builder pattern
+const qrWithMetadata = QRCodeJs.useTemplate('modern')
+  .useId('customer-portal-qr-001')
+  .useName('Customer Portal Access')
+  .useDescription('QR code for customer portal login system')
+  .useMetadata({
+    campaign: 'winter2024',
+    department: 'marketing',
+    version: '1.2.0'
+  })
+  .options({
+    data: 'https://customer.company.com/portal'
+  });
+
+qrWithMetadata.append(document.getElementById('metadata-container'));
+
+// Access metadata after creation
+console.log('QR ID:', qrWithMetadata.getId()); // 'customer-portal-qr-001'
+console.log('QR Name:', qrWithMetadata.getName()); // 'Customer Portal Access'
+console.log('QR Description:', qrWithMetadata.getDescription()); // 'QR code for customer portal login system'
+console.log('QR Metadata:', qrWithMetadata.getMetadata());
+// { campaign: 'winter2024', department: 'marketing', version: '1.2.0' }
+```
+
+**Example 2: Static Metadata Methods**
+```javascript
+// Set metadata using static methods
+QRCodeJs
+  .setId('product-qr-123')
+  .setName('Product Landing Page')
+  .setDescription('QR code linking to product details page')
+  .setMetadata({
+    productId: '123',
+    category: 'electronics',
+    createdBy: 'marketing-team',
+    expires: '2024-12-31'
+  });
+
+const qrInstance = new QRCodeJs({
+  data: 'https://example.com/product-123'
+});
+
+qrInstance.append(document.getElementById('instance-metadata-container'));
+
+// Get current settings and options
+const currentSettings = qrInstance.getSettings();
+console.log('Current Settings:', currentSettings);
+```
+
+**Example 3: Chaining Metadata with Templates and Styles**
+```javascript
+// Complex builder chain with metadata
+const qrComplexChain = QRCodeJs.useTemplate('rounded')
+  .useStyle({ dotsOptions: { color: '#2E86AB' } })
+  .useId('campaign-qr-2024')
+  .useName('Summer Campaign QR')
+  .useDescription('Multi-channel marketing campaign QR code')
+  .useMetadata({
+    campaignId: 'summer-2024',
+    channels: ['email', 'social', 'print'],
+    budget: 5000,
+    targetAudience: 'millennials'
+  })
+  .useImage('https://company.com/assets/summer-logo.png')
+  .options({
+    data: 'https://campaign.company.com/summer-2024',
+    qrOptions: { errorCorrectionLevel: 'Q' }
+  });
+
+qrComplexChain.append(document.getElementById('complex-chain-container'));
+```
+
+**Example 4: Conditional Metadata Setting**
+```javascript
+// Function to create QR codes with conditional metadata
+function createTrackingQR(data, trackingInfo) {
+  const builder = QRCodeJs.useTemplate('tracking')
+    .useId(trackingInfo.id)
+    .useName(trackingInfo.name);
+
+  // Conditionally add description
+  if (trackingInfo.description) {
+    builder.useDescription(trackingInfo.description);
+  }
+
+  // Conditionally add metadata
+  if (trackingInfo.metadata) {
+    builder.useMetadata(trackingInfo.metadata);
+  }
+
+  return builder.options({ data });
+}
+
+// Usage
+const trackingQR = createTrackingQR('https://track.company.com/package/ABC123', {
+  id: 'package-tracker-ABC123',
+  name: 'Package Tracking QR',
+  description: 'Scan to track package ABC123',
+  metadata: {
+    packageId: 'ABC123',
+    carrier: 'FedEx',
+    priority: 'high',
+    estimatedDelivery: '2024-03-15'
+  }
+});
+
+trackingQR.append(document.getElementById('tracking-qr-container'));
+```

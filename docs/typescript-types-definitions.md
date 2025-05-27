@@ -1,5 +1,7 @@
-# QRCode.js TypeScript Types and Definitions
-<a id="start"></a>
+---
+title: 'QRCode.js TypeScript Types'
+description: 'Complete TypeScript type definitions for QRCode.js'
+---
 
 Below is a complete TypeScript Types and Definitions section for all options available in the QRCode.js library. This section is designed as a standalone reference, defining the structure of the options object with interfaces and enums to ensure type safety and clarity for users configuring a QR code.
 
@@ -386,6 +388,200 @@ interface MethodOverrideOptions {
 }
 ```
 
+### QRCodeBuilder
+
+Interface for the fluent builder pattern used by methods like `QRCodeJs.useTemplate()`, `QRCodeJs.useStyle()`, etc.
+
+```typescript
+interface QRCodeBuilder {
+  /** Applies a template by name or options object. */
+  useTemplate(templateNameOrOptions: string | RecursivePartial<Options>): this;
+  
+  /** Applies a template by its ID. */
+  useTemplateId(templateId: string): this;
+  
+  /** Applies a style by name or options object. */
+  useStyle(styleNameOrOptions: string | StyleOptions): this;
+  
+  /** Applies a style by its ID. */
+  useStyleId(styleId: string): this;
+  
+  /** Applies border configuration by name or options object. */
+  useBorder(borderNameOrOptions: string | RecursivePartial<BorderOptions>): this;
+  
+  /** Applies border configuration by its ID. */
+  useBorderId(borderId: string): this;
+  
+  /** Sets text for border decorations. */
+  useText(textNameOrOptions: string | TextOptions, overrideOpts?: MethodOverrideOptions): this;
+  
+  /** Sets text for border decorations by ID. */
+  useTextId(textId: string, overrideOpts?: MethodOverrideOptions): this;
+  
+  /** Sets the image URL for the QR code. */
+  useImage(imageUrl: string, overrideOpts?: MethodOverrideOptions): this;
+  
+  /** Sets the data string for the QR code. */
+  useData(data: string, overrideOpts?: MethodOverrideOptions): this;
+  
+  /** Applies general options to the configuration. */
+  useOptions(options: RecursivePartial<Options>, overrideOpts?: MethodOverrideOptions): this;
+  
+  /** Applies comprehensive settings, resetting previous builder configurations. */
+  useSettings(settings: SettingsOptions): this;
+  
+  /** Assigns an identifier to the QR code instance. */
+  useId(id: string): this;
+  
+  /** Assigns a name to the QR code instance. */
+  useName(name: string): this;
+  
+  /** Assigns a description to the QR code instance. */
+  useDescription(description: string): this;
+  
+  /** Attaches custom metadata to the QR code instance. */
+  useMetadata(metadata: Record<string, any>): this;
+  
+  /** Merges options and creates the final QRCodeJs instance. */
+  options(options: RecursivePartial<Options>): QRCodeJs;
+  
+  /** Creates the final QRCodeJs instance with accumulated configuration. */
+  build(): QRCodeJs;
+}
+```
+
+### ScanValidatorResponse
+
+Response interface for QR code validation methods.
+
+```typescript
+interface ScanValidatorResponse {
+  /** Whether the QR code is valid and scannable. */
+  isValid: boolean;
+  
+  /** Decoded data from the QR code (if isValid is true). */
+  data?: string;
+  
+  /** Error message (if isValid is false). */
+  message?: string;
+  
+  /** The validator used for scanning (e.g., 'ZBAR', 'ZXING'). */
+  validator?: 'ZBAR' | 'ZXING';
+  
+  /** Barcode format (e.g., 'QR-Code') if successfully decoded. */
+  format?: string;
+  
+  /** Number of decoding attempts made. */
+  attempts?: number;
+  
+  /** Whether an inverted image was needed for scanning. */
+  isInverted?: boolean;
+  
+  /** Error code for failed validation (e.g., 'NO_BARCODE_DETECTED'). */
+  errorCode?: string;
+}
+```
+
+### QRInstanceMetadata
+
+Interface for metadata that can be attached to QR code instances.
+
+```typescript
+interface QRInstanceMetadata {
+  /** Unique identifier for the QR code instance. */
+  id?: string;
+  
+  /** Human-readable name for the QR code. */
+  name?: string;
+  
+  /** Description of the QR code's purpose or content. */
+  description?: string;
+  
+  /** Custom metadata as key-value pairs. */
+  metadata?: Record<string, any>;
+}
+```
+
+### ValidationResult
+
+Interface for license validation results.
+
+```typescript
+interface ValidationResult {
+  /** Whether the license validation was successful. */
+  success: boolean;
+  
+  /** Error message if validation failed. */
+  error?: string;
+  
+  /** Additional validation details. */
+  details?: Record<string, any>;
+}
+```
+
+### StyleOptions and TextOptions
+
+Additional type definitions for style and text configurations.
+
+```typescript
+/** Style options for configuring QR code appearance. */
+interface StyleOptions {
+  /** Options for styling the dots. */
+  dotsOptions?: DotsOptions;
+  
+  /** Options for styling corner squares. */
+  cornersSquareOptions?: CornersSquareOptions;
+  
+  /** Options for styling corner dots. */
+  cornersDotOptions?: CornersDotOptions;
+  
+  /** Options for styling the background. */
+  backgroundOptions?: BackgroundOptions | false;
+}
+
+/** Text options for border decorations. */
+interface TextOptions {
+  /** Text for the top border. */
+  topValue?: string;
+  
+  /** Text for the right border. */
+  rightValue?: string;
+  
+  /** Text for the bottom border. */
+  bottomValue?: string;
+  
+  /** Text for the left border. */
+  leftValue?: string;
+  
+  /** Style configuration for the text. */
+  style?: {
+    fontFace?: string;
+    fontSize?: number;
+    fontColor?: string;
+    letterSpacing?: number;
+    textTransform?: 'uppercase' | 'lowercase' | 'capitalize';
+    fontWeight?: 'normal' | 'bold';
+  };
+}
+```
+
+### Utility Types
+
+Helper types used throughout the library.
+
+```typescript
+/** Makes all properties optional recursively. */
+type RecursivePartial<T> = {
+  [P in keyof T]?: T[P] extends object ? RecursivePartial<T[P]> : T[P];
+};
+
+/** Data URL string type. */
+type DataURL = string;
+
+/** Image data types supported by validation methods. */
+type ImageDataLike = Buffer | Uint8Array | ArrayBuffer;
+```
+
 ## Enums
 
 These enums provide predefined values for certain properties, ensuring type safety.
@@ -453,14 +649,3 @@ enum ImageMode {
   background = 'background'
 }
 ```
-
----
-
-### See Also
-- [QRCode.js Documentation](./documentation.md#start)
-- [Quick References Guide](./quick-references-guide.md#start)
-- [API Reference Guide](./api-reference-guide.md#start)
-- [TypeScript Types and Definitions](./typescript-types-definitions.md#start)
-- [License Management](./license-management.md#start)
-- [Basic Examples](./examples.md#start)
-- [Advanced Examples](./advanced-examples.md#start)

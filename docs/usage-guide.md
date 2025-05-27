@@ -1,5 +1,7 @@
-# QRCode.js Usage Guide
-<a id="start"></a>
+---
+title: 'QRCode.js Usage Guide'
+description: 'Complete guide on how to use QRCode.js library'
+---
 
 ## Introduction
 
@@ -484,6 +486,238 @@ if (validationResult.isValid) {
 
 ---
 
+## Metadata Management
+
+QRCode.js supports metadata management for organizing and tracking QR code instances. You can assign identifiers, names, descriptions, and custom metadata to both individual instances and within the builder pattern.
+
+### Instance Metadata Methods
+
+Once a QR code instance is created, you can manage its metadata using these methods:
+
+```javascript
+const qrCode = new QRCodeJs({
+  data: 'https://example.com/product/123'
+});
+
+// Set metadata using chainable methods
+qrCode
+  .setId('product-qr-123')
+  .setName('Product Landing Page QR')
+  .setDescription('QR code linking to product details and purchase options')
+  .setMetadata({
+    productId: '123',
+    category: 'electronics',
+    campaign: 'summer-sale-2024',
+    createdBy: 'marketing-team',
+    expires: '2024-12-31'
+  });
+
+// Retrieve metadata
+console.log('QR ID:', qrCode.getId()); // 'product-qr-123'
+console.log('QR Name:', qrCode.getName()); // 'Product Landing Page QR'
+console.log('QR Description:', qrCode.getDescription()); // 'QR code linking to product details...'
+console.log('Custom Metadata:', qrCode.getMetadata()); 
+// { productId: '123', category: 'electronics', ... }
+
+// Get current settings and options
+const currentSettings = qrCode.getSettings();
+console.log('Current Settings:', currentSettings);
+```
+
+### Builder Pattern Metadata
+
+The builder pattern provides metadata methods for assigning information during QR code construction:
+
+```javascript
+const qrWithMetadata = QRCodeJs.useTemplate('modern')
+  .useId('campaign-qr-2024-winter')
+  .useName('Winter Campaign Landing')
+  .useDescription('QR code for winter marketing campaign landing page')
+  .useMetadata({
+    campaignId: 'winter-2024',
+    targetAudience: 'millennials',
+    channels: ['social', 'email', 'print'],
+    budget: 10000,
+    kpi: 'conversion-rate'
+  })
+  .options({
+    data: 'https://campaign.company.com/winter-2024'
+  });
+
+qrWithMetadata.append(document.getElementById('campaign-container'));
+```
+
+### Metadata Management Patterns
+
+**1. Content Management System Integration**
+
+```javascript
+function createCMSQR(contentId, contentType, options = {}) {
+  return QRCodeJs.useTemplate('cms-standard')
+    .useId(`cms-${contentType}-${contentId}`)
+    .useName(`${contentType.toUpperCase()} Content #${contentId}`)
+    .useDescription(`QR code for ${contentType} content item ${contentId}`)
+    .useMetadata({
+      contentId,
+      contentType,
+      createdAt: new Date().toISOString(),
+      source: 'cms',
+      ...options.metadata
+    })
+    .options({
+      data: `https://cms.company.com/${contentType}/${contentId}`,
+      ...options
+    });
+}
+
+// Usage
+const articleQR = createCMSQR('article-456', 'article', {
+  metadata: { author: 'john-doe', publishDate: '2024-03-15' }
+});
+```
+
+**2. Event Management**
+
+```javascript
+function createEventQR(eventConfig) {
+  const builder = QRCodeJs.useTemplate('event')
+    .useId(`event-${eventConfig.eventId}`)
+    .useName(eventConfig.eventName)
+    .useDescription(`QR code for ${eventConfig.eventName} event registration`)
+    .useMetadata({
+      eventId: eventConfig.eventId,
+      eventType: eventConfig.type,
+      venue: eventConfig.venue,
+      date: eventConfig.date,
+      capacity: eventConfig.capacity,
+      organizer: eventConfig.organizer
+    });
+
+  // Conditional metadata based on event type
+  if (eventConfig.type === 'conference') {
+    builder.useMetadata({
+      speakers: eventConfig.speakers,
+      tracks: eventConfig.tracks
+    });
+  } else if (eventConfig.type === 'workshop') {
+    builder.useMetadata({
+      instructor: eventConfig.instructor,
+      prerequisites: eventConfig.prerequisites
+    });
+  }
+
+  return builder.options({
+    data: `https://events.company.com/register/${eventConfig.eventId}`
+  });
+}
+
+// Usage
+const conferenceQR = createEventQR({
+  eventId: 'tech-conf-2024',
+  eventName: 'Annual Tech Conference 2024',
+  type: 'conference',
+  venue: 'Convention Center',
+  date: '2024-09-15',
+  capacity: 500,
+  organizer: 'Tech Corp',
+  speakers: ['speaker1', 'speaker2'],
+  tracks: ['AI', 'Web Dev', 'Mobile']
+});
+```
+
+**3. Product Tracking**
+
+```javascript
+class ProductQRManager {
+  static createProductQR(productData) {
+    const metadata = {
+      sku: productData.sku,
+      category: productData.category,
+      brand: productData.brand,
+      price: productData.price,
+      inStock: productData.inStock,
+      trackingEnabled: true,
+      createdAt: new Date().toISOString()
+    };
+
+    return QRCodeJs.useTemplate('product')
+      .useId(`product-${productData.sku}`)
+      .useName(`${productData.brand} ${productData.name}`)
+      .useDescription(`Product QR for ${productData.name}`)
+      .useMetadata(metadata)
+      .options({
+        data: `https://store.company.com/product/${productData.sku}?ref=qr`,
+        image: productData.thumbnailUrl
+      });
+  }
+
+  static updateProductMetadata(qrInstance, updates) {
+    const currentMetadata = qrInstance.getMetadata() || {};
+    qrInstance.setMetadata({
+      ...currentMetadata,
+      ...updates,
+      lastUpdated: new Date().toISOString()
+    });
+  }
+}
+
+// Usage
+const productQR = ProductQRManager.createProductQR({
+  sku: 'LAPTOP-001',
+  name: 'Gaming Laptop Pro',
+  brand: 'TechBrand',
+  category: 'electronics',
+  price: 1299.99,
+  inStock: true,
+  thumbnailUrl: 'https://store.company.com/images/laptop-001-thumb.jpg'
+});
+
+// Later update
+ProductQRManager.updateProductMetadata(productQR, {
+  price: 1199.99,
+  inStock: false,
+  lastSale: '2024-03-20'
+});
+```
+
+### Metadata Best Practices
+
+1. **Consistent Naming**: Use consistent key names across your application
+2. **Structured Data**: Use nested objects for complex metadata
+3. **Timestamps**: Include creation and update timestamps
+4. **Validation**: Validate metadata before setting
+5. **Documentation**: Document your metadata schema
+
+```javascript
+// Example metadata schema
+const metadataSchema = {
+  // Required fields
+  id: 'string',
+  name: 'string',
+  description: 'string',
+  
+  // Tracking fields
+  createdAt: 'ISO 8601 timestamp',
+  updatedAt: 'ISO 8601 timestamp',
+  createdBy: 'string (user id)',
+  
+  // Business fields
+  campaign: 'string',
+  channel: 'string',
+  category: 'string',
+  
+  // Analytics
+  trackingEnabled: 'boolean',
+  analytics: {
+    scans: 'number',
+    lastScan: 'ISO 8601 timestamp',
+    conversionRate: 'number'
+  }
+};
+```
+
+---
+
 #### Methods
 
 - **`append(container: HTMLElement, options?: { clearContainer?: boolean }): void`**
@@ -844,66 +1078,3 @@ const qrCodePremium = new QRCodeJs({
   }
 });
 ```
-
----
-
-### See Also
-- [QRCode.js Documentation](./documentation.md#start)
-- [Quick References Guide](./quick-references-guide.md#start)
-- [API Reference Guide](./api-reference-guide.md#start)
-- [TypeScript Types and Definitions](./typescript-types-definitions.md#start)
-- [License Management](./license-management.md#start)
-- [Basic Examples](./examples.md#start)
-- [Advanced Examples](./advanced-examples.md#start)
-
-</file_content>
-
-Now that you have the latest state of the file, try the operation again with fewer, more precise SEARCH blocks. For large files especially, it may be prudent to try to limit yourself to <5 SEARCH/REPLACE blocks at a time, then wait for the user to respond with the result of the operation before following up with another replace_in_file call to make additional edits.
-(If you run into this error 3 times in a row, you may use the write_to_file tool as a fallback.)
-</error><environment_details>
-# VSCode Visible Files
-docs/usage-guide.md
-
-# VSCode Open Tabs
-src/types/text-options.ts
-src/core/templates/qr-templates.ts
-src/core/qr-code-js.ts
-src/index.ts
-src/node.ts
-docs/ft009-settings-option-continuation-plan.md
-tests/node/node.settings.test.ts
-docs/api-reference-guide.md
-docs/usage-guide.md
-src/types/settings-options.ts
-src/index.html
-src/node-pdf-demo.js
-src/options-demo.ts
-src/templates/borders-templates.html
-docs/documentation.md
-tests/node/node.text-image.test.ts
-docs/ft009-settings-option-plan.md
-../../../../../Untitled-2
-../../../../../Untitled-1
-docs/typescript-types-definitions.md
-src/license/LicenseManager.ts
-rollup.config.ts
-package.json
-node_modules/rollup-plugin-minify-template-literals/dist/index.d.ts
-src/config/runtime-config.js
-src/core/templates/qr-styles-dark.ts
-src/core/qr-svg.ts
-src/templates/borders-inner-outter.ts
-src/demo.ts
-src/core/templates/qr-template-borders.ts
-src/core/templates/qr-styles.ts
-docs/border-text-implementation-plan.md
-
-# Current Time
-5/11/2025, 5:15:20 PM (America/New_York, UTC-4:00)
-
-# Context Window Usage
-258,040 / 1,048.576K tokens used (25%)
-
-# Current Mode
-ACT MODE
-</environment_details>

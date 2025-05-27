@@ -1,5 +1,7 @@
-# QRCode.js Documentation
-<a id="start"></a>
+---
+title: 'QRCode.js Comprehensive Documentation'
+description: 'Comprehensive documentation for QRCode.js, including installation, usage, and customization options, with a focus on styling, borders, and advanced features.'
+---
 
 ## Introduction
 
@@ -2136,13 +2138,501 @@ enum ImageMode {
 }
 ```
 
----
+## Metadata Management
 
-### See Also
-- [QRCode.js Documentation](./documentation.md#start)
-- [Quick References Guide](./quick-references-guide.md#start)
-- [API Reference Guide](./api-reference-guide.md#start)
-- [TypeScript Types and Definitions](./typescript-types-definitions.md#start)
-- [License Management](./license-management.md#start)
-- [Basic Examples](./examples.md#start)
-- [Advanced Examples](./advanced-examples.md#start)
+QRCode.js provides comprehensive metadata management capabilities for organizing, tracking, and categorizing QR code instances. This section covers the various metadata features available through both instance methods and the builder pattern.
+
+### Overview
+
+Metadata in QRCode.js allows you to:
+- Assign unique identifiers to QR code instances
+- Provide human-readable names and descriptions
+- Attach custom data for tracking and analytics
+- Retrieve comprehensive settings information
+- Support enterprise-level QR code management workflows
+
+### Instance Metadata Methods
+
+Once a QR code instance is created, you can manage its metadata using chainable methods:
+
+#### Setting Metadata
+
+```typescript
+const qrCode = new QRCodeJs({
+  data: 'https://company.com/products/laptop-pro'
+});
+
+// Chain metadata methods for clean configuration
+qrCode
+  .setId('product-laptop-pro-2024')
+  .setName('Laptop Pro QR Code')
+  .setDescription('QR code for Laptop Pro product page with specifications and pricing')
+  .setMetadata({
+    productId: 'laptop-pro-001',
+    category: 'electronics',
+    subcategory: 'laptops',
+    brand: 'TechCorp',
+    price: 1299.99,
+    inStock: true,
+    campaign: 'back-to-school-2024',
+    trackingEnabled: true,
+    analytics: {
+      expectedScans: 1000,
+      conversionTarget: 50
+    }
+  });
+```
+
+#### Retrieving Metadata
+
+```typescript
+// Access individual metadata components
+const qrId = qrCode.getId(); // 'product-laptop-pro-2024'
+const qrName = qrCode.getName(); // 'Laptop Pro QR Code'
+const qrDescription = qrCode.getDescription(); // 'QR code for Laptop Pro...'
+const customMetadata = qrCode.getMetadata(); // { productId: 'laptop-pro-001', ... }
+
+// Get comprehensive settings and configuration
+const settings = qrCode.getSettings();
+console.log('Complete QR Configuration:', settings);
+```
+
+### Builder Pattern Metadata
+
+The builder pattern provides elegant metadata assignment during QR code construction:
+
+```typescript
+const enterpriseQR = QRCodeJs.useTemplate('corporate')
+  .useId('campaign-summer-2024-001')
+  .useName('Summer Campaign Landing Page')
+  .useDescription('Primary QR code for summer marketing campaign directing to landing page')
+  .useMetadata({
+    campaignId: 'summer-2024',
+    campaignType: 'seasonal',
+    targetAudience: ['millennials', 'gen-z'],
+    channels: ['social-media', 'print', 'email'],
+    budget: 25000,
+    duration: {
+      start: '2024-06-01',
+      end: '2024-08-31'
+    },
+    kpis: {
+      primary: 'conversion-rate',
+      secondary: ['engagement', 'reach']
+    },
+    geography: {
+      regions: ['north-america', 'europe'],
+      languages: ['en', 'es', 'fr', 'de']
+    }
+  })
+  .options({
+    data: 'https://company.com/summer-campaign-2024',
+    image: 'https://company.com/assets/summer-logo.png'
+  });
+```
+
+### Enterprise Metadata Patterns
+
+#### Content Management System Integration
+
+```typescript
+class CMSQRManager {
+  static createContentQR(content) {
+    const metadata = {
+      contentId: content.id,
+      contentType: content.type,
+      title: content.title,
+      author: content.author,
+      publishDate: content.publishDate,
+      lastModified: content.lastModified,
+      tags: content.tags,
+      language: content.language,
+      seoScore: content.seoScore,
+      readingTime: content.estimatedReadingTime
+    };
+
+    return QRCodeJs.useTemplate('cms-standard')
+      .useId(`cms-${content.type}-${content.id}`)
+      .useName(`${content.title} - ${content.type}`)
+      .useDescription(`QR code for ${content.type}: ${content.title}`)
+      .useMetadata(metadata)
+      .options({
+        data: `https://cms.company.com/content/${content.id}`,
+        qrOptions: { errorCorrectionLevel: 'M' }
+      });
+  }
+}
+
+// Usage
+const articleQR = CMSQRManager.createContentQR({
+  id: 'art-2024-0315',
+  type: 'article',
+  title: 'Future of Sustainable Technology',
+  author: 'Dr. Jane Smith',
+  publishDate: '2024-03-15',
+  lastModified: '2024-03-20',
+  tags: ['technology', 'sustainability', 'innovation'],
+  language: 'en',
+  seoScore: 94,
+  estimatedReadingTime: '8 minutes'
+});
+```
+
+#### Multi-Channel Campaign Management
+
+```typescript
+class CampaignQRGenerator {
+  constructor(campaignConfig) {
+    this.config = campaignConfig;
+  }
+
+  createChannelQR(channel, specific = {}) {
+    const baseMetadata = {
+      campaignId: this.config.id,
+      campaignName: this.config.name,
+      channel: channel.name,
+      channelType: channel.type,
+      medium: channel.medium,
+      budget: channel.budget,
+      expectedReach: channel.expectedReach,
+      createdAt: new Date().toISOString(),
+      ...this.config.globalMetadata
+    };
+
+    return QRCodeJs.useTemplate(this.config.template)
+      .useId(`${this.config.id}-${channel.name}-${Date.now()}`)
+      .useName(`${this.config.name} - ${channel.displayName}`)
+      .useDescription(`${this.config.name} campaign QR for ${channel.displayName}`)
+      .useMetadata({ ...baseMetadata, ...specific })
+      .options({
+        data: `${this.config.baseUrl}?utm_source=${channel.name}&utm_medium=${channel.medium}&utm_campaign=${this.config.id}`,
+        ...channel.qrOptions
+      });
+  }
+}
+
+// Usage
+const campaignGen = new CampaignQRGenerator({
+  id: 'holiday-2024',
+  name: 'Holiday Sale Campaign',
+  template: 'festive',
+  baseUrl: 'https://store.company.com/holiday-sale',
+  globalMetadata: {
+    brand: 'TechCorp',
+    season: 'holiday',
+    year: 2024,
+    department: 'marketing'
+  }
+});
+
+const socialQR = campaignGen.createChannelQR(
+  {
+    name: 'instagram',
+    displayName: 'Instagram',
+    type: 'social',
+    medium: 'social-media',
+    budget: 5000,
+    expectedReach: 50000,
+    qrOptions: { margin: 20 }
+  },
+  {
+    platform: 'instagram',
+    contentType: 'story',
+    demographics: 'young-adults'
+  }
+);
+```
+
+#### Analytics and Tracking Integration
+
+```typescript
+class AnalyticsQRWrapper {
+  static enhanceWithAnalytics(qrInstance, analyticsConfig) {
+    const enhancedMetadata = {
+      ...qrInstance.getMetadata(),
+      analytics: {
+        trackingId: analyticsConfig.trackingId,
+        platform: analyticsConfig.platform,
+        goals: analyticsConfig.goals,
+        customDimensions: analyticsConfig.customDimensions,
+        autoTrack: analyticsConfig.autoTrack,
+        enableHeatmap: analyticsConfig.enableHeatmap,
+        retentionPeriod: analyticsConfig.retentionPeriod
+      },
+      privacy: {
+        gdprCompliant: true,
+        anonymized: analyticsConfig.anonymized,
+        consentRequired: analyticsConfig.consentRequired
+      }
+    };
+
+    qrInstance.setMetadata(enhancedMetadata);
+    return qrInstance;
+  }
+
+  static createAnalyticsReport(qrInstance) {
+    const metadata = qrInstance.getMetadata();
+    const settings = qrInstance.getSettings();
+    
+    return {
+      qrInfo: {
+        id: qrInstance.getId(),
+        name: qrInstance.getName(),
+        description: qrInstance.getDescription()
+      },
+      configuration: settings,
+      metadata: metadata,
+      analyticsReadiness: this.validateAnalyticsSetup(metadata),
+      reportGeneratedAt: new Date().toISOString()
+    };
+  }
+
+  static validateAnalyticsSetup(metadata) {
+    const analytics = metadata?.analytics;
+    return {
+      hasTrackingId: !!analytics?.trackingId,
+      hasGoals: !!(analytics?.goals && analytics.goals.length > 0),
+      gdprCompliant: metadata?.privacy?.gdprCompliant === true,
+      autoTrackEnabled: analytics?.autoTrack === true
+    };
+  }
+}
+
+// Usage
+const productQR = QRCodeJs.useTemplate('product')
+  .useId('product-smartphone-x1')
+  .useName('Smartphone X1 Product Page')
+  .useMetadata({
+    productId: 'smartphone-x1',
+    category: 'mobile',
+    price: 699.99
+  })
+  .options({
+    data: 'https://store.company.com/smartphone-x1'
+  });
+
+const enhancedQR = AnalyticsQRWrapper.enhanceWithAnalytics(productQR, {
+  trackingId: 'GA-123456789',
+  platform: 'google-analytics',
+  goals: ['purchase', 'add-to-cart', 'view-specifications'],
+  customDimensions: {
+    productCategory: 'mobile',
+    priceRange: '600-800',
+    season: 'q1-2024'
+  },
+  autoTrack: true,
+  enableHeatmap: true,
+  retentionPeriod: '2-years',
+  anonymized: true,
+  consentRequired: false
+});
+
+const analyticsReport = AnalyticsQRWrapper.createAnalyticsReport(enhancedQR);
+console.log('QR Analytics Report:', analyticsReport);
+```
+
+### Metadata Best Practices
+
+#### 1. Consistent Schema Design
+
+```typescript
+// Define a standardized metadata schema
+const MetadataSchema = {
+  // Core identification
+  id: 'string (required)',
+  name: 'string (required)',
+  description: 'string (required)',
+  
+  // Lifecycle tracking
+  createdAt: 'ISO 8601 timestamp',
+  updatedAt: 'ISO 8601 timestamp',
+  createdBy: 'string (user identifier)',
+  lastModifiedBy: 'string (user identifier)',
+  version: 'string (semantic versioning)',
+  
+  // Business context
+  businessUnit: 'string',
+  department: 'string',
+  project: 'string',
+  campaign: 'string',
+  
+  // Technical details
+  environment: 'development | staging | production',
+  region: 'string',
+  locale: 'string (ISO 639-1)',
+  
+  // Analytics and tracking
+  analytics: {
+    enabled: 'boolean',
+    platform: 'string',
+    goals: 'string[]',
+    customDimensions: 'Record<string, any>'
+  },
+  
+  // Compliance and governance
+  dataRetention: 'string (duration)',
+  privacyLevel: 'public | internal | confidential | restricted',
+  complianceFlags: 'string[]'
+};
+```
+
+#### 2. Validation and Type Safety
+
+```typescript
+class MetadataValidator {
+  static validateRequiredFields(metadata) {
+    const required = ['id', 'name', 'description'];
+    const missing = required.filter(field => !metadata[field]);
+    
+    if (missing.length > 0) {
+      throw new Error(`Missing required metadata fields: ${missing.join(', ')}`);
+    }
+  }
+
+  static sanitizeMetadata(metadata) {
+    return {
+      ...metadata,
+      // Ensure timestamps are ISO strings
+      createdAt: metadata.createdAt || new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      // Sanitize strings
+      name: metadata.name?.trim(),
+      description: metadata.description?.trim(),
+      // Ensure arrays are arrays
+      tags: Array.isArray(metadata.tags) ? metadata.tags : [],
+      // Validate email format for creator fields
+      createdBy: this.validateEmail(metadata.createdBy)
+    };
+  }
+
+  static validateEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return email && emailRegex.test(email) ? email : null;
+  }
+}
+
+// Usage with validation
+function createValidatedQR(data, metadata) {
+  try {
+    MetadataValidator.validateRequiredFields(metadata);
+    const sanitizedMetadata = MetadataValidator.sanitizeMetadata(metadata);
+    
+    return QRCodeJs.useTemplate('validated')
+      .useId(sanitizedMetadata.id)
+      .useName(sanitizedMetadata.name)
+      .useDescription(sanitizedMetadata.description)
+      .useMetadata(sanitizedMetadata)
+      .options({ data });
+  } catch (error) {
+    console.error('QR creation failed:', error.message);
+    throw error;
+  }
+}
+```
+
+#### 3. Metadata Versioning and Migration
+
+```typescript
+class MetadataVersionManager {
+  static CURRENT_VERSION = '2.1.0';
+  
+  static migrateMetadata(metadata) {
+    const version = metadata.schemaVersion || '1.0.0';
+    let migrated = { ...metadata };
+    
+    if (this.isVersionLess(version, '2.0.0')) {
+      migrated = this.migrateTo2_0_0(migrated);
+    }
+    
+    if (this.isVersionLess(version, '2.1.0')) {
+      migrated = this.migrateTo2_1_0(migrated);
+    }
+    
+    migrated.schemaVersion = this.CURRENT_VERSION;
+    migrated.lastMigration = new Date().toISOString();
+    
+    return migrated;
+  }
+  
+  static migrateTo2_0_0(metadata) {
+    return {
+      ...metadata,
+      // Migrate old tracking field to new analytics structure
+      analytics: {
+        enabled: metadata.tracking?.enabled || false,
+        platform: metadata.tracking?.platform || 'unknown',
+        goals: metadata.tracking?.events || []
+      },
+      // Remove deprecated fields
+      tracking: undefined
+    };
+  }
+  
+  static migrateTo2_1_0(metadata) {
+    return {
+      ...metadata,
+      // Add new compliance fields with defaults
+      compliance: {
+        dataRetention: metadata.compliance?.dataRetention || '1-year',
+        privacyLevel: metadata.compliance?.privacyLevel || 'internal'
+      }
+    };
+  }
+  
+  static isVersionLess(version1, version2) {
+    const v1Parts = version1.split('.').map(Number);
+    const v2Parts = version2.split('.').map(Number);
+    
+    for (let i = 0; i < Math.max(v1Parts.length, v2Parts.length); i++) {
+      const v1Part = v1Parts[i] || 0;
+      const v2Part = v2Parts[i] || 0;
+      
+      if (v1Part < v2Part) return true;
+      if (v1Part > v2Part) return false;
+    }
+    
+    return false;
+  }
+}
+```
+
+### Integration Examples
+
+#### Database Integration
+
+```typescript
+class QRDatabaseManager {
+  static async saveQRMetadata(qrInstance) {
+    const metadata = {
+      id: qrInstance.getId(),
+      name: qrInstance.getName(),
+      description: qrInstance.getDescription(),
+      customMetadata: qrInstance.getMetadata(),
+      settings: qrInstance.getSettings(),
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    
+    // Save to database (pseudo-code)
+    return await database.qrCodes.create(metadata);
+  }
+  
+  static async loadQRMetadata(qrId) {
+    const record = await database.qrCodes.findById(qrId);
+    if (!record) return null;
+    
+    // Recreate QR instance with stored metadata
+    const qrInstance = new QRCodeJs(record.settings.options || { data: record.data });
+    
+    qrInstance
+      .setId(record.id)
+      .setName(record.name)
+      .setDescription(record.description)
+      .setMetadata(record.customMetadata);
+    
+    return qrInstance;
+  }
+}
+```
+
+This comprehensive metadata management system enables enterprise-level QR code organization, tracking, and governance while maintaining flexibility for various use cases and integration requirements.

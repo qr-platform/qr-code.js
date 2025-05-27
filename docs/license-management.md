@@ -1,8 +1,9 @@
-# QRCode.js License Management
-<a id="start"></a>
+---
+title: 'QRCode.js License Management'
+description: 'Learn how to manage licenses for QRCode.js, including activation, premium features, and usage in both browser and Node.js environments.'
+---
 
 ## Introduction
-<a id="introduction"></a>
 
 QRCode.js uses a license key system to enable premium features. Activation involves validating a JSON Web Token (JWT) which contains details about your license grant. This validation happens client-side (in the browser) or server-side (in Node.js) against a public key embedded in the library.
 
@@ -489,13 +490,3 @@ Check `getLicenseDetails().plan` to determine which features should be available
 
 Ensure activation was completed before QRCode instances were created. Check for errors in the console or network requests. If using a token, ensure it is valid and not expired. If you are still having issues, please contact us for support.
 
----
-
-### See Also
-- [QRCode.js Documentation](./documentation.md#start)
-- [Quick References Guide](./quick-references-guide.md#start)
-- [API Reference Guide](./api-reference-guide.md#start)
-- [TypeScript Types and Definitions](./typescript-types-definitions.md#start)
-- [License Management](./license-management.md#start)
-- [Basic Examples](./examples.md#start)
-- [Advanced Examples](./advanced-examples.md#start)
