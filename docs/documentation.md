@@ -533,20 +533,14 @@ Gradients can be applied to multiple elements: `dotsOptions`, `cornersSquareOpti
 
 ## Borders
 
-### Free vs. Premium Features
+QRCode.js provides border features:
 
-QRCode.js provides border features in both the free and premium versions, with some important differences:
-
-- **Free Version Borders**: 
-  - Basic border features are available but will automatically include "QR-Platform" branding text in the bottom border
-  - This branding cannot be removed or customized without a license
-  - Basic border styling like color and thickness is supported
-
-- **Premium Version Borders** (requires license):
-  - No QR-Platform branding (can use custom text or no text)
-  - Full control over all sides of the border
-  - Advanced border features (inner borders, outer borders, custom text)
-  - Fine-grained control over border appearance
+- Basic border styling like color and thickness is supported
+- Full control over all sides of the border
+- Advanced border features (inner borders, outer borders, custom text)
+- Fine-grained control over border appearance
+- Inner and outer borders can be styled independently
+- Decorative text and images can be added to each side of the border
 
 ### `borderOptions`
 
@@ -598,7 +592,7 @@ Options for adding decorative borders around the QR code. Borders can be configu
   }
   ```
 
-#### `noBorderThickness` (Premium)
+#### `noBorderThickness`
 
 - **Purpose**: Thickness to use for a border side if its decoration is disabled (e.g., text is not shown). Useful for maintaining alignment.
 - **Type**: `number`
@@ -610,7 +604,7 @@ Options for adding decorative borders around the QR code. Borders can be configu
   }
   ```
 
-#### `background` (Premium)
+#### `background`
 
 - **Purpose**: Background color specifically for the border area itself.
 - **Type**: `string` (CSS color, hex, rgb, rgba)
@@ -622,7 +616,7 @@ Options for adding decorative borders around the QR code. Borders can be configu
   }
   ```
 
-#### `inner` (Premium)
+#### `inner`
 
 - **Purpose**: Options for scaling/offsetting the inner content area
 - **Type**: `object`
@@ -643,7 +637,7 @@ Options for adding decorative borders around the QR code. Borders can be configu
   }
   ```
 
-#### `borderOuter` (Premium)
+#### `borderOuter`
 
 - **Purpose**: Options for an additional border outside the main one
 - **Type**: `object`
@@ -660,7 +654,7 @@ Options for adding decorative borders around the QR code. Borders can be configu
   }
   ```
 
-#### `borderInner` (Premium)
+#### `borderInner`
 
 - **Purpose**: Options for an additional border inside the main one
 - **Type**: `object`
@@ -677,12 +671,11 @@ Options for adding decorative borders around the QR code. Borders can be configu
   }
   ```
 
-#### `decorations` (Premium)
+#### `decorations`
 
 - **Purpose**: Add text or images to specific sides of the border
 - **Type**: `object`
 - **Properties**: Configuration for each side (`top`, `right`, `bottom`, `left`)
-- **Note**: In the free version, the bottom border will always display "QR-Platform" branding regardless of your settings
 - **Example**:
   ```typescript
   borderOptions: {
@@ -720,12 +713,9 @@ Each decoration object can have these properties:
 - `value`: Text content or image URL
 - `style`: Style options for text (font, size, color, etc.)
 
-### Free vs. Premium Border Examples
-
-#### Free Version (with QR-Platform branding)
+#### Example Usage of Borders
 
 ```typescript
-// Free version border - will show "QR-Platform" in bottom border
 const qrCode = new QRCodeJs({
   data: 'https://example.com',
   borderOptions: {
@@ -737,12 +727,8 @@ const qrCode = new QRCodeJs({
 });
 ```
 
-#### Premium Version (license required)
 
 ```typescript
-// First activate license
-await QRCodeJs.license('YOUR-LICENSE-KEY');
-
 // Then create QR code with custom border text
 const qrCode = new QRCodeJs({
   data: 'https://example.com',
@@ -755,7 +741,7 @@ const qrCode = new QRCodeJs({
       bottom: {
         enableText: true,
         type: 'text',
-        value: 'YOUR CUSTOM TEXT', // This only works with a license
+        value: 'Scan Me',
         style: {
           fontFace: 'Arial',
           fontSize: 24,
@@ -767,26 +753,7 @@ const qrCode = new QRCodeJs({
 });
 ```
 
-### Error Handling for Borders
-
-When attempting to use premium border features without a license, the library will:
-
-1. Not throw errors, but gracefully fall back to the free version behavior
-2. Display "QR-Platform" branding in the bottom border regardless of your `decorations` settings
-3. Ignore certain premium-only properties like `inner`, `borderOuter`, and `borderInner`
-
-To check if your license is active and premium features are available:
-
-```typescript
-// Check detailed license information
-const licenseDetails = QRCodeJs.getLicenseDetails();
-if (licenseDetails) {
-  console.log('License plan:', licenseDetails.plan);
-  console.log('License expires:', new Date(licenseDetails.exp * 1000));
-}
-```
-
-## Border Text Methods (Premium Feature)
+## Border Text Methods
 
 QRCode.js provides dedicated methods for managing text on QR code borders, allowing for convenient text configuration across all sides.
 
@@ -926,8 +893,6 @@ This is particularly useful when you need to ensure specific text appears regard
 ### Example: Combining Text Methods with Border Options
 
 ```typescript
-// First activate license (required for custom border text)
-await QRCodeJs.license('YOUR-LICENSE-KEY');
 
 // Set global default for all QR codes
 QRCodeJs.setText({ 
@@ -976,9 +941,7 @@ QRCodeJs.useText('empty-text-options').options({
 });
 ```
 
-## Scan Validation (Premium Feature)
-
-> **Note**: This is a Premium Feature requiring a license.
+## Scan Validation
 
 The QRCode.js library offers functionality to validate that generated QR codes are scannable.
 
@@ -986,9 +949,6 @@ The QRCode.js library offers functionality to validate that generated QR codes a
 
 - **Purpose**: Verify the generated QR code is scannable
 - **Returns**: `Promise<ScanValidatorResponse>` resolving to a validation result object (`{ isValid: boolean, decodedText?: string, message?: string }`)
-- **Parameters**:
-  - `validatorId` (`string`, optional, default: `'zbar'`): The ID of the validator engine to use. Currently only `'zbar'` is supported in the public release.
-  - `debug` (`boolean`, optional, default: `false`): Enables debug logging for the validation process.
 - **Example**:
   ```typescript
   const qrCode = new QRCodeJs({
@@ -1049,162 +1009,16 @@ qrCode.serialize().then(svgString => {
   npm i @xmldom/xmldom @undecaf/zbar-wasm image-size jose jimp @resvg/resvg-js file-type
   ```
 - **No Canvas/Download**: Methods relying on browser APIs like `append()`, `download()`, or internal canvas generation are not available or behave differently in the Node.js version.
-- **License Management**: Use the static methods described in the [License Management](#license-management) section.
-- **Border Branding**: Similar to the browser version, Node.js will add "QR-Platform" branding to borders in the free version. To remove this, you'll need to activate a license.
 
-## License Management
 
-QRCode.js provides a comprehensive licensing system for premium features like advanced border controls and scan validation.
+#### QRCode.js provides a comprehensive system for generating QR codes with advanced features:
 
-### Free vs. Premium Features
-
-- **Free Features**: Basic QR code generation, styling options (colors, shapes, dot types), image embedding, basic borders (with QR-Platform branding)
-- **Premium Features**: 
-  - Advanced border customization (without branding)
-  - Custom border text
-  - Inner and outer borders
-  - Scan validation tools
-  - Full control over border sides and styling
-
-### Border Limitations in Free Version
-
-When using the basic border features in the free version, the library will automatically add "QR-Platform" branding text in the bottom border. This branded text cannot be removed or modified without a valid license. With a premium license, you gain full control over border text and can use borders without any branding.
-
-### Activation Timing
-
-- **Purpose**: Determines when license activation should occur
-- **Important**: License activation must be completed *before* you create any `QRCodeJs` instances
-- **Reason**: The constructor checks the license status at the time of creation
-- **Rule**: Activate first, then instantiate
-
-### Initialization
-
-- **Purpose**: Sets up the license manager
-- **Behavior**: Initializes automatically when you call `.license()` (or otherwise attempt activation) or check the status
-- **Manual Method**: `QRCodeJs.initializeIfNeeded()` (rarely needed because `.license()` runs it automatically)
-- **Example**:
-  ```typescript
-  async function initializeOnLoad() {
-    const isActive = await QRCodeJs.initializeIfNeeded();
-    console.log('License active after init:', isActive);
-  }
-  ```
-
-### Persistence
-
-#### Browser Environment
-- **Storage**: `localStorage` under the key `QRCodeJsLicense`
-- **Persistence**: License persists across page loads and sessions until token expiration
-- **Content Stored**: Both JWT and license key (if used for activation)
-
-#### Node.js Environment
-- **Storage**: In-memory only (no persistent storage)
-- **Persistence**: Requires reactivation when the application restarts
-- **Alternative**: Manage token storage externally
-
-### Activation Methods
-
-#### Using a License Key (`QRCodeJs.license()`)
-
-- **Purpose**: Activate license using a license key
-- **Type**: `function(licenseKey: string): Promise<ValidationResult>`
-- **Process**:
-  1. Calls `QRCodeJs.license('YOUR-LICENSE-KEY')`
-  2. Library sends key to backend endpoint (default: `POST /api/get-token`)
-  3. Backend validates key and returns signed JWT
-  4. Library validates JWT signature and expiration date
-  5. If valid, token and key are stored
-- **Example** (async/await):
-  ```typescript
-  await QRCodeJs.license('YOUR-LICENSE-KEY');
-  const qrInstance = new QRCodeJs({
-    data: 'https://example.com',
-    borderOptions: { 
-      hasBorder: true,
-      decorations: {
-        bottom: {
-          enableText: true,
-          value: 'CUSTOM TEXT' // Works because license is active
-        }
-      }
-    }
-  });
-  ```
-
-#### Using a Pre-fetched Token (`QRCodeJs.token()`)
-
-- **Purpose**: Activate license using a pre-fetched JWT token
-- **Type**: `function(jwtToken: string | null): Promise<ValidationResult>`
-- **Process**:
-  1. Calls `QRCodeJs.token('YOUR-JWT-STRING')`
-  2. Library validates JWT signature and expiration date
-  3. If valid, token is stored
-- **Example** (async/await):
-  ```typescript
-  await QRCodeJs.token(token);
-  const qrInstance = new QRCodeJs({
-    data: 'https://example.com',
-    borderOptions: { 
-      hasBorder: true,
-      borderOuter: { // Premium feature works with license
-        color: '#002683',
-        thickness: 10
-      }
-    }
-  });
-  ```
-
-### Checking License Status
-
-#### Getting License Details
-
-- **Purpose**: Retrieve current license information
-- **Type**: `function(): DecodedLicenseToken | null`
-- **Returns**: Decoded token object if license is active, otherwise `null`
-- **Example**:
-  ```typescript
-  const licenseDetails = QRCodeJs.getLicenseDetails();
-  if (licenseDetails) {
-    console.log('License active. Plan:', licenseDetails.plan);
-    console.log('Domains:', licenseDetails.domains);
-    console.log('Expires:', new Date(licenseDetails.exp * 1000));
-  } else {
-    console.log('License not active or expired.');
-  }
-  ```
-
-### Configuration
-
-#### Setting License URL
-
-- **Purpose**: Configure the endpoint for license key validation
-- **Type**: `function(url: string): typeof QRCodeJs`
-- **Default**: `/api/get-token`
-- **Important**: Must be called before `QRCodeJs.license()`
-- **Example**:
-  ```typescript
-  QRCodeJs.setLicenseUrl('https://my-api.com/licenses/get-token');
-  await QRCodeJs.license('YOUR-LICENSE-KEY');
-  ```
-
-#### Custom License Fetcher
-
-- **Purpose**: Implement custom token fetching logic
-- **Type**: `function(fetcherFn: (licenseKey: string) => Promise<string>): void`
-- **Use Cases**: Custom headers, authentication, or request format
-- **Example**:
-  ```typescript
-  QRCodeJs.configureLicenseFetcher(async (key) => {
-    const response = await fetch('/my/custom/endpoint', {
-      method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + getAuthToken() },
-      body: JSON.stringify({ licKey: key })
-    });
-    if (!response.ok) throw new Error('Fetch failed');
-    const data = await response.json();
-    return data.token;
-  });
-  ```
+- QR code generation, styling options (colors, shapes, dot types), image embedding and borders
+- Advanced border customization
+- Custom border text
+- Inner and outer borders
+- Scan validation tools
+- Full control over border sides and styling
 
 ## Centralized Configuration with Settings (`SettingsOptions`, `setSettings`, `useSettings`)
 
@@ -1462,7 +1276,7 @@ const qrCode = new QRCodeJs({
 });
 ```
 
-### QR Code with Free Border (includes QR-Platform branding)
+### QR Code with Border
 
 ```typescript
 const qrCode = new QRCodeJs({
@@ -1476,17 +1290,12 @@ const qrCode = new QRCodeJs({
     thickness: 50,
     color: '#002683',
     radius: '5%'
-    // Note: Bottom border will automatically show "QR-Platform" text
-    // This cannot be changed in the free version
   }
 });
 ```
 
-### QR Code with Premium Border Features (requires license)
 
 ```typescript
-// Must activate license before creating QR code
-await QRCodeJs.license('YOUR-LICENSE-KEY');
 
 const qrCode = new QRCodeJs({
   data: 'https://example.com',
@@ -1509,7 +1318,6 @@ const qrCode = new QRCodeJs({
     thickness: 50,
     color: '#002683',
     radius: '40%',
-    // Premium feature: custom border text (no branding)
     decorations: {
       top: {
         enableText: true,
@@ -1526,7 +1334,6 @@ const qrCode = new QRCodeJs({
       bottom: {
         enableText: true,
         type: 'text',
-        value: 'CUSTOM BOTTOM TEXT', // With license this replaces "QR-Platform"
         style: {
           fontFace: 'Arial',
           fontSize: 20,
@@ -1534,7 +1341,6 @@ const qrCode = new QRCodeJs({
         }
       }
     },
-    // Premium feature: additional borders
     borderOuter: {
       color: '#001255',
       thickness: 10
@@ -1694,7 +1500,7 @@ Updates the QR code with new options.
 qrCode.update(options?: RecursivePartial<Options>): void
 ```
 
-#### `validateScanning()` (Premium)
+#### `validateScanning()`
 
 Validates that the QR code is scannable.
 
@@ -1725,56 +1531,6 @@ qrCode.getSettings(): SettingsOptions & { options: Options }
 ### Static Methods
 
 These methods are called directly on the `QRCodeJs` class (e.g., `QRCodeJs.setTemplate()`).
-
-#### License Management
-
-#### `initializeIfNeeded()`
-
-Initializes the license manager if needed. Typically this runs automatically when calling `.license()`, but you can call it manually in unusual scenarios.
-
-```typescript
-QRCodeJs.initializeIfNeeded(): Promise<boolean>
-```
-
-#### `getLicenseDetails()`
-
-Returns the decoded token object if a valid license is active.
-
-```typescript
-QRCodeJs.getLicenseDetails(): DecodedLicenseToken | null
-```
-
-#### `license()`
-
-Activates a license using a license key.
-
-```typescript
-QRCodeJs.license(licenseKey: string): Promise<ValidationResult>
-```
-
-#### `token()`
-
-Activates a license using a pre-fetched JWT token.
-
-```typescript
-QRCodeJs.token(token: string | null): Promise<ValidationResult>
-```
-
-#### `configureLicenseFetcher()`
-
-Configures a custom function for fetching license tokens.
-
-```typescript
-QRCodeJs.configureLicenseFetcher(fetcher: (licenseKey: string) => Promise<string>): void
-```
-
-#### `setLicenseUrl()`
-
-Sets the URL endpoint for license key validation.
-
-```typescript
-QRCodeJs.setLicenseUrl(url: string): void
-```
 
 #### Configuration Defaults & Builder Initiators
 
@@ -1902,57 +1658,6 @@ const qrBuildDirectly = QRCodeJs.useTemplate({
 qrBuildDirectly.append(document.getElementById('qr-container-4'));
 ```
 
-## FAQ
-
-### General Questions
-
-#### Can I use SVG output?
-Yes, set `type: 'svg'` and use the `.svg` property.
-
-#### Can I use QRCode.js for free without a license?
-
-Yes, QRCode.js can be used for free without a license key. This allows you to create full-featured, styled QR codes with all the basic features including custom dot styles, colors, shapes, and image embedding. The only limitations are on advanced border features and scan validation. 
-
-#### Can I use border features in the free version?
-
-Yes, you can use basic border features in the free version, but the library will automatically add "QR-Platform" branding text in the bottom border of your QR code. This branding cannot be removed or customized in the free version.
-
-#### Does the QR-Platform branding affect the scannability of the QR code?
-
-No, the QR-Platform branding only appears in the border area, which is outside the actual QR code area. It does not affect the scannability or functionality of the QR code itself. However, it does affect the visual appearance of your QR code.
-
-### Do you provide support for licensed users?
-Yes, we do provide support for licensed users. If you have any questions or need assistance, please contact us at support@qr-platform.com.
-
-### What is QR-Platform?
-QR-Platform is a powerful and comprehensive solution for managing and deploying QR codes, it enables businesses to effortlessly Create, Store, Manage, and Deploy Beautiful, Stylish, and Fully Customizable QR codes. QRCode.js library license is included free of charge with all paid QR-Platform plans, offering seamless integration and powerful customization capabilities for businesses of any size.
-
-#### Can I modify or remove the QR-Platform branding in the free version?
-
-No, the QR-Platform branding in the bottom border is automatically added when using border features in the free version and cannot be modified or removed. This is a limitation of the free version. Purchasing a license allows you to remove the branding and fully customize your border text.
-
-#### Can I make the QR-Platform branding less noticeable without a license?
-
-While you cannot remove the branding, you can somewhat reduce its visual impact by:
-- Using colors that create less contrast with the text
-- Using thinner borders
-- Using a small border radius to make the overall design less attention-grabbing
-
-However, the branding will still be present, and these approaches might reduce the aesthetic appeal of your QR code.
-
-#### What happens if I try to use premium border features without a license?
-
-The library will not throw errors but will instead gracefully fall back to the free version behavior. It will ignore premium-only properties like `inner`, `borderOuter`, and `borderInner`, and will still display the QR-Platform branding in the bottom border.
-
-#### Do I need to activate the license on every page load?
-
-- **Browser**: No, license persists in `localStorage` until expiration
-- **Node.js**: Yes, unless token is managed externally
-
-#### What happens if the license expires?
-
-`getLicenseDetails()` returns `null`; you'll need to renew with `license()` or `token()`.
-
 ## TypeScript Types
 
 ### Main Options Interface
@@ -2018,7 +1723,6 @@ interface Options {
     };
   };
 
-  // Borders (Basic features in free version, advanced in premium)
   borderOptions?: {
     hasBorder: boolean; // Master switch to enable/disable borders
     thickness: number; // Thickness of the main border in pixels
@@ -2636,3 +2340,9 @@ class QRDatabaseManager {
 ```
 
 This comprehensive metadata management system enables enterprise-level QR code organization, tracking, and governance while maintaining flexibility for various use cases and integration requirements.
+
+## License and Support
+
+QRCode.js by QR-Platform is free for personal projects, open-source projects, or general non-commercial use. For commercial use, a license is required.
+
+See the full license at [LICENSE.md](https://github.com/qr-platform/qr-code.js/blob/main/LICENSE.md) for more information. For commercial licenses, including full source code and support, contact [qr.platform.com@gmail.com](mailto:qr.platform.com@gmail.com).

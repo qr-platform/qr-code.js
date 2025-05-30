@@ -738,13 +738,9 @@ const qrBuiltWithBorderId = QRCodeJs.useBorderId('border-id-example') // Assumes
 qrBuiltWithBorderId.append(document.getElementById('builder-border-id-container'));
 ```
 
-**Example: Using Text in Borders with Override Option (Premium Feature)**
+**Example: Using Text in Borders with Override Option**
 
 ```javascript
-// Ensure license is activated first for premium border features
-// await QRCodeJs.license('YOUR-LICENSE-KEY');
-
-// Setting text that will override any text specified in borderOptions
 QRCodeJs.setText({
   topValue: 'TOP PRIORITY TEXT', 
   bottomValue: 'BOTTOM PRIORITY TEXT'
@@ -794,8 +790,7 @@ qrBuilderWithTextOverride.append(document.getElementById('builder-text-override-
 
 // Reset global text when done
 QRCodeJs.setText(null);
-```
-*For custom border text and advanced features like inner/outer borders, a [Premium License](./license-management) is required.*
+``
 
 ---
 

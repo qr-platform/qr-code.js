@@ -519,16 +519,13 @@ QRCodeJs.setOptions(null); // This clears the override as well
 
 ---
 
-### Border Options and Decorations (Premium Feature)
+### Border Options and Decorations
 
-Uses premium border features for advanced styling and text. Requires a license.
 
 **Example 1: Using Text Override Option**
 
 ```typescript
 
-// Ensure license is activated first
-// await QRCodeJs.license('YOUR-LICENSE-KEY');
 
 // Setting global text with override that will take precedence 
 // even over text specified in instance options
@@ -596,8 +593,6 @@ QRCodeJs.setText(null);
 **Example 2: Elaborate Border with Multiple Decorations**
 
 ```typescript
-// Ensure license is activated first
-// await QRCodeJs.license('YOUR-LICENSE-KEY');
 
 const qrBorderElaborate = new QRCodeJs({
   data: 'https://example.com/border-elaborate',
@@ -709,7 +704,6 @@ qrBuilderExampleWithBuild.update({ data: 'https://example.com/builder-pattern-ad
 Demonstrates using the class instance pattern (`setTemplate`, `setStyle`) to combine base settings with specific styles for a complex result.
 
 ```typescript
-
 // Define a base template (could be predefined like 'dots' or 'rounded')
 const baseTemplate = {
   qrOptions: { errorCorrectionLevel: 'Q' },
@@ -746,7 +740,6 @@ const qrBuilderExample = new QRCodeJs({ data: 'https://example.com/class-instanc
 This example shows how to set global defaults for a template, style, and border configuration. Subsequent `QRCodeJs` instances will inherit these settings unless overridden during instantiation.
 
 ```typescript
-
 // 1. Define and set global defaults
 const globalTemplate = { backgroundOptions: { color: '#E8F5E9' } }; // Light Green background
 const globalStyle = { dotsOptions: { type: 'classy', color: '#1B5E20' } }; // Dark Green classy dots
@@ -786,7 +779,6 @@ qrGlobalCombinedOverride.append(document.getElementById('global-combined-overrid
 This example demonstrates chaining builder methods to combine a template, style, and border configuration for a single instance without affecting global defaults.
 
 ```typescript
-
 // 1. Define components (optional, could be predefined names or IDs)
 const baseTpl = { qrOptions: { errorCorrectionLevel: 'M' }, margin: 5 };
 const dotsStyle = { dotsOptions: { type: 'dots', color: '#01579B' } }; // Light Blue dots
@@ -811,14 +803,9 @@ qrBuilderCombined.append(document.getElementById('builder-combined-container'));
 ```
 ---
 
-### Scan Validation (Premium Feature)
-
-Validate if the generated QR code is scannable using the built-in validator. This requires a premium license.
+### Scan Validation
 
 ```typescript
-// Ensure license is activated first
-// await QRCodeJs.license('YOUR-LICENSE-KEY');
-
 const qrCodeToValidate = new QRCodeJs({
   data: 'Complex data string that might be hard to scan due to density or styling choices',
   qrOptions: { errorCorrectionLevel: 'L' }, // Lower error correction can make scanning harder
@@ -877,7 +864,7 @@ createAndValidate();
 
 ---
 
-### Node.js Static Validation Methods (Premium Feature)
+### Node.js Static Validation Methods
 
 QRCode.js provides static validation methods specifically for Node.js environments to validate existing QR codes from image data or SVG strings.
 
@@ -888,8 +875,6 @@ QRCode.js provides static validation methods specifically for Node.js environmen
 import { QRCodeJs } from '@qr-platform/qr-code.js/node';
 import fs from 'fs';
 
-// Ensure license is activated first
-// await QRCodeJs.license('YOUR-LICENSE-KEY');
 
 async function validateQRFromImage() {
   try {
@@ -919,8 +904,6 @@ validateQRFromImage();
 // Node.js import
 import { QRCodeJs } from '@qr-platform/qr-code.js/node';
 
-// Ensure license is activated first
-// await QRCodeJs.license('YOUR-LICENSE-KEY');
 
 async function validateQRFromSVG() {
   try {
@@ -958,8 +941,6 @@ import { QRCodeJs } from '@qr-platform/qr-code.js/node';
 import fs from 'fs';
 import path from 'path';
 
-// Ensure license is activated first
-// await QRCodeJs.license('YOUR-LICENSE-KEY');
 
 async function batchValidateQRCodes() {
   const qrDirectory = 'path/to/qr-codes/';
@@ -1018,9 +999,6 @@ batchValidateQRCodes();
 ```typescript
 import { QRCodeJs } from '@qr-platform/qr-code.js/node';
 
-// Ensure license is activated first
-// await QRCodeJs.license('YOUR-LICENSE-KEY');
-
 async function validateWithRetry(imageData, maxRetries = 3) {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
@@ -1078,8 +1056,6 @@ import { QRCodeJs } from '@qr-platform/qr-code.js/node';
 const app = express();
 const upload = multer({ memory: true });
 
-// Ensure license is activated on server startup
-// await QRCodeJs.license('YOUR-LICENSE-KEY');
 
 // API endpoint for QR code validation
 app.post('/api/validate-qr', upload.single('qrImage'), async (req, res) => {

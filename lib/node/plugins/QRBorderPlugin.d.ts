@@ -29,8 +29,7 @@ type QRBorderPluginFn = (options: BorderOptions) => (svgElement: SVGElement, set
     [key in Position]: number;
 }, bordersInner: {
     [key in Position]: number;
-}, noBorderThickness: number, hs: () => boolean) => void;
+}, noBorderThickness: number) => void;
 export declare const isBorderSideEnabled: (options: BorderOptions, position: Position) => boolean;
-export declare const isBorderSideEnabledBottom: (options: BorderOptions, position: Position, _hls: boolean) => boolean;
 declare const QRBorderPlugin: QRBorderPluginFn;
 export { QRBorderPlugin };

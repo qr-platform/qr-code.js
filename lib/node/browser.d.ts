@@ -1,3 +1,2 @@
-import { _, QRCodeJs } from './index';
+import { QRCodeJs } from './index';
 export default QRCodeJs;
-export { _ };

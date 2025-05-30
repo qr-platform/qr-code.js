@@ -63,7 +63,7 @@ interface Options {
   /** Options for the embedded image. */
   imageOptions: ImageOptions;
 
-  /** Options for adding decorative borders (premium feature). */
+  /** Options for adding decorative borders. */
   borderOptions?: BorderOptions;
 }
 ```
@@ -182,7 +182,7 @@ interface ImageOptions {
 }
 ```
 
-### BorderOptions (Premium Feature)
+### BorderOptions
 
 Options for adding decorative borders.
 
@@ -499,23 +499,6 @@ interface QRInstanceMetadata {
   
   /** Custom metadata as key-value pairs. */
   metadata?: Record<string, any>;
-}
-```
-
-### ValidationResult
-
-Interface for license validation results.
-
-```typescript
-interface ValidationResult {
-  /** Whether the license validation was successful. */
-  success: boolean;
-  
-  /** Error message if validation failed. */
-  error?: string;
-  
-  /** Additional validation details. */
-  details?: Record<string, any>;
 }
 ```
 

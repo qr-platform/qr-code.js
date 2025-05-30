@@ -306,11 +306,9 @@ const qrCodeWithLogo = new QRCodeJs({
 ```
 ---
 
-#### Borders (Premium Feature, Requires License)
 
 `borderOptions` is an `object` that defines the appearance of decorative borders around the QR code.
 
-**Note:** This is a premium feature requiring a license. See [License Management](#license-management) for details.
 
 | Option                        | Type                 | Default        | Description                                                                                                                               |
 | :---------------------------- | :------------------- | :------------- | :---------------------------------------------------------------------------------------------------------------------------------------- |
@@ -359,15 +357,12 @@ const qrCodeWithLogo = new QRCodeJs({
 
 #### Notes
 - **Required Option**: The `data` option is the only mandatory option, marked as **Required option** in its description.
-- **Premium Feature**: The `borderOptions` and its sub-options (including decorations) require a license, as indicated by **Premium option**.
 - **Links to Enums and Sections**: References like `[ShapeType](#enums-shapetype)` and `[Gradients](#gradients)` assume corresponding documentation sections exist. Adjust these to match your actual document structure.
 - **Default Values**: Some defaults (e.g., `borderOptions.decorations.style`) are inferred from typical usage; verify with the library’s behavior if needed.
 
 ##### Example: Borders with Decorations
 
 ```javascript
-// Ensure license is activated first!
-// await QRCodeJs.license('YOUR-LICENSE-KEY');
 
 const qrCodeWithBorder = new QRCodeJs({
   data: 'QR Code with Fancy Border',
@@ -427,36 +422,19 @@ To use QRCode.js in a Node.js environment:
     ```
 
 ---
-<a id="license-management"></a>
-### License Management
 
-Premium features like Borders and Scan Validation require a valid license. To activate:
 
-- **Using a License Key**:
-  ```javascript
-  await QRCodeJs.license('YOUR-LICENSE-KEY');
-  ```
 
-- **Using a JWT Token**:
-  ```javascript
-  await QRCodeJs.token('YOUR-JWT');
-  ```
-
-For detailed instructions, refer to the [License Management Documentation](./license-management.md#introduction).
 
 ---
 
-## Scan Validation (Premium Feature, Requires License)
 
 Validate that a QR code is scannable and decodes correctly.
 
-**Note:** Requires a license. See [License Management](#license-management).
 
 **Usage:**
 
 ```javascript
-// Ensure license is activated
-// await QRCodeJs.license('YOUR-LICENSE-KEY');
 
 const qrCode = new QRCodeJs({
   data: 'Data to validate'
@@ -734,19 +712,13 @@ const metadataSchema = {
   Updates the QR code with new options.
 
 - **`validateScanning(): Promise<{ isValid: boolean; decodedText?: string; message?: string }>`**
-  Validates that the QR code is scannable (Premium feature).
+  Validates that the QR code is scannable.
 
 
 #### Static Methods
 
 These methods are called directly on the `QRCodeJs` class (e.g., `QRCodeJs.setTemplate(...)`).
 
-- **License Management:**
-  - `QRCodeJs.license(licenseKey: string): Promise<ValidationResult>`: Activates a license using a license key.
-  - `QRCodeJs.token(token: string | null): Promise<ValidationResult>`: Activates a license using a pre-fetched JWT token.
-  - `QRCodeJs.getLicenseDetails(): DecodedLicenseToken | null`: Retrieves current license information.
-  - `QRCodeJs.setLicenseUrl(url: string): void`: Sets the URL endpoint for license key validation.
-  - `QRCodeJs.configureLicenseFetcher(fetcher: (licenseKey: string) => Promise<string>): void`: Configures a custom function for fetching license tokens.
 
 - **Global Configuration Defaults:**
   - `QRCodeJs.setTemplate(templateNameOrOptions: string | RecursivePartial<Options> | null): typeof QRCodeJs`: Sets a global default template.
@@ -1047,14 +1019,11 @@ const qrCodeCircleStar = new QRCodeJs({
 });
 ```
 
-##### Example 3: Premium Border with Text and Inner/Outer Borders
+##### Example 3: Border with Text and Inner/Outer Borders
 
 ```javascript
-// Ensure license is activated
-// await QRCodeJs.license('YOUR-LICENSE-KEY');
 
-const qrCodePremium = new QRCodeJs({
-  data: 'Premium Features Showcase',
+const qrCode = new QRCodeJs({
   qrOptions: { errorCorrectionLevel: 'Q' },
   dotsOptions: { type: 'square', color: '#006400' }, // Dark green
   cornersSquareOptions: { type: 'square', color: '#006400' },
@@ -1070,7 +1039,7 @@ const qrCodePremium = new QRCodeJs({
     decorations: {
       bottom: {
         type: 'text',
-        value: 'LICENSED FEATURE',
+        value: 'SCAN ME',
         style: { fontColor: '#FFFFFF', fontSize: 18, fontWeight: 'bold' },
         curveDisabled: true // Straight text
       }

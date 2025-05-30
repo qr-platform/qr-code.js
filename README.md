@@ -15,7 +15,7 @@ QRCode.js is a professional JavaScript/TypeScript library for creating customize
 *   **Highly Customizable:** Control dot shapes, colors, sizes, corner styles, and background.
 *   **Gradients:** Apply linear or radial gradients to dots, corners, and backgrounds.
 *   **Image Embedding:** Embed logos or other images in the center, as an overlay, or as a background. Control image precedence with global `QRCodeJs.setImage()` or builder `useImage()`, both supporting an `override` option.
-*   **Borders (Free & Premium):** Add basic borders (with branding in free version) or advanced, customizable borders with text/images (Premium). Control text precedence with `QRCodeJs.setText()` or builder `useText()`, both supporting an `override` option.
+*   **Borders:** Add basic borders or advanced, customizable borders with text/images. Control text precedence with `QRCodeJs.setText()` or builder `useText()`, both supporting an `override` option.
 *   **Flexible Border Configuration:** Set global border defaults (`setBorder`/`setBorderId`) or use the builder pattern (`useBorder`/`useBorderId`) for instance-specific borders.
 *   **Templates & Styles**: Use predefined templates and styles, or create your own for consistent branding. Apply them globally with `QRCodeJs.setTemplate()` / `QRCodeJs.setStyle()` or per-instance with the builder's `useTemplate()` / `useStyle()`.
 *   **Comprehensive Configuration:**
@@ -26,7 +26,7 @@ QRCode.js is a professional JavaScript/TypeScript library for creating customize
 *   **TypeScript Support:** Fully typed for a better development experience.
 *   **Node.js Compatible:** Works seamlessly in server-side environments.
 *   **Responsive:** Option to make SVG output responsive to container size.
-*   **Scan Validation (Premium):** Verify the scannability of generated QR codes.
+*   **Scan Validation:** Verify the scannability of generated QR codes.
 
 ## 🚀 Installation
 
@@ -108,7 +108,7 @@ qrCode.serialize().then(svgString => {
 | `backgroundOptions`    | Background style (color, roundness, gradient).   | `{ color: '#f0f0f0', round: 0.2 }` |
 | `image`                | URL/Buffer/Blob of image to embed.               | `'logo.png'`         |
 | `imageOptions`         | Options for the embedded image (size, margin).   | `{ imageSize: 0.3, margin: 2 }` |
-| `borderOptions`        | **Premium.** Options for decorative borders.     | `{ hasBorder: true, thickness: 20, ... }` |
+| `borderOptions`        | Options for decorative borders.     | `{ hasBorder: true, thickness: 20, ... }` |
 | `SettingsOptions`      | Comprehensive object for `setSettings`/`useSettings`. | `{ templateId: '...', data: '...', ...}` |
 
 #### For a full list of options and detailed explanations of `SettingsOptions`, `setData`, `setOptions`, and their builder counterparts, see the [API Reference Guide](https://qr-platform.github.io/qr-code.js/docs/api-reference-guide.html) and [Usage Guide](https://qr-platform.github.io/qr-code.js/docs/usage-guide.html).
@@ -148,7 +148,6 @@ qrCode.serialize().then(svgString => {
 **Key Differences:**
 *   Import from `@qr-platform/qr-code.js/node`.
 *   Methods requiring a DOM like `append()` or `download()` are not available. Use `serialize()` to get the SVG string.
-*   License activation (if needed) persists only in memory per session. See [License Management](https://qr-platform.github.io/qr-code.js/docs/license-management.html) for details.
 *   **Peer Dependencies:** You must install the required `peerDependencies` for Node.js functionality. 
   
     Install automatically using npx:
@@ -160,59 +159,16 @@ qrCode.serialize().then(svgString => {
      npm i @xmldom/xmldom @undecaf/zbar-wasm image-size jose jimp @resvg/resvg-js file-type
      ````
 
-## 🔑 License Management (Free vs. Premium)
-
-QRCode.js offers both free and premium features.
-
-*   **Free Version:**
-    *   All core generation and styling features (dots, corners, background, gradients, image embedding).
-    *   Basic border styling (`borderOptions.hasBorder`, `thickness`, `color`, `radius`).
-    *   **Limitation:** Borders created in the free version will automatically display "QR-Platform" branding text in the bottom border. This cannot be removed or customized without a license.
-
-*   **Premium Version (Requires License):**
-    *   **Advanced Borders:** No branding, custom text/images on any side, inner/outer borders, full styling control.
-    *   **Scan Validation:** Access to the `validateScanning()` method.
-
-**Activating a License:**
-
-```typescript
-// Activate BEFORE creating QRCodeJs instances
-// Using a license key (fetches token from backend)
-await QRCodeJs.license('YOUR-LICENSE-KEY');
-
-// Or using a pre-fetched JWT token
-await QRCodeJs.token('YOUR-JWT-TOKEN');
-
-// Check license status
-const licenseDetails = QRCodeJs.getLicenseDetails();
-if (licenseDetails) {
-  console.log('License active. Plan:', licenseDetails.plan);
-}
-
-// Now create instances with premium features enabled
-const qrPremium = new QRCodeJs({
-  data: 'Premium QR Code',
-  borderOptions: {
-    hasBorder: true,
-    thickness: 30,
-    decorations: {
-      bottom: { enableText: true, value: 'My Custom Text' } // No branding!
-    }
-  }
-});
-```
-
-##### For full details on activation, persistence, configuration, and backend implementation, see the [License Management Guide](https://qr-platform.github.io/qr-code.js/docs/license-management.html).
-
 ## 📚 Documentation
 
-*   **[Full Documentation](./docs/documentation.md#start)**: The main guide covering all features, options, and concepts.
-*   **[API Reference](./docs/api-reference-guide.md#start)**: Detailed reference for all classes, methods, and types.
-*   **[Usage Guide](./docs/usage-guide.md#start)**: Practical examples and explanations for common use cases.
-*   **[Basic Examples](./docs/examples.md#start)**: Simple examples to get started quickly.
-*   **[Advanced Examples](./docs/advanced-examples.md#start)**: Demonstrations of complex configurations and feature combinations, including `setSettings` and `useSettings`.
-*   **[License Management](./docs/license-management.md#start)**: Information on activating and managing premium features.
+*   **[Full Documentation](./docs/documentation.md)**: The main guide covering all features, options, and concepts.
+*   **[API Reference](./docs/api-reference-guide.md)**: Detailed reference for all classes, methods, and types.
+*   **[Usage Guide](./docs/usage-guide.md)**: Practical examples and explanations for common use cases.
+*   **[Basic Examples](./docs/examples.md)**: Simple examples to get started quickly.
+*   **[Advanced Examples](./docs/advanced-examples.md)**: Demonstrations of complex configurations and feature combinations, including `setSettings` and `useSettings`.
 
-## 📜 License
+## 📜 License and Support
 
-This Software is licensed, not sold, by QR-Platform ("Licensor") for use only under the terms of this license. The source code for the Software is proprietary, confidential, and is **not** provided or licensed under this agreement. Licensor reserves all rights not expressly granted to User - see the [LICENSE](https://qr-platform.github.io/qr-code.js/LICENSE.md) file for details. Premium features require a separate commercial license from [QR-Platform](https://www.qr-platform.com).
+QRCode.js by QR-Platform is **free** for personal projects, open-source projects, or general non-commercial use. For commercial use, a license is required.
+
+See the full license at LICENSE.md for more information. For commercial licenses, including full source code and support, contact qr.platform.com@gmail.com.
