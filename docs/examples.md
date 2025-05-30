@@ -1,9 +1,9 @@
-# QRCode.js Examples
-<a id="start"></a>
-
-This document provides basic examples to help you get started with QRCode.js and understand its core features. For more complex scenarios, refer to the [Advanced Examples](./advanced-examples.md#start).
-
 ---
+title: 'Basic Examples'
+description: 'Basic examples to get started with QRCode.js'
+---
+
+This document provides basic examples to help you get started with QRCode.js and understand its core features. For more complex scenarios, refer to the [Advanced Examples](./advanced-examples).
 
 ## Basic Usage
 
@@ -24,14 +24,10 @@ const qrCode = new QRCodeJs(options);
 
 // Append the generated SVG to your document (in browser)
 const container = document.getElementById('qr-container');
-if (container && qrCode.svgElement) {
-  container.appendChild(qrCode.svgElement);
-} else if (!container) {
-  console.error("Container element not found.");
+if (container) {
+  qrCode.append(container);
 } else {
-  console.error("SVG element not generated.");
-  // Handle SVG generation for Node.js if needed (e.g., serialize to string)
-  // qrCode.serialize().then(svgString => { /* save string */ });
+  console.error("Container element not found.");
 }
 ```
 
@@ -216,6 +212,7 @@ qrChained.append(document.getElementById('template-style-chain-container'));
 Demonstrating fundamental settings like data, shape, and error correction.
 
 **Example 1: Minimal QR Code**
+```javascript
 
 const qrMinimal = new QRCodeJs({
   data: 'Just the data!'
@@ -224,6 +221,7 @@ qrMinimal.append(document.getElementById('minimal-qr-container'));
 ```
 
 **Example 2: Circle Shape**
+```javascript
 
 const qrCircle = new QRCodeJs({
   data: 'https://example.com/circle',
@@ -233,6 +231,7 @@ qrCircle.append(document.getElementById('circle-qr-container'));
 ```
 
 **Example 3: High Error Correction**
+```javascript
 
 const qrHighEC = new QRCodeJs({
   data: 'Important Data',
@@ -250,6 +249,7 @@ qrHighEC.append(document.getElementById('high-ec-qr-container'));
 Controlling margin, scale, and offsets.
 
 **Example 1: Adding Margin**
+```javascript
 
 const qrMargin = new QRCodeJs({
   data: 'With Margin',
@@ -259,6 +259,7 @@ qrMargin.append(document.getElementById('margin-qr-container'));
 ```
 
 **Example 2: Scaling Down**
+```javascript
 
 const qrScaled = new QRCodeJs({
   data: 'Scaled Down',
@@ -274,6 +275,7 @@ qrScaled.append(document.getElementById('scaled-qr-container'));
 Changing the appearance of the data dots.
 
 **Example 1: Rounded Dots**
+```javascript
 
 const qrRoundedDots = new QRCodeJs({
   data: 'Rounded Dots',
@@ -286,6 +288,7 @@ qrRoundedDots.append(document.getElementById('rounded-dots-container'));
 ```
 
 **Example 2: Dot Style Dots**
+```javascript
 
 const qrDotDots = new QRCodeJs({
   data: 'Dot Style Dots',
@@ -302,6 +305,7 @@ qrDotDots.append(document.getElementById('dot-dots-container'));
 ### Styling Options - Corner Squares
 
 Customizing the large corner squares.
+```javascript
 
 const qrStyledCorners = new QRCodeJs({
   data: 'Styled Corners',
@@ -319,6 +323,7 @@ qrStyledCorners.append(document.getElementById('styled-corners-container'));
 ### Styling Options - Corner Dots
 
 Customizing the small dots inside the corner squares.
+```javascript
 
 const qrStyledCornerDots = new QRCodeJs({
   data: 'Styled Corner Dots',
@@ -339,6 +344,7 @@ qrStyledCornerDots.append(document.getElementById('styled-corner-dots-container'
 Modifying the background color and shape.
 
 **Example 1: Colored Background**
+```javascript
 
 const qrColoredBg = new QRCodeJs({
   data: 'Colored Background',
@@ -351,6 +357,7 @@ qrColoredBg.append(document.getElementById('colored-bg-container'));
 ```
 
 **Example 2: Rounded Background**
+```javascript
 
 const qrRoundedBg = new QRCodeJs({
   data: 'Rounded Background',
@@ -421,6 +428,7 @@ qrGradientBg.append(document.getElementById('gradient-bg-container'));
 ### Image Embedding
 
 Adding a simple logo.
+```javascript
 
 const qrWithLogo = new QRCodeJs({
   data: 'QR with Logo',
@@ -679,6 +687,7 @@ qrUseSettings1.append(document.getElementById('builder-usesettings-container-1')
 ### Border Options (Free Version)
 
 Adding a basic border (includes "QR-Platform" branding).
+```javascript
 
 const qrFreeBorder = new QRCodeJs({
   data: 'Free Border Example',
@@ -693,6 +702,7 @@ const qrFreeBorder = new QRCodeJs({
 qrFreeBorder.append(document.getElementById('free-border-container'));
 ```
 **Example: Setting a Global Default Border**
+```javascript
 
 
 // Set a default border configuration by name
@@ -710,6 +720,7 @@ qrWithDefaultBorder.append(document.getElementById('default-border-container'));
 ```
 
 **Example: Using the Builder Pattern for Borders**
+```javascript
 
 
 // Start the builder with a border configuration by name
@@ -727,13 +738,9 @@ const qrBuiltWithBorderId = QRCodeJs.useBorderId('border-id-example') // Assumes
 qrBuiltWithBorderId.append(document.getElementById('builder-border-id-container'));
 ```
 
-**Example: Using Text in Borders with Override Option (Premium Feature)**
+**Example: Using Text in Borders with Override Option**
 
 ```javascript
-// Ensure license is activated first for premium border features
-// await QRCodeJs.license('YOUR-LICENSE-KEY');
-
-// Setting text that will override any text specified in borderOptions
 QRCodeJs.setText({
   topValue: 'TOP PRIORITY TEXT', 
   bottomValue: 'BOTTOM PRIORITY TEXT'
@@ -783,16 +790,125 @@ qrBuilderWithTextOverride.append(document.getElementById('builder-text-override-
 
 // Reset global text when done
 QRCodeJs.setText(null);
-```
-
-*For custom border text and advanced features like inner/outer borders, a [Premium License](./license-management.md#start) is required.*
+``
 
 ---
 
-### See Also
-- [QRCode.js Documentation](./documentation.md#start)
-- [Usage Guide](./usage-guide.md#start)
-- [API Reference Guide](./api-reference-guide.md#start)
-- [TypeScript Types and Definitions](./typescript-types-definitions.md#start)
-- [License Management](./license-management.md#start)
-- [Advanced Examples](./advanced-examples.md#start)
+## Metadata Management
+
+QRCode.js supports metadata for better organization and tracking:
+
+### Metadata Management with Builder Pattern
+
+The builder pattern supports metadata methods for assigning identifiers, names, descriptions, and custom metadata to QR code instances.
+
+**Example 1: Basic Metadata with Builder Pattern**
+```javascript
+// Create QR code with metadata using builder pattern
+const qrWithMetadata = QRCodeJs.useTemplate('modern')
+  .useId('customer-portal-qr-001')
+  .useName('Customer Portal Access')
+  .useDescription('QR code for customer portal login system')
+  .useMetadata({
+    campaign: 'winter2024',
+    department: 'marketing',
+    version: '1.2.0'
+  })
+  .options({
+    data: 'https://customer.company.com/portal'
+  });
+
+qrWithMetadata.append(document.getElementById('metadata-container'));
+
+// Access metadata after creation
+console.log('QR ID:', qrWithMetadata.getId()); // 'customer-portal-qr-001'
+console.log('QR Name:', qrWithMetadata.getName()); // 'Customer Portal Access'
+console.log('QR Description:', qrWithMetadata.getDescription()); // 'QR code for customer portal login system'
+console.log('QR Metadata:', qrWithMetadata.getMetadata());
+// { campaign: 'winter2024', department: 'marketing', version: '1.2.0' }
+```
+
+**Example 2: Static Metadata Methods**
+```javascript
+// Set metadata using static methods
+QRCodeJs
+  .setId('product-qr-123')
+  .setName('Product Landing Page')
+  .setDescription('QR code linking to product details page')
+  .setMetadata({
+    productId: '123',
+    category: 'electronics',
+    createdBy: 'marketing-team',
+    expires: '2024-12-31'
+  });
+
+const qrInstance = new QRCodeJs({
+  data: 'https://example.com/product-123'
+});
+
+qrInstance.append(document.getElementById('instance-metadata-container'));
+
+// Get current settings and options
+const currentSettings = qrInstance.getSettings();
+console.log('Current Settings:', currentSettings);
+```
+
+**Example 3: Chaining Metadata with Templates and Styles**
+```javascript
+// Complex builder chain with metadata
+const qrComplexChain = QRCodeJs.useTemplate('rounded')
+  .useStyle({ dotsOptions: { color: '#2E86AB' } })
+  .useId('campaign-qr-2024')
+  .useName('Summer Campaign QR')
+  .useDescription('Multi-channel marketing campaign QR code')
+  .useMetadata({
+    campaignId: 'summer-2024',
+    channels: ['email', 'social', 'print'],
+    budget: 5000,
+    targetAudience: 'millennials'
+  })
+  .useImage('https://company.com/assets/summer-logo.png')
+  .options({
+    data: 'https://campaign.company.com/summer-2024',
+    qrOptions: { errorCorrectionLevel: 'Q' }
+  });
+
+qrComplexChain.append(document.getElementById('complex-chain-container'));
+```
+
+**Example 4: Conditional Metadata Setting**
+```javascript
+// Function to create QR codes with conditional metadata
+function createTrackingQR(data, trackingInfo) {
+  const builder = QRCodeJs.useTemplate('tracking')
+    .useId(trackingInfo.id)
+    .useName(trackingInfo.name);
+
+  // Conditionally add description
+  if (trackingInfo.description) {
+    builder.useDescription(trackingInfo.description);
+  }
+
+  // Conditionally add metadata
+  if (trackingInfo.metadata) {
+    builder.useMetadata(trackingInfo.metadata);
+  }
+
+  return builder.options({ data });
+}
+
+// Usage
+const trackingQR = createTrackingQR('https://track.company.com/package/ABC123', {
+  id: 'package-tracker-ABC123',
+  name: 'Package Tracking QR',
+  description: 'Scan to track package ABC123',
+  metadata: {
+    packageId: 'ABC123',
+    carrier: 'FedEx',
+    priority: 'high',
+    estimatedDelivery: '2024-03-15'
+  }
+});
+
+trackingQR.append(document.getElementById('tracking-qr-container'));
+```

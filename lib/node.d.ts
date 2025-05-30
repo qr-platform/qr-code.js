@@ -1,5 +1,4 @@
 import { QRCodeJs as _QRCodeJs } from './core/qr-code-js';
-import { type ValidationResult } from './license/LicenseManagerNode';
 import { MethodOverrideOptions, RecursivePartial } from './types/helper';
 import { SettingsOptions } from './types/settings-options';
 import { StyleOptions } from './types/style-options';
@@ -7,7 +6,6 @@ import { TextOptions } from './types/text-options';
 import { Options, type BorderOptions } from './utils/options';
 import { ImageDataLike } from './utils/scan-validator-worker';
 import { ScanValidatorResponse } from './utils/scan-validators/abstract-scan-validator';
-import { type DecodedLicenseToken } from './utils/token-validator';
 export { ErrorCorrectionLevel, Mode, TypeNumber } from '~/lib/qrcode/QRCodeMinimal';
 export { type ExtensionFunction } from './core/qr-code-js';
 export { type RecursivePartial } from './types/helper';
@@ -17,19 +15,6 @@ export { CornerDotType, CornerSquareType, DotType, ImageMode, ShapeType, type Op
 export { ErrorCorrectionPercents } from './utils/qrcode';
 type QRCodeJsConstructor = new (options: RecursivePartial<Options>, internal?: boolean) => QRCodeJs;
 export declare class QRCodeJs extends _QRCodeJs {
-    static initializeIfNeeded(): Promise<boolean>;
-    static get hls(): boolean;
-    protected _hls(): boolean;
-    static getLicenseDetails(): DecodedLicenseToken | null;
-    static configureLicenseFetcher(fetcher: (licenseKey: string) => Promise<string>): void;
-    static token(token: string | null): Promise<ValidationResult>;
-    static license(licenseKey: string): Promise<ValidationResult>;
-    /**
-     * Sets the absolute URL used by the built-in license fetcher.
-     * MUST be called before using .license('key') if not providing a custom fetcher.
-     * @param url The absolute URL for fetching license tokens (e.g., https://api.example.com/get-token).
-     */
-    static setLicenseUrl(url: string): typeof QRCodeJs;
     static _xmldomSync: any;
     static _initPromise: Promise<void> | null;
     static initXmldom(): Promise<void>;
@@ -218,7 +203,5 @@ export declare class QRCodeBuilder {
     build(): QRCodeJs;
 }
 export declare class _ extends QRCodeJs {
-    protected _hls(): boolean;
-    static get hls(): boolean;
     constructor(options: RecursivePartial<Options>);
 }

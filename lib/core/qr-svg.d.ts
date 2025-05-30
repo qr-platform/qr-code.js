@@ -33,7 +33,6 @@ export declare class QRSVG {
     private imageTools;
     private finalWidth;
     private finalHeight;
-    private _hls;
     private _innerQrGroup;
     private _maskedQrGroup;
     _instanceId: number;

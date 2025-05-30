@@ -164,6 +164,5 @@ export declare class QRCodeJs {
      * Apply thresholding to enhance QR code contrast
      */
     private applyQRThreshold;
-    protected _hls(): boolean;
     private _logValidationWarnings;
 }

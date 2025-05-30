@@ -1,7 +1,9 @@
-## API Reference Guide for QRCode.js Library
-<a id="start"></a>
+---
+title: 'API Reference Guide'
+description: 'Complete API reference for QRCode.js library'
+---
 
-### Basic Usage
+### Basic QR Code Creation with QRCode.js
 
 ```typescript
 import { QRCodeJs, Options } from '@qr-platform/qr-code.js';
@@ -57,7 +59,7 @@ qrCode.append(document.getElementById('qr-container'));
 | `imageOptions.fill`    | `object`                               | `{...}`           | Fill `color` or `gradient`.                               |
 | `imageOptions.fill.color` | `string`                            | `'rgba(255,255,255,1)'`    | Fill color.
 | `imageOptions.fill.gradient` | `Gradient` object | `undefined`    | Apply a gradient fill to the QR code. See [Gradient options](#gradientoptions) for configuration details.
-| `borderOptions`        | `BorderOptions` object                 | `undefined`    | Options for adding decorative borders. Can be configured globally via `QRCodeJs.setBorder()`/`setBorderId()` or per-instance via the builder pattern (`useBorder()`/`useBorderId()`). See below for sub-options. **Premium option** |
+| `borderOptions`        | `BorderOptions` object                 | `undefined`    | Options for adding decorative borders. Can be configured globally via `QRCodeJs.setBorder()`/`setBorderId()` or per-instance via the builder pattern (`useBorder()`/`useBorderId()`). See below for sub-options. |
 
 ---
 
@@ -74,7 +76,6 @@ qrCode.append(document.getElementById('qr-container'));
   
 ### Additional Notes
 - The `data` option is the only required option for generating a QR code.
-- Premium features like `borderOptions` and `validateScanning` require a valid license to use.
 
 ---
 
@@ -114,22 +115,25 @@ qrCode.append(document.getElementById('qr-container'));
 | `useName`           | `name: string` | Assigns a name to the QR code instance within the builder chain. Returns `QRCodeBuilder`. |
 | `useDescription`    | `description: string` | Assigns a description to the QR code instance within the builder chain. Returns `QRCodeBuilder`. |
 | `useMetadata`       | `metadata: Record<string, any>` | Attaches custom metadata to the QR code instance within the builder chain. Returns `QRCodeBuilder`. |
-| `validateScanning`  | `validatorId?: string, debug?: boolean` | **(Premium method)** Validates that the QR code is scannable. Returns `Promise<ScanValidatorResponse>`. |
+| `validateScanning`  | `validatorId?: string, debug?: boolean` | Validates that the QR code is scannable. Returns `Promise<ScanValidatorResponse>`. |
 | `getTemplates`      |  | Returns helper functions for looking up predefined templates, styles, text, and borders. |
-| `initializeIfNeeded` |  | Initializes the license manager if needed (usually called automatically by `.license()`). Returns `Promise<boolean>`. |
-| `getLicenseDetails` |  | Returns decoded license information if a license is active. |
-| `license`           | `licenseKey: string` | Activates a license using a license key. Returns `Promise<ValidationResult>`. |
-| `token`             | `token: string | null` | Activates a license using a pre-fetched token. Returns `Promise<ValidationResult>`. |
-| `configureLicenseFetcher` | `fetcher: (licenseKey: string) => Promise<string>` | Sets a custom function for fetching license tokens. |
-| `setLicenseUrl`     | `url: string` | Sets the URL endpoint for license validation. Returns `typeof QRCodeJs`. |
-| `validateImageData` | `imageData: ImageDataLike` | **(Node.js)** Validate scannability from raw image data. Returns `Promise<ScanValidatorResponse>`. |
+| `validateImageData` | `imageData: ImageDataLike` | **(Node.js Static)** Validate scannability from raw image data. Returns `Promise<ScanValidatorResponse>`. |
+| `validateSvg`       | `svgSource: string` | **(Node.js Static)** Validate scannability from SVG string. Returns `Promise<ScanValidatorResponse>`. |
+| `setId`             | `id: string` | Sets an identifier for the QR code instance. Returns `this`. |
+| `getId`             | - | Gets the identifier for the QR code instance. Returns `string \| undefined`. |
+| `setName`           | `name: string` | Sets a name for the QR code instance. Returns `this`. |
+| `getName`           | - | Gets the name for the QR code instance. Returns `string \| undefined`. |
+| `setDescription`    | `description: string` | Sets a description for the QR code instance. Returns `this`. |
+| `getDescription`    | - | Gets the description for the QR code instance. Returns `string \| undefined`. |
+| `setMetadata`       | `metadata: Record<string, any>` | Sets custom metadata for the QR code instance. Returns `this`. |
+| `getMetadata`       | - | Gets the custom metadata for the QR code instance. Returns `Record<string, any> \| undefined`. |
+| `getSettings`       | - | Gets the current settings and options for the QR code instance. Returns `SettingsOptions \| undefined`. |
 
 ---
 
 <a id="borderoptions"></a>
 ### borderOptions Options 
 
-The `borderOptions` object is a premium feature that allows you to add decorative borders around the QR code. This options can be used to customize the borders, including the color, thickness, text and corner rounding. If used without a license, the library will automatically add "QR-Platform" branding text in the bottom border.
 
 | Sub-option            | Type                                   | Default        | Description                                                                 |
 | :-------------------- | :------------------------------------- | :------------- | :-------------------------------------------------------------------------- |
@@ -322,13 +326,9 @@ const qr3 = QRCodeJs.useTemplate('basic')
 | `useData`     | `data: string, overrideOpts?: MethodOverrideOptions`                           | Applies a data string to the current builder configuration. If `overrideOpts.override` is `true`, this data will take precedence over data provided in the final `.options()` call. Returns `this`. |
 | `useOptions`  | `options: RecursivePartial<Options>, overrideOpts?: MethodOverrideOptions`     | Applies a partial options object to the current builder configuration. If `overrideOpts.override` is `true`, these options take higher precedence over options provided in the final `.options()` call for the properties they cover. Returns `this`. |
 | `useSettings` | `settings: SettingsOptions`                                                | Applies a comprehensive `SettingsOptions` object as a new baseline for the builder chain. This will **reset** any configurations previously applied to *that builder instance* via other `use` methods. Subsequent builder methods modify this new baseline. Returns `this`. |
+| `useId`       | `id: string`                                                               | Assigns an identifier to the QR code instance being built. Returns `this`. |
+| `useName`     | `name: string`                                                             | Assigns a name to the QR code instance being built. Returns `this`. |
+| `useDescription` | `description: string`                                                   | Assigns a description to the QR code instance being built. Returns `this`. |
+| `useMetadata` | `metadata: Record<string, any>`                                            | Attaches custom metadata to the QR code instance being built. Returns `this`. |
 | `options`     | `options: RecursivePartial<Options>`                                       | Merges the provided `Options` into the current configuration and creates and returns the final `QRCodeJs` instance.    |
 | `build`       | -                                                                          | Creates and returns the final `QRCodeJs` instance based on the accumulated configuration.                  |
-### See Also
-- [QRCode.js Documentation](./documentation.md#start)
-- [Quick References Guide](./quick-references-guide.md#start)
-- [API Reference Guide](./api-reference-guide.md#start)
-- [TypeScript Types and Definitions](./typescript-types-definitions.md#start)
-- [License Management](./license-management.md#start)
-- [Basic Examples](./examples.md#start)
-- [Advanced Examples](./advanced-examples.md#start)

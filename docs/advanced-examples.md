@@ -1,5 +1,7 @@
-# Advanced Examples for QR-Code.js
-<a id="start"></a>
+---
+title: 'Advanced Examples for QR-Code.js'
+description: 'Advanced examples demonstrating the customization capabilities of QRCode.js'
+---
 
 This document provides advanced examples demonstrating the customization capabilities of QRCode.js. Each section focuses on specific options to help you create unique and visually appealing QR codes.
 
@@ -13,7 +15,8 @@ These examples focus on the fundamental QR code generation settings.
 
 **Example 1: High Error Correction & Specific Type Number**
 
-```typescriptconst qrCoreHighEC = new QRCodeJs({
+```typescript
+const qrCoreHighEC = new QRCodeJs({
   data: 'https://example.com/high-ec',
   qrOptions: {
     typeNumber: 10, // Larger QR code version
@@ -28,7 +31,8 @@ qrCoreHighEC.append(document.getElementById('core-high-ec-container'));
 
 **Example 2: Auto Type Number & Medium Error Correction**
 
-```typescriptconst qrCoreAutoEC = new QRCodeJs({
+```typescript
+const qrCoreAutoEC = new QRCodeJs({
   data: 'https://example.com/auto-ec-medium',
   qrOptions: {
     typeNumber: 0, // Auto-detect size
@@ -49,7 +53,8 @@ Demonstrates how to control the positioning and scaling within the container or 
 
 **Example 1: Scaled Down with Offsets**
 
-```typescriptconst qrLayoutScaledOffset = new QRCodeJs({
+```typescript
+const qrLayoutScaledOffset = new QRCodeJs({
   data: 'https://example.com/layout-scaled-offset',
   scale: 0.75, // QR code occupies 75% of the space
   offset: -15, // Moves QR code 15px up relative to center
@@ -67,7 +72,8 @@ qrLayoutScaledOffset.append(document.getElementById('layout-scaled-offset-contai
 
 **Example 2: Responsive QR Code**
 
-```typescriptconst qrLayoutResponsive = new QRCodeJs({
+```typescript
+const qrLayoutResponsive = new QRCodeJs({
   data: 'https://example.com/layout-responsive',
   isResponsive: true, // SVG will resize with container
   margin: 10, // Add a 10px quiet zone
@@ -92,7 +98,8 @@ Showcases different shapes and colors for the main data dots.
 
 **Example 1: Classy Rounded Dots**
 
-```typescriptconst qrDotsClassy = new QRCodeJs({
+```typescript
+const qrDotsClassy = new QRCodeJs({
   data: 'https://example.com/dots-classy',
   dotsOptions: {
     type: 'classyRounded',
@@ -105,7 +112,8 @@ qrDotsClassy.append(document.getElementById('dots-classy-container'));
 
 **Example 2: Star Dots**
 
-```typescriptconst qrDotsStar = new QRCodeJs({
+```typescript
+const qrDotsStar = new QRCodeJs({
   data: 'https://example.com/dots-star',
   dotsOptions: {
     type: 'star',
@@ -118,7 +126,8 @@ qrDotsStar.append(document.getElementById('dots-star-container'));
 
 **Example 3: Diamond Dots**
 
-```typescriptconst qrDotsDiamond = new QRCodeJs({
+```typescript
+const qrDotsDiamond = new QRCodeJs({
   data: 'https://example.com/dots-diamond',
   dotsOptions: {
     type: 'diamond',
@@ -137,7 +146,8 @@ Customizes the three large corner squares.
 
 **Example 1: Outpoint Corner Squares**
 
-```typescriptconst qrCornerSquareOutpoint = new QRCodeJs({
+```typescript
+const qrCornerSquareOutpoint = new QRCodeJs({
   data: 'https://example.com/corner-square-outpoint',
   dotsOptions: { color: '#444' },
   cornersSquareOptions: {
@@ -150,7 +160,8 @@ qrCornerSquareOutpoint.append(document.getElementById('corner-square-outpoint-co
 
 **Example 2: Rounded Corner Squares**
 
-```typescriptconst qrCornerSquareRounded = new QRCodeJs({
+```typescript
+const qrCornerSquareRounded = new QRCodeJs({
   data: 'https://example.com/corner-square-rounded',
   dotsOptions: { type: 'dot', color: '#7B1FA2' }, // Purple dots
   cornersSquareOptions: {
@@ -169,7 +180,8 @@ Customizes the smaller dots within the corner squares.
 
 **Example 1: Heart Corner Dots**
 
-```typescriptconst qrCornerDotHeart = new QRCodeJs({
+```typescript
+const qrCornerDotHeart = new QRCodeJs({
   data: 'https://example.com/corner-dot-heart',
   dotsOptions: { color: '#555' },
   cornersSquareOptions: { type: 'square', color: '#E64A19' }, // Orange square corners
@@ -183,7 +195,8 @@ qrCornerDotHeart.append(document.getElementById('corner-dot-heart-container'));
 
 **Example 2: Square Corner Dots with Different Color**
 
-```typescriptconst qrCornerDotSquare = new QRCodeJs({
+```typescript
+const qrCornerDotSquare = new QRCodeJs({
   data: 'https://example.com/corner-dot-square',
   dotsOptions: { type: 'rounded', color: '#004D40' }, // Dark Teal dots
   cornersSquareOptions: { type: 'rounded', color: '#FBC02D' }, // Yellow rounded corners
@@ -203,7 +216,8 @@ Applies color, rounding, and gradients to the background.
 
 **Example 1: Colored and Rounded Background**
 
-```typescriptconst qrBackgroundStyled = new QRCodeJs({
+```typescript
+const qrBackgroundStyled = new QRCodeJs({
   data: 'https://example.com/background-styled',
   dotsOptions: { color: '#FFFFFF' }, // White dots for contrast
   backgroundOptions: {
@@ -216,7 +230,8 @@ qrBackgroundStyled.append(document.getElementById('background-styled-container')
 
 **Example 2: Background with Subtle Radial Gradient**
 
-```typescriptconst qrBackgroundGradient = new QRCodeJs({
+```typescript
+const qrBackgroundGradient = new QRCodeJs({
   data: 'https://example.com/background-gradient',
   dotsOptions: { color: '#333' },
   backgroundOptions: {
@@ -241,7 +256,8 @@ Applies linear and radial gradients to various elements.
 
 **Example 1: Linear Gradient on Dots**
 
-```typescriptconst qrGradientDotsLinear = new QRCodeJs({
+```typescript
+const qrGradientDotsLinear = new QRCodeJs({
   data: 'https://example.com/gradient-dots-linear',
   dotsOptions: {
     type: 'rounded',
@@ -261,7 +277,8 @@ qrGradientDotsLinear.append(document.getElementById('gradient-dots-linear-contai
 
 **Example 2: Radial Gradient on Corner Squares & Linear on Dots**
 
-```typescriptconst qrGradientMultiple = new QRCodeJs({
+```typescript
+const qrGradientMultiple = new QRCodeJs({
   data: 'https://example.com/gradient-multiple',
   dotsOptions: {
     type: 'square',
@@ -307,7 +324,8 @@ Embeds logos or images within the QR code.
 
 **Example 1: Centered Logo with Fill**
 
-```typescriptconst qrImageCenter = new QRCodeJs({
+```typescript
+const qrImageCenter = new QRCodeJs({
   data: 'https://example.com/image-center',
   qrOptions: { errorCorrectionLevel: 'Q' }, // Higher EC recommended
   image: 'https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png', // Example: Instagram logo
@@ -325,7 +343,8 @@ qrImageCenter.append(document.getElementById('image-center-container'));
 
 **Example 2: Image as Background**
 
-```typescriptconst qrImageBackground = new QRCodeJs({
+```typescript
+const qrImageBackground = new QRCodeJs({
   data: 'https://example.com/image-background',
   qrOptions: { errorCorrectionLevel: 'M' },
   image: 'https://source.unsplash.com/random/300x300?nature,water', // Example: Random nature image
@@ -348,6 +367,7 @@ qrImageBackground.append(document.getElementById('image-background-container'));
 **Example 3: Using the Override Option with Images**
 
 ```typescript
+
 // Setting a global image with override that will take precedence
 // even over images specified in instance options
 QRCodeJs.setImage('https://example.com/global-priority-logo.png', { override: true });
@@ -384,6 +404,7 @@ Demonstrates using `QRCodeJs.setSettings()` for establishing global presets and 
 `QRCodeJs.setSettings()` acts as a macro, calling other static setters like `setData()`, `setImage()`, `setTemplate()`, `setStyle()`, `setOptions()`, etc., based on the provided `SettingsOptions`. It overrides/resets previous static configurations for the aspects it covers.
 
 ```typescript
+
 // Define a comprehensive global preset using SettingsOptions
 const companyGlobalPreset: SettingsOptions = {
   name: 'CompanyStandardGlobalQR',
@@ -430,6 +451,7 @@ qrOverrideGlobalData.append(document.getElementById('global-settings-override-da
 `QRCodeBuilder.useSettings()` resets any configurations previously applied to *that builder instance* and establishes the provided `SettingsOptions` as the new baseline.
 
 ```typescript
+
 const eventSpecificBuilderConfig: SettingsOptions = {
   name: 'TechConferenceBuilderQR',
   data: 'https://techconf.example/main-schedule', // Baseline data for this builder
@@ -472,6 +494,7 @@ qrEventSpecialBuilder.append(document.getElementById('builder-usesettings-contai
 The `overrideOpts: { override: true }` parameter makes static settings "sticky", meaning they are harder to override by instance options or non-overriding builder methods.
 
 ```typescript
+
 // Set data with override:true; it will take precedence over instance data
 QRCodeJs.setData('https://permanent-global-link.com', { override: true });
 
@@ -496,15 +519,13 @@ QRCodeJs.setOptions(null); // This clears the override as well
 
 ---
 
-### Border Options and Decorations (Premium Feature)
+### Border Options and Decorations
 
-Uses premium border features for advanced styling and text. Requires a license.
 
 **Example 1: Using Text Override Option**
 
 ```typescript
-// Ensure license is activated first
-// await QRCodeJs.license('YOUR-LICENSE-KEY');
+
 
 // Setting global text with override that will take precedence 
 // even over text specified in instance options
@@ -571,8 +592,7 @@ QRCodeJs.setText(null);
 
 **Example 2: Elaborate Border with Multiple Decorations**
 
-```typescript// Ensure license is activated first
-// await QRCodeJs.license('YOUR-LICENSE-KEY');
+```typescript
 
 const qrBorderElaborate = new QRCodeJs({
   data: 'https://example.com/border-elaborate',
@@ -637,6 +657,7 @@ qrBorderElaborate.append(document.getElementById('border-elaborate-container'));
 Demonstrates using the fluent builder pattern (`useTemplate`, `useStyle`) to combine base settings with specific styles for a complex result.
 
 ```typescript
+
 // Define a base template (could be predefined like 'dots' or 'rounded')
 const baseTemplate = {
   qrOptions: { errorCorrectionLevel: 'Q' },
@@ -782,13 +803,9 @@ qrBuilderCombined.append(document.getElementById('builder-combined-container'));
 ```
 ---
 
-### Scan Validation (Premium Feature)
+### Scan Validation
 
-Validate if the generated QR code is scannable using the built-in validator. This requires a premium license.
-
-```typescript// Ensure license is activated first
-// await QRCodeJs.license('YOUR-LICENSE-KEY');
-
+```typescript
 const qrCodeToValidate = new QRCodeJs({
   data: 'Complex data string that might be hard to scan due to density or styling choices',
   qrOptions: { errorCorrectionLevel: 'L' }, // Lower error correction can make scanning harder
@@ -847,9 +864,257 @@ createAndValidate();
 
 ---
 
-### See Also
-- [QRCode.js Documentation](./documentation.md#start)
-- [API Reference Guide](./api-reference-guide.md#start)
-- [TypeScript Types and Definitions](./typescript-types-definitions.md#start)
-- [License Management](./license-management.md#start)
-- [Basic Examples](./examples.md#start)
+### Node.js Static Validation Methods
+
+QRCode.js provides static validation methods specifically for Node.js environments to validate existing QR codes from image data or SVG strings.
+
+**Example 1: Validating Image Data (Node.js Only)**
+
+```typescript
+// Node.js import
+import { QRCodeJs } from '@qr-platform/qr-code.js/node';
+import fs from 'fs';
+
+
+async function validateQRFromImage() {
+  try {
+    // Read image file as buffer
+    const imageBuffer = fs.readFileSync('path/to/qr-code-image.png');
+    
+    // Validate the QR code from image data
+    const result = await QRCodeJs.validateImageData(imageBuffer);
+    
+    if (result.isValid) {
+      console.log(`QR code is valid! Decoded text: ${result.data}`);
+      console.log(`Validator used: ${result.validator}`);
+    } else {
+      console.warn(`QR code validation failed: ${result.message}`);
+    }
+  } catch (error) {
+    console.error('Error validating image:', error);
+  }
+}
+
+validateQRFromImage();
+```
+
+**Example 2: Validating SVG Strings (Node.js Only)**
+
+```typescript
+// Node.js import
+import { QRCodeJs } from '@qr-platform/qr-code.js/node';
+
+
+async function validateQRFromSVG() {
+  try {
+    // SVG string from file or generated QR code
+    const svgString = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+        <!-- SVG QR code content here -->
+      </svg>
+    `;
+    
+    // Or read from file
+    // const svgString = fs.readFileSync('path/to/qr-code.svg', 'utf8');
+    
+    // Validate the QR code from SVG
+    const result = await QRCodeJs.validateSvg(svgString);
+    
+    if (result.isValid) {
+      console.log(`SVG QR code is valid! Decoded text: ${result.data}`);
+      console.log(`Validator used: ${result.validator}`);
+    } else {
+      console.warn(`SVG QR code validation failed: ${result.message}`);
+    }
+  } catch (error) {
+    console.error('Error validating SVG:', error);
+  }
+}
+
+validateQRFromSVG();
+```
+
+**Example 3: Batch Validation of Multiple QR Codes**
+
+```typescript
+import { QRCodeJs } from '@qr-platform/qr-code.js/node';
+import fs from 'fs';
+import path from 'path';
+
+
+async function batchValidateQRCodes() {
+  const qrDirectory = 'path/to/qr-codes/';
+  const results = [];
+  
+  try {
+    const files = fs.readdirSync(qrDirectory);
+    
+    for (const file of files) {
+      const filePath = path.join(qrDirectory, file);
+      const ext = path.extname(file).toLowerCase();
+      
+      let validationResult;
+      
+      if (['.png', '.jpg', '.jpeg', '.gif', '.bmp'].includes(ext)) {
+        // Validate image files
+        const imageBuffer = fs.readFileSync(filePath);
+        validationResult = await QRCodeJs.validateImageData(imageBuffer);
+      } else if (ext === '.svg') {
+        // Validate SVG files
+        const svgString = fs.readFileSync(filePath, 'utf8');
+        validationResult = await QRCodeJs.validateSvg(svgString);
+      } else {
+        console.log(`Skipping unsupported file: ${file}`);
+        continue;
+      }
+      
+      results.push({
+        file,
+        isValid: validationResult.isValid,
+        data: validationResult.data,
+        message: validationResult.message,
+        validator: validationResult.validator
+      });
+      
+      console.log(`${file}: ${validationResult.isValid ? 'VALID' : 'INVALID'} - ${validationResult.data || validationResult.message}`);
+    }
+    
+    // Summary
+    const validCount = results.filter(r => r.isValid).length;
+    const totalCount = results.length;
+    console.log(`\nBatch validation complete: ${validCount}/${totalCount} QR codes are valid`);
+    
+    return results;
+  } catch (error) {
+    console.error('Error during batch validation:', error);
+    return [];
+  }
+}
+
+batchValidateQRCodes();
+```
+
+**Example 4: Validation with Error Handling and Retry Logic**
+
+```typescript
+import { QRCodeJs } from '@qr-platform/qr-code.js/node';
+
+async function validateWithRetry(imageData, maxRetries = 3) {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      console.log(`Validation attempt ${attempt}/${maxRetries}`);
+      
+      const result = await QRCodeJs.validateImageData(imageData);
+      
+      if (result.isValid) {
+        console.log(`✅ Validation successful on attempt ${attempt}`);
+        return result;
+      } else {
+        console.warn(`❌ Validation failed on attempt ${attempt}: ${result.message}`);
+        
+        if (attempt === maxRetries) {
+          throw new Error(`Validation failed after ${maxRetries} attempts: ${result.message}`);
+        }
+        
+        // Wait before retrying
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+    } catch (error) {
+      console.error(`Error on attempt ${attempt}:`, error.message);
+      
+      if (attempt === maxRetries) {
+        throw error;
+      }
+      
+      // Wait before retrying
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+  }
+}
+
+// Usage
+async function validateQRWithRetry() {
+  try {
+    const imageBuffer = fs.readFileSync('path/to/problematic-qr.png');
+    const result = await validateWithRetry(imageBuffer);
+    console.log('Final result:', result);
+  } catch (error) {
+    console.error('All validation attempts failed:', error.message);
+  }
+}
+
+validateQRWithRetry();
+```
+
+**Example 5: Integration with Express.js API**
+
+```typescript
+import express from 'express';
+import multer from 'multer';
+import { QRCodeJs } from '@qr-platform/qr-code.js/node';
+
+const app = express();
+const upload = multer({ memory: true });
+
+
+// API endpoint for QR code validation
+app.post('/api/validate-qr', upload.single('qrImage'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No image file provided' });
+    }
+    
+    const imageBuffer = req.file.buffer;
+    const result = await QRCodeJs.validateImageData(imageBuffer);
+    
+    res.json({
+      success: true,
+      validation: {
+        isValid: result.isValid,
+        data: result.data,
+        message: result.message,
+        validator: result.validator
+      }
+    });
+  } catch (error) {
+    console.error('Validation API error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error during validation'
+    });
+  }
+});
+
+// API endpoint for SVG validation
+app.post('/api/validate-qr-svg', express.text({ type: 'image/svg+xml' }), async (req, res) => {
+  try {
+    const svgString = req.body;
+    
+    if (!svgString) {
+      return res.status(400).json({ error: 'No SVG content provided' });
+    }
+    
+    const result = await QRCodeJs.validateSvg(svgString);
+    
+    res.json({
+      success: true,
+      validation: {
+        isValid: result.isValid,
+        data: result.data,
+        message: result.message,
+        validator: result.validator
+      }
+    });
+  } catch (error) {
+    console.error('SVG validation API error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error during SVG validation'
+    });
+  }
+});
+
+app.listen(3000, () => {
+  console.log('QR validation API server running on port 3000');
+});
+```
