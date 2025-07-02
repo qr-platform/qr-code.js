@@ -165,7 +165,8 @@ qrCode.serialize().then(svgString => {
 *   **[API Reference](./docs/api-reference-guide.md)**: Detailed reference for all classes, methods, and types.
 *   **[Usage Guide](./docs/usage-guide.md)**: Practical examples and explanations for common use cases.
 *   **[Basic Examples](./docs/examples.md)**: Simple examples to get started quickly.
-*   **[Advanced Examples](./docs/advanced-examples.md)**: Demonstrations of complex configurations and feature combinations, including `setSettings` and `useSettings`.
+*   **[Advanced Examples](./docs/advanced-examples.md)**: Demonstrations of complex configurations and feature combinations.
+*   **[Commercial Use](./docs/commercial-use.md)**: Information for commercial use of QRCode.js library.
 
 ## 📜 License and Support
 

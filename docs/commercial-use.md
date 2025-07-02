@@ -1,6 +1,7 @@
-# Using QRCode.js in Commercial Applications
-
-This page explains how you can use the QRCode.js library in your commercial projects, based on our official license terms. Our goal is to make it clear what's possible and what's required when you're building applications intended to generate revenue or that are not open-source.
+---
+title: Using QRCode.js in Commercial Applications
+description: This page explains how you can use the QRCode.js library in your commercial projects, based on our official license terms. Our goal is to make it clear what's possible and what's required when you're building applications intended to generate revenue or that are not open-source.
+---
 
 ## What is Considered Commercial Use?
 

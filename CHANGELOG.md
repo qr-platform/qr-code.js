@@ -1,5 +1,11 @@
 # @qr-platform/qr-code-js
 
+## 0.20.1
+
+### Patch Changes
+
+- merge of undefined values
+
 ## 0.11.3
 
 ### Patch Changes

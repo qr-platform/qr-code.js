@@ -1,5 +1,5 @@
 ---
-title: 'QRCode.js Comprehensive Documentation'
+title: 'QRCode.js Documentation'
 description: 'Comprehensive documentation for QRCode.js, including installation, usage, and customization options, with a focus on styling, borders, and advanced features.'
 ---
 
@@ -8,7 +8,7 @@ description: 'Comprehensive documentation for QRCode.js, including installation,
 QRCode.js is a professional JavaScript/TypeScript library for creating customized QR codes, offering a blend of simplicity and sophistication. With versatile styling options—dot shapes, colors, gradients, embedded images, borders, and text—it enables you to design unique, visually appealing QR codes that work flawlessly with standard scanners. QRCode.js is part of QR-Platform: All-in-One QR Codes Management Solution. 
 
 
-This documentation provides a comprehensive overview of all available options to help you create the perfect QR code for your needs.
+This documentation provides an overview of all available options to help you create the perfect QR code for your needs.
 
 ## Installation
 
