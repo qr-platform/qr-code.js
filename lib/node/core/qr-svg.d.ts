@@ -7,6 +7,7 @@ type QRSVGOptions = Pick<Options, 'width' | 'height' | 'isResponsive' | 'margin'
     height: number;
     userWidth?: number | string;
     userHeight?: number | string;
+    zoomFactor?: number;
     hls: boolean;
     errorCorrectionPercent: number;
     bordersMain: {

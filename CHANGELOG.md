@@ -1,5 +1,11 @@
 # @qr-platform/qr-code-js
 
+## 0.20.3
+
+### Patch Changes
+
+- c55e513: chore: added zoomFactor option to scale main svg element
+
 ## 0.20.2
 
 ### Patch Changes

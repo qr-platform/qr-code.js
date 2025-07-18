@@ -131,6 +131,7 @@ export interface Options {
      * @default false
      */
     isResponsive?: boolean;
+    zoomFactor?: number;
     margin?: number;
     verticalOffset?: number;
     horizontalOffset?: number;
