@@ -67,15 +67,78 @@ qrCode.append(document.getElementById('qr-container'));
   margin: 20
   ```
 
+### `width` and `height`
+
+- **Purpose**: Allows you to specify custom dimensions for the QR code SVG. When `isResponsive` is `false`, these values override the auto-calculated dimensions. When `isResponsive` is `true`, these values are ignored in favor of responsive sizing.
+- **Type**: `number | string` (optional)
+- **Default**: Auto-calculated based on QR code content and options
+- **Supported formats**: 
+  - Numbers (pixels): `300`, `500`
+  - CSS units: `'300px'`, `'20rem'`, `'50vh'`, `'100%'`
+- **Examples**:
+  ```typescript
+  // Fixed pixel dimensions
+  width: 300,
+  height: 300
+
+  // CSS units
+  width: '20rem',
+  height: '20rem'
+
+  // Mixed units
+  width: 400,
+  height: '30vh'
+  ```
+
 ### `isResponsive`
 
-- **Purpose**: Allows the QR code SVG to resize dynamically based on its container size. If `false`, fixed `width` and `height` attributes are set on the SVG.
+- **Purpose**: Controls whether the QR code SVG should be responsive to its container. When `true`, the SVG uses 100% width/height and ignores any specified `width`/`height` values. When `false`, the SVG uses specified `width`/`height` values or auto-calculated dimensions.
 - **Type**: `boolean`
 - **Default**: `false`
-- **Example**:
+- **Interaction with width/height**:
+  - When `true`: SVG becomes fluid (100% width/height), any `width`/`height` values are ignored
+  - When `false`: SVG uses `width`/`height` values if provided, otherwise uses auto-calculated dimensions
+- **Examples**:
   ```typescript
-  isResponsive: true
+  // Responsive QR code (ignores width/height)
+  isResponsive: true,
+  width: 500,  // This will be ignored
+  height: 500  // This will be ignored
+
+  // Fixed size QR code (uses width/height)
+  isResponsive: false, // or omit (default)
+  width: 300,
+  height: 300
   ```
+
+### Dimension Control Use Cases
+
+**1. Fixed-Size QR Codes (Print, Downloads):**
+```typescript
+const qrCode = new QRCodeJs({
+  data: 'Fixed size for printing',
+  width: 300,
+  height: 300,
+  isResponsive: false // Default behavior
+});
+```
+
+**2. Responsive Web QR Codes:**
+```typescript
+const qrCode = new QRCodeJs({
+  data: 'Responsive for web',
+  isResponsive: true // Ignores width/height, uses container size
+});
+```
+
+**3. CSS Unit Dimensions:**
+```typescript
+const qrCode = new QRCodeJs({
+  data: 'Using CSS units',
+  width: '20rem',
+  height: '20rem'
+});
+```
 
 ### `qrOptions`
 

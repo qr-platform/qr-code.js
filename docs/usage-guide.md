@@ -70,14 +70,16 @@ const qrCode = new QRCodeJs({
 
 These options control the positioning, scaling, and responsiveness of the QR code within its container or border.
 
-| Option             | Type     | Default | Description                                                                 |
-| :----------------- | :------- | :------ | :-------------------------------------------------------------------------- |
-| `margin`           | `number` | `0`     | The quiet zone (empty space) around the QR code in pixels.                  |
-| `isResponsive`     | `boolean`| `false` | When `true`, the QR code SVG resizes dynamically to fill the width or height of the parent container, with no internal size dimensions applied. |
-| `scale`            | `number` | `1`     | Scales the QR code size relative to its container or border (0 to 1.5).     |
-| `offset`           | `number` | `0`     | Applies a vertical offset (positive moves down, negative moves up) relative to the center. |
-| `verticalOffset`   | `number` | `0`     | Applies an absolute vertical offset in pixels.                              |
-| `horizontalOffset` | `number` | `0`     | Applies an absolute horizontal offset in pixels.                            |
+| Option             | Type               | Default         | Description                                                                 |
+| :----------------- | :----------------- | :-------------- | :-------------------------------------------------------------------------- |
+| `width`            | `number \| string` | Auto-calculated | QR code width in pixels or CSS units. When `isResponsive` is false, overrides auto-calculated width. When `isResponsive` is true, this value is ignored. |
+| `height`           | `number \| string` | Auto-calculated | QR code height in pixels or CSS units. When `isResponsive` is false, overrides auto-calculated height. When `isResponsive` is true, this value is ignored. |
+| `margin`           | `number`           | `0`             | The quiet zone (empty space) around the QR code in pixels.                  |
+| `isResponsive`     | `boolean`          | `false`         | Controls whether the QR code SVG should be responsive to its container. When true, SVG uses 100% width/height, ignoring any specified width/height values. When false, SVG uses specified width/height values or auto-calculated dimensions. |
+| `scale`            | `number`           | `1`             | Scales the QR code size relative to its container or border (0 to 1.5).     |
+| `offset`           | `number`           | `0`             | Applies a vertical offset (positive moves down, negative moves up) relative to the center. |
+| `verticalOffset`   | `number`           | `0`             | Applies an absolute vertical offset in pixels.                              |
+| `horizontalOffset` | `number`           | `0`             | Applies an absolute horizontal offset in pixels.                            |
 
 ##### Example: Layout Options
 
@@ -90,6 +92,39 @@ const qrCode = new QRCodeJs({
   horizontalOffset: -5  // Absolute 5px left
 });
 ```
+
+##### Dimension Control Examples
+
+**Fixed Size QR Code:**
+```javascript
+const qrCode = new QRCodeJs({
+  data: 'Fixed size QR code',
+  width: 300,           // Fixed 300px width
+  height: 300,          // Fixed 300px height
+  isResponsive: false   // Use fixed dimensions (default)
+});
+```
+
+**Responsive QR Code:**
+```javascript
+const qrCode = new QRCodeJs({
+  data: 'Responsive QR code',
+  width: 500,           // This will be ignored
+  height: 500,          // This will be ignored
+  isResponsive: true    // SVG will use 100% width/height
+});
+```
+
+**CSS Units:**
+```javascript
+const qrCode = new QRCodeJs({
+  data: 'QR code with CSS units',
+  width: '20rem',       // Using rem units
+  height: '20rem',      // Using rem units
+  isResponsive: false
+});
+```
+
 ---
 
 ### Styling Options

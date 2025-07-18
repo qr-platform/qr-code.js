@@ -5,6 +5,8 @@ import { BorderOptions, Options } from '../utils/options';
 type QRSVGOptions = Pick<Options, 'width' | 'height' | 'isResponsive' | 'margin' | 'document' | 'imageTools' | 'image' | 'imageOptions' | 'dotsOptions' | 'cornersDotOptions' | 'cornersSquareOptions' | 'backgroundOptions' | 'borderOptions' | 'shape' | 'scale' | 'verticalOffset' | 'horizontalOffset' | 'offset'> & {
     width: number;
     height: number;
+    userWidth?: number | string;
+    userHeight?: number | string;
     hls: boolean;
     errorCorrectionPercent: number;
     bordersMain: {

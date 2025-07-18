@@ -63,6 +63,8 @@ import { QRCodeJs, Options } from '@qr-platform/qr-code.js';
 // 1. Define options (only 'data' is required)
 const options: Options = {
   data: 'https://example.com',
+  width: 300,       // Fixed 300px width
+  height: 300,      // Fixed 300px height
   dotsOptions: {
     color: '#007bff', // Blue dots
     type: 'rounded'   // Use rounded dots
@@ -98,7 +100,10 @@ qrCode.serialize().then(svgString => {
 | :--------------------- | :----------------------------------------------- | :------------------- |
 | `data`                 | **Required.** The content to encode.             | `'Your URL here'`    |
 | `shape`                | Overall shape (`'square'` or `'circle'`).        | `'circle'`           |
+| `width`                | QR code width (pixels/CSS units). Ignored when `isResponsive: true`. | `300` or `'20rem'`   |
+| `height`               | QR code height (pixels/CSS units). Ignored when `isResponsive: true`. | `300` or `'20rem'`   |
 | `margin`               | Quiet zone around the QR code (pixels).          | `10`                 |
+| `isResponsive`         | Makes SVG responsive (100% width/height), ignoring `width`/`height`. | `true`               |
 | `qrOptions.errorCorrectionLevel` | Error correction (`'L'`, `'M'`, `'Q'`, `'H'`). | `'H'`                |
 | `dotsOptions.type`     | Shape of the data dots (e.g., `rounded`, `dot`). | `'rounded'`          |
 | `dotsOptions.color`    | Color of the data dots.                          | `'#ff5733'`          |

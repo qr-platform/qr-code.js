@@ -90,6 +90,45 @@ if (responsiveContainer) {
 }
 ```
 
+**Example 3: Fixed Dimensions with CSS Units**
+
+```typescript
+const qrLayoutCSSUnits = new QRCodeJs({
+  data: 'https://example.com/css-dimensions',
+  width: '25rem',     // Fixed width using rem units
+  height: '25rem',    // Fixed height using rem units
+  isResponsive: false, // Use specified dimensions (default)
+  dotsOptions: {
+    color: '#7B1FA2',  // Purple dots
+    type: 'extraRounded'
+  },
+  backgroundOptions: {
+    color: '#F3E5F5',  // Light purple background
+    round: 0.1
+  }
+});
+qrLayoutCSSUnits.append(document.getElementById('layout-css-units-container'));
+```
+
+**Example 4: Mixed Pixel and Percentage Dimensions**
+
+```typescript
+const qrLayoutMixed = new QRCodeJs({
+  data: 'https://example.com/mixed-dimensions',
+  width: 400,         // Fixed pixel width
+  height: '50vh',     // Height as 50% of viewport height
+  dotsOptions: {
+    color: '#E65100',  // Deep orange dots
+    type: 'classy'
+  },
+  cornersSquareOptions: {
+    color: '#FF8F00',  // Lighter orange corners
+    type: 'rounded'
+  }
+});
+qrLayoutMixed.append(document.getElementById('layout-mixed-container'));
+```
+
 ---
 
 ### Dot Styling

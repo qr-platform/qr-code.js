@@ -10,8 +10,8 @@ export interface QRBorderPluginStyleOptions {
     fontWeight?: string;
 }
 interface QRPluginSettings {
-    width?: number;
-    height?: number;
+    width?: number | string;
+    height?: number | string;
     document: Document;
     instanceId: number;
     backgroundOptions?: {

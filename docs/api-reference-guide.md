@@ -23,8 +23,10 @@ qrCode.append(document.getElementById('qr-container'));
 | :--------------------- | :------------------------------------- | :------------- | :-------------------------------------------------------------------------- |
 | `data`                 | `string`                               | -              | Specifies the text, URL, or other data to encode into the QR code. **Required option**  | 
 | `shape`                | `'square' \| 'circle'`                 | `'square'`     | The overall shape of the QR code's boundary. See [ShapeType](#enums-shapetype) enum.
+| `width`                | `number \| string`                     | Auto-calculated| QR code width in pixels or CSS units. When `isResponsive` is false, overrides auto-calculated width. When `isResponsive` is true, this value is ignored. |
+| `height`               | `number \| string`                     | Auto-calculated| QR code height in pixels or CSS units. When `isResponsive` is false, overrides auto-calculated height. When `isResponsive` is true, this value is ignored. |
 | `margin`               | `number`                               | `0`            | The quiet zone (empty space) around the QR code in pixels.                  |
-| `isResponsive`         | `boolean`                              | `false`        | When `true`, the QR code SVG resizes dynamically to fill the width or height of the parent container, with no internal size dimensions applied. |
+| `isResponsive`         | `boolean`                              | `false`        | Controls whether the QR code SVG should be responsive to its container. When true, SVG uses 100% width/height, ignoring any specified width/height values. When false, SVG uses specified width/height values or auto-calculated dimensions. |
 | `scale`                | `number` (0 to 1.5)                    | `1`            | Scales the QR code size relative to its container or border.                |
 | `offset`               | `number`                               | `0`            | Applies a vertical offset (positive moves down, negative moves up) relative to the center. |
 | `verticalOffset`       | `number`                               | `0`            | Applies an absolute vertical offset in pixels.                              |

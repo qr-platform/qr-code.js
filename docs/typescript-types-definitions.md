@@ -24,10 +24,30 @@ interface Options {
   /** The overall shape of the QR code's boundary. */
   shape: ShapeType;
 
+  /** 
+   * QR code width in pixels or CSS units (e.g., '300px', '100%').
+   * When isResponsive is false: This value overrides the auto-calculated width and sets the SVG width attribute.
+   * When isResponsive is true: This value is ignored and the SVG uses 100% width.
+   * If not specified, the library calculates the optimal width based on QR code size and options.
+   */
+  width?: number | string;
+
+  /** 
+   * QR code height in pixels or CSS units (e.g., '300px', '100%').
+   * When isResponsive is false: This value overrides the auto-calculated height and sets the SVG height attribute.
+   * When isResponsive is true: This value is ignored and the SVG uses 100% height.
+   * If not specified, the library calculates the optimal height based on QR code size and options.
+   */
+  height?: number | string;
+
   /** The quiet zone (empty space) around the QR code in pixels. */
   margin: number;
 
-  /** When true, the QR code SVG resizes dynamically to fill the width or height of the parent container, with no internal size dimensions applied. */
+  /** 
+   * Controls whether the QR code SVG should be responsive to its container.
+   * When true: SVG uses 100% width/height, ignoring any specified width/height values.
+   * When false (default): SVG uses specified width/height values or auto-calculated dimensions.
+   */
   isResponsive: boolean;
 
   /** Scales the QR code size relative to its container or border. */

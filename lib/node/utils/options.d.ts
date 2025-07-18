@@ -110,10 +110,26 @@ export interface Options {
     instanceId: number;
     /** Use a custom image fetching & serializaton implementation */
     imageTools?: typeof browserImageTools;
-    /** @ignore */
-    width?: number;
-    /** @ignore */
-    height?: number;
+    /**
+     * QR code width in pixels or CSS units (e.g., '300px', '100%')
+     * When isResponsive is false: This value overrides the auto-calculated width and sets the SVG width attribute
+     * When isResponsive is true: This value is ignored and the SVG uses 100% width
+     * If not specified, the library calculates the optimal width based on QR code size and options
+     */
+    width?: number | string;
+    /**
+     * QR code height in pixels or CSS units (e.g., '300px', '100%')
+     * When isResponsive is false: This value overrides the auto-calculated height and sets the SVG height attribute
+     * When isResponsive is true: This value is ignored and the SVG uses 100% height
+     * If not specified, the library calculates the optimal height based on QR code size and options
+     */
+    height?: number | string;
+    /**
+     * Controls whether the QR code SVG should be responsive to its container
+     * When true: SVG uses 100% width/height, ignoring any specified width/height values
+     * When false (default): SVG uses specified width/height values or auto-calculated dimensions
+     * @default false
+     */
     isResponsive?: boolean;
     margin?: number;
     verticalOffset?: number;

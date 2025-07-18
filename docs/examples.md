@@ -684,6 +684,82 @@ qrUseSettings1.append(document.getElementById('builder-usesettings-container-1')
 
 ---
 
+## Dimension Control
+
+Control the size and responsiveness of your QR codes with `width`, `height`, and `isResponsive` options.
+
+### Fixed Size QR Codes
+
+Perfect for downloads, print materials, or when you need exact pixel dimensions:
+
+```javascript
+// Basic fixed size QR code
+const fixedQR = new QRCodeJs({
+  data: 'Fixed size QR code - 300x300 pixels',
+  width: 300,
+  height: 300,
+  isResponsive: false // Default behavior
+});
+fixedQR.append(document.getElementById('fixed-size-container'));
+```
+
+### Using CSS Units
+
+You can specify dimensions using any CSS units:
+
+```javascript
+// QR code with CSS units
+const cssUnitsQR = new QRCodeJs({
+  data: 'QR code with CSS units',
+  width: '20rem',    // Using rem units
+  height: '20rem',   // Using rem units
+  dotsOptions: {
+    color: '#007bff',
+    type: 'rounded'
+  }
+});
+cssUnitsQR.append(document.getElementById('css-units-container'));
+```
+
+### Responsive QR Codes
+
+For web applications where the QR code should adapt to its container:
+
+```javascript
+// Responsive QR code - scales with container
+const responsiveQR = new QRCodeJs({
+  data: 'Responsive QR code - fills container',
+  width: 500,        // This will be ignored
+  height: 500,       // This will be ignored
+  isResponsive: true, // SVG becomes fluid (100% width/height)
+  dotsOptions: {
+    color: '#28a745',
+    type: 'extraRounded'
+  }
+});
+responsiveQR.append(document.getElementById('responsive-container'));
+```
+
+### Real-World Example: Your Provided Code
+
+```javascript
+const qrCode = new QRCodeJs({
+  data: 'test/test/test22dasdasd',
+  scale: 1,
+  width: '100',     // String width value
+  height: '100',    // String height value
+  imageOptions: {
+    imageSize: 1,
+    backgroundColor: '#8e44ad',
+    margin: 0.2,
+    padding: 8,
+    radius: '5%'
+  }
+});
+```
+
+---
+
 ### Border Options (Free Version)
 
 Adding a basic border (includes "QR-Platform" branding).
