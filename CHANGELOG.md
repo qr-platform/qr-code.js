@@ -1,5 +1,11 @@
 # @qr-platform/qr-code-js
 
+## 0.20.2
+
+### Patch Changes
+
+- 0e4b1dd: Added documentation about width and height options
+
 ## 0.20.1
 
 ### Patch Changes
