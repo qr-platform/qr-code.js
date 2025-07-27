@@ -1,5 +1,11 @@
 # @qr-platform/qr-code-js
 
+## 0.20.4
+
+### Patch Changes
+
+- 0bdb4f8: Firefox qr code svg mask fix
+
 ## 0.20.3
 
 ### Patch Changes
