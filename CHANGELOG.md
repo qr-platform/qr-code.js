@@ -1,5 +1,11 @@
 # @qr-platform/qr-code-js
 
+## 0.20.6
+
+### Patch Changes
+
+- 8e50db8: Border template text position fixes
+
 ## 0.20.5
 
 ### Patch Changes
