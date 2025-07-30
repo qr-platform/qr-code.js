@@ -1,5 +1,11 @@
 # @qr-platform/qr-code-js
 
+## 0.20.5
+
+### Patch Changes
+
+- 4b1b650: Fix: border text position fix with inner and outter borders
+
 ## 0.20.4
 
 ### Patch Changes
