@@ -63,7 +63,7 @@ export declare class QRSVG {
         dotSize: number;
         radius?: string | number;
     }): Promise<void>;
-    createColor({ options, borderOptions, color, additionalRotation, x, y, height, width, name, returnSVGGroup }: {
+    createColor({ options, borderOptions, color, additionalRotation, x, y, height, width, name, returnSVGGroup, clipPathId }: {
         options?: Gradient;
         borderOptions?: BorderOptions;
         color?: string;
@@ -74,6 +74,7 @@ export declare class QRSVG {
         width: number;
         name: string;
         returnSVGGroup?: boolean;
+        clipPathId?: string;
     }): void | SVGElement;
     private createMask;
 }

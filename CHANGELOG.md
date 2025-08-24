@@ -1,5 +1,11 @@
 # @qr-platform/qr-code-js
 
+## 0.20.7
+
+### Patch Changes
+
+- f8b7018: Rounded background support to QR SVG with clipping path option for enhanced styling
+
 ## 0.20.6
 
 ### Patch Changes
