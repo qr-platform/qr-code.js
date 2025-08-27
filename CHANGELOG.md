@@ -1,5 +1,11 @@
 # @qr-platform/qr-code-js
 
+## 0.20.8
+
+### Patch Changes
+
+- 5bf0158: Transparent background support for main qr background and borders color
+
 ## 0.20.7
 
 ### Patch Changes
