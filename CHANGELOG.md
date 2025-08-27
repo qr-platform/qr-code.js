@@ -1,5 +1,11 @@
 # @qr-platform/qr-code-js
 
+## 0.20.9
+
+### Patch Changes
+
+- b9f5505: Added mask cutout for transparent background with solid color border
+
 ## 0.20.8
 
 ### Patch Changes

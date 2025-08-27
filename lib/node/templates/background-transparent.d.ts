@@ -45,6 +45,7 @@ export declare const codes: ({
                 enableText: boolean;
                 style: {
                     fontColor: string;
+                    fontSize?: undefined;
                 };
             };
             bottom: {
@@ -53,6 +54,7 @@ export declare const codes: ({
                 enableText: boolean;
                 style: {
                     fontColor: string;
+                    fontSize?: undefined;
                 };
             };
         };
@@ -91,6 +93,7 @@ export declare const codes: ({
                 enableText: boolean;
                 style: {
                     fontColor: string;
+                    fontSize?: undefined;
                 };
             };
             bottom: {
@@ -99,6 +102,7 @@ export declare const codes: ({
                 enableText: boolean;
                 style: {
                     fontColor: string;
+                    fontSize?: undefined;
                 };
             };
         };
@@ -265,5 +269,168 @@ export declare const codes: ({
     shape: string;
     borderOptions: {
         hasBorder: boolean;
+    };
+} | {
+    backgroundOptions: {
+        color: string;
+        round?: undefined;
+    };
+    shape: string;
+    margin: number;
+    borderOptions: {
+        hasBorder: boolean;
+        thickness: number;
+        color: string;
+        radius: string;
+        decorations: {
+            top: {
+                value: string;
+                enableText: boolean;
+                style: {
+                    fontColor: string;
+                    fontSize?: undefined;
+                };
+                offset?: undefined;
+            };
+            bottom?: undefined;
+        };
+        borderOuter?: undefined;
+        borderInner?: undefined;
+    };
+    data: string;
+    scale: number;
+    width: number;
+    height: number;
+    dotsOptions: {
+        color: string;
+    };
+    cornersSquareOptions: {
+        color: string;
+    };
+    cornersDotOptions: {
+        color: string;
+    };
+} | {
+    backgroundOptions: {
+        color: string;
+        round?: undefined;
+    };
+    margin: number;
+    shape: string;
+    borderOptions: {
+        hasBorder: boolean;
+        thickness: number;
+        color: string;
+        radius: string;
+        borderOuter: {
+            thickness: number;
+            color: string;
+        };
+        borderInner: {
+            thickness: number;
+            color: string;
+        };
+        decorations: {
+            top: {
+                value: string;
+                enableText: boolean;
+                style: {
+                    fontColor: string;
+                    fontSize: number;
+                };
+                offset?: undefined;
+            };
+            bottom: {
+                value: string;
+                enableText: boolean;
+                style: {
+                    fontColor: string;
+                    fontSize: number;
+                };
+                offset?: undefined;
+            };
+        };
+    };
+    data: string;
+    scale: number;
+    width: number;
+    height: number;
+    dotsOptions: {
+        color: string;
+    };
+    cornersSquareOptions: {
+        color: string;
+    };
+    cornersDotOptions: {
+        color: string;
+    };
+} | {
+    backgroundOptions: {
+        color: string;
+        round?: undefined;
+    };
+    borderOptions: {
+        hasBorder: boolean;
+        thickness: number;
+        color: string;
+        radius: string;
+        decorations?: undefined;
+        borderOuter?: undefined;
+        borderInner?: undefined;
+    };
+    margin: number;
+    dotsOptions: {
+        type: string;
+        gradient: {
+            type: string;
+            colorStops: {
+                offset: number;
+                color: string;
+            }[];
+            rotation?: undefined;
+        };
+        color?: undefined;
+    };
+    cornersSquareOptions: {
+        type: string;
+        color: string;
+        gradient?: undefined;
+    };
+    data: string;
+    scale: number;
+    width: number;
+    height: number;
+    shape: string;
+    cornersDotOptions: {
+        color: string;
+    };
+} | {
+    backgroundOptions: {
+        color: string;
+        round?: undefined;
+    };
+    margin: number;
+    borderOptions: {
+        hasBorder: boolean;
+        thickness: number;
+        color: string;
+        radius: string;
+        decorations?: undefined;
+        borderOuter?: undefined;
+        borderInner?: undefined;
+    };
+    data: string;
+    scale: number;
+    width: number;
+    height: number;
+    shape: string;
+    dotsOptions: {
+        color: string;
+    };
+    cornersSquareOptions: {
+        color: string;
+    };
+    cornersDotOptions: {
+        color: string;
     };
 })[];
