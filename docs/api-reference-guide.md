@@ -56,11 +56,11 @@ qrCode.append(document.getElementById('qr-container'));
 | `imageOptions`         | `object`                               | `{...}`        | Options for the embedded image.                                             |
 | `imageOptions.mode`    | `ImageMode` enum                       | `'center'`     | How the image is embedded. See `ImageMode` enum.                            |
 | `imageOptions.imageSize` | `number`                             | `0.4`          | Relative size of the image (0-1).                                           |
-| `imageOptions.margin`  | `number`                               | `0`            | Margin around the image in dot units.                                       |
+| `imageOptions.margin`  | `number`                               | `0`            | Margin around the image in blocks. **Warning: Keep minimal or QR code may disappear.** |
+| `imageOptions.backgroundColor` | `string`                       | `undefined`    | Background color of QR code image (logo).                                   |
+| `imageOptions.padding` | `number`                               | `0`            | Padding around the image in pixels.                                         |
+| `imageOptions.radius`  | `string \| number`                     | `undefined`    | Border radius of the image (e.g., "10px" or 10).                           |
 | `imageOptions.crossOrigin` | `string`                           | `undefined`    | CORS setting for the image.                                                 |
-| `imageOptions.fill`    | `object`                               | `{...}`           | Fill `color` or `gradient`.                               |
-| `imageOptions.fill.color` | `string`                            | `'rgba(255,255,255,1)'`    | Fill color.
-| `imageOptions.fill.gradient` | `Gradient` object | `undefined`    | Apply a gradient fill to the QR code. See [Gradient options](#gradientoptions) for configuration details.
 | `borderOptions`        | `BorderOptions` object                 | `undefined`    | Options for adding decorative borders. Can be configured globally via `QRCodeJs.setBorder()`/`setBorderId()` or per-instance via the builder pattern (`useBorder()`/`useBorderId()`). See below for sub-options. |
 
 ---

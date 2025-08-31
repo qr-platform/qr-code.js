@@ -567,7 +567,7 @@ Options for the embedded image.
 
 ## Gradients
 
-Gradients can be applied to multiple elements: `dotsOptions`, `cornersSquareOptions`, `cornersDotOptions`, `backgroundOptions`, and `imageOptions.fill`.
+Gradients can be applied to multiple elements: `dotsOptions`, `cornersSquareOptions`, `cornersDotOptions`, and `backgroundOptions`.
 
 ### Gradient Structure
 

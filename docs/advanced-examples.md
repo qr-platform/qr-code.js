@@ -361,7 +361,7 @@ qrGradientMultiple.append(document.getElementById('gradient-multiple-container')
 
 Embeds logos or images within the QR code.
 
-**Example 1: Centered Logo with Fill**
+**Example 1: Centered Logo with Background Color and Padding**
 
 ```typescript
 const qrImageCenter = new QRCodeJs({
@@ -371,9 +371,11 @@ const qrImageCenter = new QRCodeJs({
   imageOptions: {
     mode: 'center',
     imageSize: 0.35,
-    margin: 3,
-    crossOrigin: 'anonymous',
-    fill: { color: 'rgba(255,255,255,0.8)' } // Semi-transparent white fill behind logo
+    margin: 0.5, // Keep margin minimal (in blocks) or QR code may disappear
+    backgroundColor: 'rgba(255,255,255,0.9)', // Semi-transparent white background behind logo
+    padding: 10, // 10px padding around the image
+    radius: '10%', // Rounded corners with 10% radius
+    crossOrigin: 'anonymous'
   },
   dotsOptions: { color: '#C13584' } // Instagram-like color
 });
@@ -403,10 +405,104 @@ const qrImageBackground = new QRCodeJs({
 qrImageBackground.append(document.getElementById('image-background-container'));
 ```
 
-**Example 3: Using the Override Option with Images**
+**Example 3: Logo with Custom Styling**
 
 ```typescript
+const qrImageStyled = new QRCodeJs({
+  data: 'https://example.com/styled-logo',
+  image: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pg0KPCEtLSBVcGxvYWRlZCB0bzogU1ZHIFJlcG8sIHd3dy5zdmdyZXBvLmNvbSwgR2VuZXJhdG9yOiBTVkcgUmVwbyBNaXhlciBUb29scyAtLT4NCjxzdmcgaGVpZ2h0PSI4MDBweCIgd2lkdGg9IjgwMHB4IiB2ZXJzaW9uPSIxLjEiIGlkPSJMYXllcl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiANCgkgdmlld0JveD0iMCAwIDUwNC4xMjUgNTA0LjEyNSIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+DQo8cGF0aCBzdHlsZT0iZmlsbDojM0E3RjBEOyIgZD0iTTMzOS43NzIsMGMwLDAsNDQuNTM2LDEwOC45NTQtMTQ2LjMzNywxODIuMTM4Qzg5LjcxOSwyMjEuODkzLDEwLjA1OSwzMjMuNzg5LDEwNS4xNzMsNDgxLjE5Mw0KCWM3Ljg3Ny03MC4zNTcsNDEuNjUzLTIyNS40ODUsMTg2Ljg4OC0yNjAuODg0YzAsMC0xMzUuMTc2LDUwLjU0Ni0xNDcuMTE3LDI3OS4zNDdjNjkuNDU5LDkuNzUyLDIzMi4zNjEsMTYuMzA1LDI4MC43MjYtMTI1LjA2Mg0KCUM0ODkuNTM2LDE4Ny44MTcsMzM5Ljc3MiwwLDMzOS43NzIsMHoiLz4NCjxwYXRoIHN0eWxlPSJmaWxsOiM0OUEwMTA7IiBkPSJNMTQ1LjAwNyw0OTguNzA0YzE0Ny40NTYtNTguODQ5LDI1NC43NDgtMTk2LjcxLDI2OS41NTYtMzYxLjI4M0MzODQuNDE4LDU2LjEwNywzMzkuNzcyLDAsMzM5Ljc3MiwwDQoJczQ0LjUzNiwxMDguOTU0LTE0Ni4zMzcsMTgyLjEzOEM4OS43MTksMjIxLjg5MywxMC4wNTksMzIzLjc4OSwxMDUuMTczLDQ4MS4xOTNjNy44NzctNzAuMzU3LDQxLjY1My0yMjUuNDg1LDE4Ni44ODgtMjYwLjg4NA0KCUMyOTIuMDUzLDIyMC4zMSwxNTcuMjc5LDI3MC43MywxNDUuMDA3LDQ5OC43MDR6Ii8+DQo8Y2lyY2xlIHN0eWxlPSJmaWxsOiMzQTdGMEQ7IiBjeD0iOTAuNDU5IiBjeT0iMTcxLjk4NSIgcj0iMTMuNzg1Ii8+DQo8Zz4NCgk8Y2lyY2xlIHN0eWxlPSJmaWxsOiM0OUEwMTA7IiBjeD0iMTMzLjc4MiIgY3k9IjE1OC4yIiByPSI5Ljg0NiIvPg0KCTxjaXJjbGUgc3R5bGU9ImZpbGw6IzQ5QTAxMDsiIGN4PSIxMjQuOTIxIiBjeT0iNjQuNjYyIiByPSIyNC42MTUiLz4NCgk8Y2lyY2xlIHN0eWxlPSJmaWxsOiM0OUEwMTA7IiBjeD0iMjAwLjczNiIgY3k9IjEyMC43ODUiIHI9IjcuODc3Ii8+DQoJPGNpcmNsZSBzdHlsZT0iZmlsbDojNDlBMDEwOyIgY3g9IjI2Ni43MTMiIGN5PSI3Ni40NzciIHI9IjIyLjY0NiIvPg0KPC9nPg0KPC9zdmc+', // Leaf SVG logo
+  imageOptions: {
+    mode: 'center',
+    imageSize: 0.5,
+    backgroundColor: '#8e44ad', // Purple background
+    padding: 8, // 8px padding
+    radius: '5%', // 5% rounded corners
+    margin: 0.5 // Minimal margin to prevent QR code from disappearing
+  },
+  dotsOptions: { 
+    type: 'rounded',
+    color: '#2c3e50' // Dark blue-gray dots
+  }
+});
+qrImageStyled.append(document.getElementById('image-styled-container'));
+```
 
+**Example 4: Logo with Gradient Background and Circle Shape**
+
+```typescript
+const qrImageGradientBg = new QRCodeJs({
+  data: 'https://example.com/gradient-logo',
+  shape: 'circle',
+  image: 'https://example.com/company-logo.png',
+  imageOptions: {
+    mode: 'center',
+    imageSize: 0.4,
+    backgroundColor: '#ffffff', // White background for logo
+    padding: 15, // 15px padding for breathing room
+    radius: '50%', // Circular logo background
+    margin: 0.3 // Very minimal margin
+  },
+  dotsOptions: {
+    type: 'extraRounded',
+    gradient: {
+      type: 'radial',
+      colorStops: [
+        { offset: 0, color: '#667eea' }, // Purple center
+        { offset: 1, color: '#764ba2' }  // Pink edge
+      ]
+    }
+  },
+  backgroundOptions: {
+    color: '#fafafa'
+  }
+});
+qrImageGradientBg.append(document.getElementById('image-gradient-bg-container'));
+```
+
+**Example 5: Demonstrating Margin Impact (Warning Example)**
+
+```typescript
+// WARNING: High margin values can cause QR code to disappear
+// This example shows both correct and incorrect usage
+
+// CORRECT: Minimal margin value
+const qrCorrectMargin = new QRCodeJs({
+  data: 'https://example.com/correct-margin',
+  image: 'https://example.com/logo.png',
+  imageOptions: {
+    mode: 'center',
+    imageSize: 0.3,
+    margin: 0.5, // Small margin - QR code remains visible
+    backgroundColor: '#e3f2fd',
+    padding: 5,
+    radius: '8px'
+  },
+  dotsOptions: { color: '#1976d2' }
+});
+qrCorrectMargin.append(document.getElementById('correct-margin-container'));
+
+// INCORRECT: Large margin value (DO NOT USE IN PRODUCTION)
+// This is shown for educational purposes only
+const qrIncorrectMargin = new QRCodeJs({
+  data: 'https://example.com/incorrect-margin',
+  image: 'https://example.com/logo.png',
+  imageOptions: {
+    mode: 'center',
+    imageSize: 0.4,
+    margin: 5, // TOO LARGE! May cause QR code to disappear or become unscannable
+    backgroundColor: '#ffebee',
+    padding: 5,
+    radius: '8px'
+  },
+  dotsOptions: { color: '#d32f2f' }
+});
+// QR code may not render properly or disappear entirely
+qrIncorrectMargin.append(document.getElementById('incorrect-margin-container'));
+```
+
+**Example 6: Using the Override Option with Images**
+
+```typescript
 // Setting a global image with override that will take precedence
 // even over images specified in instance options
 QRCodeJs.setImage('https://example.com/global-priority-logo.png', { override: true });
@@ -415,6 +511,12 @@ QRCodeJs.setImage('https://example.com/global-priority-logo.png', { override: tr
 const qrImageOverride = new QRCodeJs({
   data: 'https://example.com/image-override-example',
   image: 'https://example.com/this-will-be-ignored.png', // Will be ignored due to override
+  imageOptions: {
+    backgroundColor: '#ffffff',
+    padding: 10,
+    radius: '5px',
+    margin: 0.4
+  },
   dotsOptions: { color: '#333333' }
 });
 qrImageOverride.append(document.getElementById('image-override-container'));
@@ -424,6 +526,12 @@ const qrBuilderImageOverride = QRCodeJs.useImage('https://example.com/builder-pr
   .options({
     data: 'https://example.com/builder-image-override-example',
     image: 'https://example.com/another-ignored-image.png', // Will be ignored due to override
+    imageOptions: {
+      backgroundColor: 'rgba(255, 255, 255, 0.95)',
+      padding: 12,
+      radius: '10%',
+      margin: 0.4
+    },
     dotsOptions: { type: 'rounded', color: '#555555' }
   });
 qrBuilderImageOverride.append(document.getElementById('builder-image-override-container'));

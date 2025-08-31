@@ -266,7 +266,7 @@ Options for applying gradient fills to various QR code elements (dots, corner sq
 | `colorStops`| `Array<{ offset: number, color: string }>` | -   | Array of color stops defining the gradient (offset: 0-1, color: CSS string). At least two stops recommended. |
 
 **Where to Apply Gradients:**
-Add a `gradient` property to: `dotsOptions`, `cornersSquareOptions`, `cornersDotOptions`, `backgroundOptions`, and `imageOptions.fill`.
+Add a `gradient` property to: `dotsOptions`, `cornersSquareOptions`, `cornersDotOptions`, and `backgroundOptions`.
 
 *Note: If both `color` and `gradient` are set, `gradient` takes precedence.*
 
@@ -309,11 +309,11 @@ const qrCodeWithGradient = new QRCodeJs({
 | `image`                   | `string \| Buffer \| Blob`     | `undefined`    | URL, Buffer, or Blob of an image to embed in the QR code.                                                                                 |
 | `imageOptions.mode`       | `ImageMode` enum               | `'center'`     | How the image is embedded.                         |
 | `imageOptions.imageSize`  | `number`                       | `0.4`          | Relative size of the image (0-1).                                                                                                         |
-| `imageOptions.margin`     | `number`                       | `0`            | Margin around the image in dot units.                                                                                                     |
+| `imageOptions.margin`     | `number`                       | `0`            | Margin around the image in blocks. **Warning: Keep minimal or QR code may disappear.**                                                    |
+| `imageOptions.backgroundColor` | `string`                  | `undefined`    | Background color of QR code image (logo).                                                                                                 |
+| `imageOptions.padding`    | `number`                       | `0`            | Padding around the image in pixels.                                                                                                       |
+| `imageOptions.radius`     | `string \| number`             | `undefined`    | Border radius of the image (e.g., "10px" or 10).                                                                                          |
 | `imageOptions.crossOrigin`| `string`                       | `undefined`    | CORS setting for the image (e.g., `'anonymous'`, `'use-credentials'`).                                                                    |
-| `imageOptions.fill`       | `object`                       | `{...}`        | Fill options for transparent areas (used in `'center'` mode).                                                                             |
-| `imageOptions.fill.color` | `string`                       | `'rgba(255,255,255,1)'` | Fill color for transparent areas.                                                                                |
-| `imageOptions.fill.gradient`| `Gradient` object            | `undefined`    | Apply a gradient fill to transparent areas. See [Gradients](#gradients) for configuration details.                                        |
 
 **Note on Image Source:** The `image` can be specified directly in the options, set globally for subsequent instances using `QRCodeJs.setImage('your_image_url')`, or set for a specific builder chain using `QRCodeJs.useImage('your_image_url').options(...)`. The builder's `useImage` typically overrides the global `setImage`, which in turn overrides an image set by a template. Direct options in the constructor or `.options()` call provide the final override.
 

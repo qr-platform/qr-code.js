@@ -1,5 +1,11 @@
 # @qr-platform/qr-code-js
 
+## 0.20.10
+
+### Patch Changes
+
+- b03c01d: Update to style template border related issue
+
 ## 0.20.9
 
 ### Patch Changes
