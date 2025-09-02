@@ -175,6 +175,10 @@ qrCode.serialize().then(svgString => {
 
 ## 📜 License and Support
 
-QRCode.js by QR-Platform is **free** for personal projects, open-source projects, or general non-commercial use. For commercial use, a license is required.
+## 🌐 Demo
+
+An interactive demo located in [`packages/demo`](./packages/demo) is automatically built with `npm run build` and deployed to GitHub Pages from the `packages/demo/dist` directory.
+
+## 📜 License
 
 See the full license at LICENSE.md for more information. For commercial licenses, including full source code and support, contact qr.platform.com@gmail.com.
