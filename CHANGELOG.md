@@ -1,5 +1,11 @@
 # @qr-platform/qr-code-js
 
+## 0.20.11
+
+### Patch Changes
+
+- debbfce: Change default font to Arial instead of Helvetica
+
 ## 0.20.10
 
 ### Patch Changes
