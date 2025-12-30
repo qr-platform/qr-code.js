@@ -1,6 +1,6 @@
 # @qr-platform/qr-code-js
 
-## 0.20.12
+## 0.20.14
 
 ### Patch Changes
 
