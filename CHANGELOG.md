@@ -1,5 +1,11 @@
 # @qr-platform/qr-code-js
 
+## 0.20.12
+
+### Patch Changes
+
+- 556b374: @xmldom/xmldom version update
+
 ## 0.20.11
 
 ### Patch Changes
