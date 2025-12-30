@@ -1,6 +1,6 @@
 {
   "name": "@qr-platform/qr-code.js",
-  "version": "0.20.12",
+  "version": "0.20.14",
   "description": "QRCode.js is a professional JavaScript/TypeScript library for creating customized QR codes, offering a blend of simplicity and sophistication. With versatile styling options—dot shapes, colors, gradients, embedded images, borders, and text—it enables you to design unique, visually appealing QR codes that work flawlessly with standard scanners. QRCode.js is part of QR-Platform: All-in-One QR Codes Management Solution.",
   "type": "module",
   "main": "./lib/node.js",
@@ -20,13 +20,13 @@
     }
   },
   "peerDependencies": {
-    "@xmldom/xmldom": "0.9.0",
-    "@undecaf/zbar-wasm": "0.11.0",
-    "image-size": "2.0.2",
-    "file-type": "20.1.0",
-    "jose": "6.0.10",
-    "jimp": "^1.6.0",
-    "@resvg/resvg-js": "2.6.2"
+    "@xmldom/xmldom": "~0.9.8",
+    "@undecaf/zbar-wasm": "~0.11.0",
+    "image-size": "~2.0.2",
+    "file-type": "~20.4.1",
+    "jose": "~6.0.10",
+    "jimp": "~1.6.0",
+    "@resvg/resvg-js": "~2.6.2"
   },
   "keywords": [
     "qr",
