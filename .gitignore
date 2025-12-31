@@ -1,3 +1,5 @@
 package-lock.json
 node_modules
+packages/demo/dist
+packages/demo/.kilocode
 .DS_Store
